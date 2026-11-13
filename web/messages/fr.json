@@ -3,6 +3,13 @@
     "name": "Orbit",
     "tagline": "Statistiques Facebook & Instagram de vos marques"
   },
+  "shell": {
+    "apply": "Appliquer",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "customRange": "Dates personnalisées",
+    "theme": { "label": "Thème", "light": "Clair", "dark": "Sombre", "system": "Système" }
+  },
   "common": {
     "loading": "Chargement…",
     "search": "Rechercher",

@@ -3,18 +3,44 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: "cv11", "ss01";
+    font-feature-settings: "cv11", "ss01", "ss03";
+    color-scheme: light;
+    text-rendering: optimizeLegibility;
   }
   body {
     background: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
   }
+  [data-theme] {
+    color: var(--color-ink);
+  }
   ::selection {
-    background: var(--color-orbit-200);
+    background: color-mix(in srgb, var(--color-orbit-400) 35%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-orbit-500);
+    outline-offset: 2px;
+  }
+  /* barres de défilement discrètes */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
   }
   /* chiffres alignés dans les tableaux et KPI */
   .tabular {
     font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum", "cv11", "ss01";
+  }
+  input[type="date"] {
+    color-scheme: inherit;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      transition-duration: 1ms !important;
+    }
   }
 }

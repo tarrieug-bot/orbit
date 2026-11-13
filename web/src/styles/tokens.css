@@ -1,86 +1,303 @@
 /*
  * Orbit — design tokens (Tailwind CSS v4 : pas de tailwind.config, tout est ici).
- * Propriétaire : agent design. Chaque variable --color-x crée les utilitaires
- * bg-x / text-x / border-x / ring-x… ; --shadow-x → shadow-x ; --radius-x → rounded-x.
+ * Propriétaire : agent design. Miroir TypeScript : ./tokens.ts (Recharts, PDF).
+ *
+ * Chaque variable --color-x crée les utilitaires bg-x / text-x / border-x / ring-x… ;
+ * --shadow-x → shadow-x ; --radius-x → rounded-x.
+ *
+ * Mode sombre : les couleurs « thématisables » sont redéclarées sous
+ * [data-theme="dark"] (posé sur <html> par ThemeScript, préférence système par défaut)
+ * et, sans JavaScript, sous @media (prefers-color-scheme: dark).
+ * Un sous-arbre peut forcer un thème : <div data-theme="light|dark">.
  */
-@theme {
-  /* Typographie */
+@theme static {
+  /* ── Typographie ─────────────────────────────────────────────── */
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-display: 2rem;
+  --text-display--line-height: 2.375rem;
+  --text-display--letter-spacing: -0.025em;
 
-  /* Marque Orbit (indigo → violet) */
-  --color-orbit-50: #eef2ff;
-  --color-orbit-100: #e0e7ff;
-  --color-orbit-200: #c7d2fe;
-  --color-orbit-300: #a5b4fc;
-  --color-orbit-400: #818cf8;
-  --color-orbit-500: #6366f1;
-  --color-orbit-600: #4f46e5;
-  --color-orbit-700: #4338ca;
-  --color-orbit-800: #3730a3;
-  --color-orbit-900: #1e1b4b;
-  --color-orbit-accent: #8b5cf6;
+  /* ── Accent Orbit (ultramarine → violet) ─────────────────────── */
+  --color-orbit-50: #f2f1fe;
+  --color-orbit-100: #e6e3fd;
+  --color-orbit-200: #cfc9fb;
+  --color-orbit-300: #aea5f7;
+  --color-orbit-400: #8a7ef1;
+  --color-orbit-500: #6d5ce8;
+  --color-orbit-600: #5944d9;
+  --color-orbit-700: #4a36bb;
+  --color-orbit-800: #3b2c94;
+  --color-orbit-900: #221b58;
+  --color-orbit-accent: #a24ee6;
 
-  /* Neutres */
-  --color-canvas: #f5f6fa;        /* fond de l'application */
+  /* ── Neutres chauds (clair) ───────────────────────────────────── */
+  --color-canvas: #f6f5f2;        /* fond de l'application */
   --color-surface: #ffffff;       /* cartes */
-  --color-surface-2: #f9fafb;     /* zones secondaires, en-têtes de tableau */
-  --color-line: #e7e9f0;          /* bordures */
-  --color-line-strong: #d5d8e2;
-  --color-ink: #0f172a;           /* texte principal */
-  --color-ink-2: #475569;         /* texte secondaire */
-  --color-ink-3: #94a3b8;         /* texte tertiaire, placeholders */
-  --color-sidebar: #0b1020;       /* barre latérale */
-  --color-sidebar-2: #151b2e;
-  --color-sidebar-ink: #e2e8f0;
-  --color-sidebar-mute: #7c86a2;
+  --color-surface-2: #faf9f7;     /* zones secondaires, en-têtes de tableau */
+  --color-surface-3: #f1efeb;     /* creux : pistes, segmented, survol */
+  --color-line: #e9e7e2;          /* bordures */
+  --color-line-strong: #d8d5ce;
+  --color-ink: #1a1917;           /* texte principal */
+  --color-ink-2: #5a5650;         /* texte secondaire */
+  --color-ink-3: #8c877f;         /* texte tertiaire, placeholders */
+  --color-ink-inverse: #ffffff;
 
-  /* Sémantique */
-  --color-positive: #16a34a;
-  --color-positive-soft: #dcfce7;
-  --color-negative: #dc2626;
-  --color-negative-soft: #fee2e2;
-  --color-warning: #d97706;
-  --color-warning-soft: #fef3c7;
+  /* Barre latérale (sombre dans les deux thèmes) */
+  --color-sidebar: #141311;
+  --color-sidebar-2: #1e1d1a;
+  --color-sidebar-3: #2a2925;
+  --color-sidebar-ink: #ebe9e4;
+  --color-sidebar-mute: #8f8b83;
+
+  /* ── Statuts (toujours accompagnés d'une icône ou d'un texte) ─── */
+  --color-positive: #15803d;
+  --color-positive-soft: #e3f6e8;
+  --color-negative: #c92a2a;
+  --color-negative-soft: #fde8e8;
+  --color-warning: #a8560a;
+  --color-warning-soft: #fdf1dc;
   --color-info: #2563eb;
-  --color-info-soft: #dbeafe;
+  --color-info-soft: #e3edfd;
 
-  /* Réseaux sociaux */
+  /* ── Réseaux sociaux (couleurs officielles) ───────────────────── */
   --color-facebook: #1877f2;
-  --color-instagram: #dd2a7b;     /* couleur unie de repli ; dégradé : bg-instagram-gradient */
-  --color-instagram-from: #f58529;
-  --color-instagram-via: #dd2a7b;
-  --color-instagram-to: #8134af;
-  --color-tiktok: #010101;
+  --color-instagram: #d62976;     /* unie de repli ; dégradé : bg-instagram-gradient */
+  --color-instagram-1: #feda75;
+  --color-instagram-2: #fa7e1e;
+  --color-instagram-3: #d62976;
+  --color-instagram-4: #962fbf;
+  --color-instagram-5: #4f5bd5;
+  /* alias historiques */
+  --color-instagram-from: #fa7e1e;
+  --color-instagram-via: #d62976;
+  --color-instagram-to: #962fbf;
+  --color-tiktok: #000000;
   --color-tiktok-cyan: #25f4ee;
   --color-tiktok-red: #fe2c55;
   --color-linkedin: #0a66c2;
   --color-youtube: #ff0000;
 
-  /* Rayons */
-  --radius-card: 1rem;
+  /* ── Graphiques : palette catégorielle validée daltonisme (ordre fixe) ── */
+  --color-chart-1: #2a78d6;  /* bleu    — Facebook / série 1 */
+  --color-chart-2: #eb6834;  /* orange  — Instagram / série 2 */
+  --color-chart-3: #1baf7a;  /* aqua */
+  --color-chart-4: #eda100;  /* jaune */
+  --color-chart-5: #e87ba4;  /* magenta */
+  --color-chart-6: #008300;  /* vert */
+  --color-chart-7: #6250d6;  /* violet */
+  --color-chart-8: #e34948;  /* rouge */
+  --color-chart-grid: #eceae5;
+  --color-chart-axis: #c9c5bc;
+  /* séquentielle (bleu, clair → foncé) : heatmaps */
+  --color-seq-0: #f1efeb;
+  --color-seq-1: #cde2fb;
+  --color-seq-2: #9ec5f4;
+  --color-seq-3: #6da7ec;
+  --color-seq-4: #3987e5;
+  --color-seq-5: #256abf;
+  --color-seq-6: #184f95;
+  --color-seq-7: #0d366b;
+
+  /* ── Rayons ───────────────────────────────────────────────────── */
+  --radius-xs: 0.375rem;
   --radius-control: 0.625rem;
+  --radius-card: 1rem;
+  --radius-hero: 1.5rem;
   --radius-pill: 9999px;
 
-  /* Ombres douces */
-  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.08);
-  --shadow-pop: 0 12px 32px -8px rgb(15 23 42 / 0.18), 0 2px 6px rgb(15 23 42 / 0.06);
-  --shadow-glow: 0 0 0 4px rgb(99 102 241 / 0.15);
+  /* ── Ombres douces ────────────────────────────────────────────── */
+  --shadow-soft: 0 1px 2px rgb(26 25 23 / 0.05);
+  --shadow-card: 0 1px 2px rgb(26 25 23 / 0.04), 0 2px 8px -2px rgb(26 25 23 / 0.06);
+  --shadow-raised: 0 1px 2px rgb(26 25 23 / 0.05), 0 8px 24px -8px rgb(26 25 23 / 0.12);
+  --shadow-pop: 0 16px 40px -12px rgb(26 25 23 / 0.22), 0 2px 6px rgb(26 25 23 / 0.06);
+  --shadow-glow: 0 0 0 3px rgb(89 68 217 / 0.22);
 
-  /* Animations */
+  /* ── Espacements nommés (en plus de l'échelle Tailwind ×0.25rem) ── */
+  --spacing-page: 2rem;
+  --spacing-section: 1.5rem;
+  --spacing-sidebar: 16.5rem;
+
+  /* ── Animations ───────────────────────────────────────────────── */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-fade-in: fade-in 160ms var(--ease-out-soft);
+  --animate-pop-in: pop-in 180ms var(--ease-out-soft);
+  --animate-slide-in-right: slide-in-right 240ms var(--ease-out-soft);
+  --animate-slide-in-left: slide-in-left 240ms var(--ease-out-soft);
+  --animate-toast-in: toast-in 260ms var(--ease-out-soft);
+
   @keyframes shimmer {
     from { background-position: -200% 0; }
     to { background-position: 200% 0; }
   }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: translateY(4px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes slide-in-right {
+    from { transform: translateX(100%); }
+    to { transform: none; }
+  }
+  @keyframes slide-in-left {
+    from { transform: translateX(-100%); }
+    to { transform: none; }
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
 }
 
-/* Dégradé Instagram officiel */
+/* Thème clair explicite (sous-arbre forcé en clair dans une page sombre). */
+[data-theme="light"] {
+  color-scheme: light;
+  --color-orbit-50: #f2f1fe;
+  --color-orbit-100: #e6e3fd;
+  --color-orbit-200: #cfc9fb;
+  --color-orbit-300: #aea5f7;
+  --color-orbit-700: #4a36bb;
+  --color-orbit-800: #3b2c94;
+  --color-canvas: #f6f5f2;
+  --color-surface: #ffffff;
+  --color-surface-2: #faf9f7;
+  --color-surface-3: #f1efeb;
+  --color-line: #e9e7e2;
+  --color-line-strong: #d8d5ce;
+  --color-ink: #1a1917;
+  --color-ink-2: #5a5650;
+  --color-ink-3: #8c877f;
+  --color-positive: #15803d;
+  --color-positive-soft: #e3f6e8;
+  --color-negative: #c92a2a;
+  --color-negative-soft: #fde8e8;
+  --color-warning: #a8560a;
+  --color-warning-soft: #fdf1dc;
+  --color-info: #2563eb;
+  --color-info-soft: #e3edfd;
+  --color-tiktok: #000000;
+  --color-chart-1: #2a78d6;
+  --color-chart-2: #eb6834;
+  --color-chart-3: #1baf7a;
+  --color-chart-4: #eda100;
+  --color-chart-5: #e87ba4;
+  --color-chart-6: #008300;
+  --color-chart-7: #6250d6;
+  --color-chart-8: #e34948;
+  --color-chart-grid: #eceae5;
+  --color-chart-axis: #c9c5bc;
+  --color-seq-0: #f1efeb;
+  --color-seq-1: #cde2fb;
+  --color-seq-2: #9ec5f4;
+  --color-seq-3: #6da7ec;
+  --color-seq-4: #3987e5;
+  --color-seq-5: #256abf;
+  --color-seq-6: #184f95;
+  --color-seq-7: #0d366b;
+  --shadow-card: 0 1px 2px rgb(26 25 23 / 0.04), 0 2px 8px -2px rgb(26 25 23 / 0.06);
+}
+
+/* Thème sombre : mêmes rôles, valeurs choisies pour la surface sombre. */
+@utility theme-dark-vars {
+  color-scheme: dark;
+  --color-orbit-50: #1f1b3d;
+  --color-orbit-100: #29234f;
+  --color-orbit-200: #3b3373;
+  --color-orbit-300: #5c50b0;
+  --color-orbit-700: #c4bcfb;
+  --color-orbit-800: #ddd8fd;
+  --color-canvas: #0e0e0d;
+  --color-surface: #171715;
+  --color-surface-2: #1c1c1a;
+  --color-surface-3: #242421;
+  --color-line: #2a2926;
+  --color-line-strong: #3a3935;
+  --color-ink: #f2f1ed;
+  --color-ink-2: #b5b2aa;
+  --color-ink-3: #85827a;
+  --color-positive: #4ade80;
+  --color-positive-soft: #13301f;
+  --color-negative: #f87171;
+  --color-negative-soft: #3a1616;
+  --color-warning: #fbbf24;
+  --color-warning-soft: #352710;
+  --color-info: #60a5fa;
+  --color-info-soft: #14243f;
+  --color-tiktok: #ffffff;
+  --color-chart-1: #3987e5;
+  --color-chart-2: #d95926;
+  --color-chart-3: #199e70;
+  --color-chart-4: #c98500;
+  --color-chart-5: #d55181;
+  --color-chart-6: #008300;
+  --color-chart-7: #9085e9;
+  --color-chart-8: #e66767;
+  --color-chart-grid: #262523;
+  --color-chart-axis: #3a3935;
+  --color-seq-0: #22221f;
+  --color-seq-1: #0d366b;
+  --color-seq-2: #104281;
+  --color-seq-3: #184f95;
+  --color-seq-4: #256abf;
+  --color-seq-5: #3987e5;
+  --color-seq-6: #6da7ec;
+  --color-seq-7: #b7d3f6;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.02), 0 2px 8px -2px rgb(0 0 0 / 0.5);
+  --shadow-raised: 0 0 0 1px rgb(255 255 255 / 0.03), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 0 0 1px rgb(255 255 255 / 0.05), 0 16px 40px -12px rgb(0 0 0 / 0.7);
+  --shadow-glow: 0 0 0 3px rgb(138 126 241 / 0.35);
+}
+
+@layer base {
+  [data-theme="dark"] {
+    @apply theme-dark-vars;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      @apply theme-dark-vars;
+    }
+  }
+}
+
+/* Variante dark: (à utiliser avec parcimonie : préférer les tokens). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ── Dégradés ─────────────────────────────────────────────────────── */
+/* Instagram officiel (logo) : radial depuis le coin bas-gauche */
 @utility bg-instagram-gradient {
-  background-image: linear-gradient(45deg, var(--color-instagram-from) 0%, var(--color-instagram-via) 50%, var(--color-instagram-to) 100%);
+  background-image: radial-gradient(
+    circle at 30% 107%,
+    var(--color-instagram-1) 0%,
+    var(--color-instagram-1) 5%,
+    var(--color-instagram-2) 30%,
+    var(--color-instagram-3) 55%,
+    var(--color-instagram-4) 78%,
+    var(--color-instagram-5) 100%
+  );
 }
-
+/* Instagram linéaire (anneaux d'avatar, barres) */
+@utility bg-instagram-linear {
+  background-image: linear-gradient(
+    45deg,
+    var(--color-instagram-1),
+    var(--color-instagram-2) 25%,
+    var(--color-instagram-3) 50%,
+    var(--color-instagram-4) 75%,
+    var(--color-instagram-5)
+  );
+}
 @utility bg-orbit-gradient {
-  background-image: linear-gradient(135deg, var(--color-orbit-600) 0%, var(--color-orbit-accent) 100%);
+  background-image: linear-gradient(135deg, #5944d9 0%, #7a47e3 55%, var(--color-orbit-accent) 100%);
+}
+@utility text-orbit-gradient {
+  background-image: linear-gradient(135deg, var(--color-orbit-500), var(--color-orbit-accent));
+  background-clip: text;
+  color: transparent;
 }
