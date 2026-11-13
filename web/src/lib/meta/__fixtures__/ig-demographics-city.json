@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "name": "follower_demographics",
+      "period": "lifetime",
+      "total_value": {
+        "breakdowns": [
+          {
+            "dimension_keys": [
+              "city"
+            ],
+            "results": [
+              {
+                "dimension_values": [
+                  "Fort-de-France, Martinique"
+                ],
+                "value": 410
+              },
+              {
+                "dimension_values": [
+                  "Le Lamentin, Martinique"
+                ],
+                "value": 150
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

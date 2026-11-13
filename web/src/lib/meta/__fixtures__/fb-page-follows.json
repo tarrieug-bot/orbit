@@ -1,0 +1,33 @@
+{
+  "data": [
+    {
+      "name": "page_follows",
+      "period": "day",
+      "values": [
+        {
+          "value": 1520,
+          "end_time": "2026-11-09T08:00:00+0000"
+        },
+        {
+          "value": 1523,
+          "end_time": "2026-11-10T08:00:00+0000"
+        },
+        {
+          "value": 1527,
+          "end_time": "2026-11-11T08:00:00+0000"
+        },
+        {
+          "value": 1530,
+          "end_time": "2026-11-12T08:00:00+0000"
+        }
+      ],
+      "title": "Lifetime Total Follows",
+      "description": "…",
+      "id": "1111/insights/page_follows/day"
+    }
+  ],
+  "paging": {
+    "previous": "https://graph.facebook.com/v25.0/1111/insights?access_token=EAAsecret&since=1",
+    "next": "https://graph.facebook.com/v25.0/1111/insights?access_token=EAAsecret&until=2"
+  }
+}

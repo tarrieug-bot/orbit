@@ -1,0 +1,61 @@
+{
+  "data": [
+    {
+      "name": "views",
+      "period": "day",
+      "total_value": {
+        "value": 4210
+      },
+      "id": "2222/insights/views/day"
+    },
+    {
+      "name": "total_interactions",
+      "period": "day",
+      "total_value": {
+        "value": 187
+      }
+    },
+    {
+      "name": "likes",
+      "period": "day",
+      "total_value": {
+        "value": 150
+      }
+    },
+    {
+      "name": "comments",
+      "period": "day",
+      "total_value": {
+        "value": 12
+      }
+    },
+    {
+      "name": "shares",
+      "period": "day",
+      "total_value": {
+        "value": 9
+      }
+    },
+    {
+      "name": "saves",
+      "period": "day",
+      "total_value": {
+        "value": 16
+      }
+    },
+    {
+      "name": "profile_views",
+      "period": "day",
+      "total_value": {
+        "value": 64
+      }
+    },
+    {
+      "name": "profile_links_taps",
+      "period": "day",
+      "total_value": {
+        "value": 7
+      }
+    }
+  ]
+}

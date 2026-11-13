@@ -102,6 +102,17 @@ export type SocialAccountTokenRow = {
   updated_at: ISOTimestamp;
 };
 
+/** État de la collecte par compte (service role uniquement) — migration 20261113180000. */
+export type AccountSyncStateRow = {
+  account_id: string;
+  backfill_cursor: ISODate | null;
+  backfill_done: boolean;
+  last_daily_on: ISODate | null;
+  audience_synced_at: ISOTimestamp | null;
+  meta: { [key: string]: Json | undefined };
+  updated_at: ISOTimestamp;
+};
+
 /** NULL = métrique indisponible pour ce compte / ce jour (≠ 0). */
 export type AccountDailyMetricsRow = {
   account_id: string;
@@ -324,6 +335,7 @@ export type Database = {
       brands: Table<BrandRow, "organization_id" | "name" | "slug">;
       social_accounts: Table<SocialAccountRow, "brand_id" | "network" | "external_id">;
       social_account_tokens: Table<SocialAccountTokenRow, "account_id" | "access_token_enc">;
+      account_sync_state: Table<AccountSyncStateRow, "account_id">;
       account_daily_metrics: Table<AccountDailyMetricsRow, "account_id" | "date">;
       campaigns: Table<CampaignRow, "brand_id" | "name" | "starts_on" | "ends_on">;
       posts: Table<PostRow, "account_id" | "network" | "external_id" | "published_at" | "format">;
