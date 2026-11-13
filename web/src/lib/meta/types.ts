@@ -1,6 +1,7 @@
 import type { AudienceDemographics, ISODate, ISOTimestamp, Network, OnlineFollowers, PostFormat, SyncCallLog } from "@/lib/db/types";
 import type { DateRange } from "@/lib/metrics/types";
 import type { DailyColumn, PostColumn } from "./metric-map";
+import type { GraphClient } from "./graph";
 
 /** Contexte d'appel : jeton DÉCHIFFRÉ (jamais journalisé), côté serveur uniquement. */
 export interface MetaCallContext {
@@ -8,6 +9,8 @@ export interface MetaCallContext {
   externalId: string;
   accessToken: string;
   apiVersion: string;
+  /** client Graph partagé (quotas, compteur de requêtes) ; créé à la volée sinon */
+  graph?: GraphClient;
 }
 
 /** Résultat commun : données + journal des appels (→ sync_runs.details.calls). */
@@ -57,6 +60,8 @@ export interface DiscoveredAccount extends FetchedProfile {
   pageAccessToken: string;
   /** IG : id de la Page FB porteuse */
   parentPageId: string | null;
+  /** FB : catégorie de la Page (→ secteur de la marque) */
+  category?: string | null;
 }
 
 export interface ExchangedToken {

@@ -1,0 +1,44 @@
+{
+  "data": [
+    {
+      "id": "17900000001",
+      "caption": "Reel coulisses 🎬",
+      "media_type": "VIDEO",
+      "media_product_type": "REELS",
+      "timestamp": "2026-11-11T22:15:00+0000",
+      "permalink": "https://www.instagram.com/reel/AAA/",
+      "thumbnail_url": "https://scontent.cdninstagram.com/v/reel1.jpg",
+      "media_url": "https://scontent.cdninstagram.com/v/reel1.mp4",
+      "like_count": 210,
+      "comments_count": 18
+    },
+    {
+      "id": "17900000002",
+      "caption": "Carrousel nouveautés",
+      "media_type": "CAROUSEL_ALBUM",
+      "media_product_type": "FEED",
+      "timestamp": "2026-11-09T14:00:00+0000",
+      "permalink": "https://www.instagram.com/p/BBB/",
+      "media_url": "https://scontent.cdninstagram.com/v/car1.jpg",
+      "like_count": 98,
+      "comments_count": 5
+    },
+    {
+      "id": "17900000003",
+      "caption": "Ancienne photo",
+      "media_type": "IMAGE",
+      "media_product_type": "FEED",
+      "timestamp": "2026-09-01T14:00:00+0000",
+      "permalink": "https://www.instagram.com/p/CCC/",
+      "media_url": "https://scontent.cdninstagram.com/v/old.jpg",
+      "like_count": 40,
+      "comments_count": 2
+    }
+  ],
+  "paging": {
+    "cursors": {
+      "before": "x",
+      "after": "y"
+    }
+  }
+}

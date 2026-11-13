@@ -1,0 +1,55 @@
+{
+  "data": [
+    {
+      "name": "follower_demographics",
+      "period": "lifetime",
+      "total_value": {
+        "breakdowns": [
+          {
+            "dimension_keys": [
+              "age",
+              "gender"
+            ],
+            "results": [
+              {
+                "dimension_values": [
+                  "18-24",
+                  "F"
+                ],
+                "value": 120
+              },
+              {
+                "dimension_values": [
+                  "18-24",
+                  "M"
+                ],
+                "value": 80
+              },
+              {
+                "dimension_values": [
+                  "25-34",
+                  "F"
+                ],
+                "value": 300
+              },
+              {
+                "dimension_values": [
+                  "25-34",
+                  "M"
+                ],
+                "value": 210
+              },
+              {
+                "dimension_values": [
+                  "25-34",
+                  "U"
+                ],
+                "value": 12
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,21 +1,37 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { assertCronRequest } from "@/lib/auth/cron";
+import { isDemoMode } from "@/lib/env";
+import { DEFAULT_BUDGET_MS, runSyncBatch } from "@/lib/sync/engine";
+import { createSupabaseSyncStore } from "@/lib/sync/supabase-store";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 /**
- * Collecte quotidienne (Vercel Cron, 10:00 UTC = 06:00 Martinique).
- * STUB — propriétaire : agent back/data. À implémenter dans src/lib/sync/ :
- *  1. lister les social_accounts actifs (client service role) ;
- *  2. pour chacun : déchiffrer le jeton (lib/security/tokens), fetchProfile (avatar_url, followers_count),
- *     fetchPageDaily / fetchIgDaily pour J−1 (+ rattrapage des jours manquants), fetchPosts récents
- *     et snapshots J+1/J+7/J+28, fetchAudience (IG, 1×/semaine) ;
- *  3. upsert des tables + une ligne sync_runs par compte (details.calls = journal des appels) ;
- *  4. statut du compte : expired (code 190), expiring (< 7 j), error.
+ * Collecte quotidienne (Vercel Cron, 10:00 UTC = 06:00 Martinique), protégée par CRON_SECRET.
+ * Traite les comptes par lots dans un budget de ~50 s (quotidien d'abord, puis backfill) et
+ * reprend où il s'est arrêté au prochain appel (account_sync_state). Peut être appelée
+ * plusieurs fois par jour sans doublon (idempotent).
  */
 export async function GET(request: NextRequest) {
   const denied = assertCronRequest(request);
   if (denied) return denied;
-  return NextResponse.json({ ok: false, status: "not_implemented" }, { status: 501 });
+  if (isDemoMode()) return NextResponse.json({ ok: true, skipped: "demo" });
+  const started = Date.now();
+  const res = await runSyncBatch({ store: createSupabaseSyncStore(), trigger: "cron", deadline: started + DEFAULT_BUDGET_MS });
+  return NextResponse.json({
+    ok: true,
+    durationMs: Date.now() - started,
+    processed: res.processed.length,
+    remaining: res.remaining,
+    results: res.processed.map((r) => ({
+      accountId: r.accountId,
+      status: r.status,
+      reauthRequired: r.reauthRequired,
+      budgetExhausted: r.budgetExhausted,
+      backfillDone: r.backfillDone,
+      backfillCursor: r.backfillCursor,
+      requests: r.requests,
+    })),
+  });
 }
