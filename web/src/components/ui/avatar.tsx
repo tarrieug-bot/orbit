@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, useState } from "react";
+import { Children, useEffect, useRef, useState } from "react";
 import type { Network } from "@/lib/db/types";
 import { cn, initials } from "@/lib/utils";
 import { NetworkIcon } from "./network-icon";
@@ -40,6 +40,12 @@ export interface AvatarProps {
  */
 export function Avatar({ src, name, size = "md", color = "#5944d9", network, shape = "circle", ring, className }: AvatarProps) {
   const [failed, setFailed] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+  // image en échec avant l'hydratation (rendu serveur) : onError n'a pas été capté
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth === 0) setFailed(true);
+  }, [src]);
   const s = SIZES[size];
   const radius = shape === "circle" ? "rounded-full" : "rounded-[28%]";
   const ringKind: AvatarRing | null = ring === true ? (network === "ig" ? "instagram" : network === "fb" ? "facebook" : "brand") : ring || null;
@@ -51,6 +57,7 @@ export function Avatar({ src, name, size = "md", color = "#5944d9", network, sha
       // URL externes signées (CDN Meta) : <img> simple, sans optimisation Next.
       // eslint-disable-next-line @next/next/no-img-element
       <img
+        ref={imgRef}
         src={src}
         alt={name}
         width={inner}

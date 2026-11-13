@@ -36,7 +36,7 @@ export function EmptyState({ icon, illustration, title, description, action, com
 }
 
 /** Illustrations originales simples (traits fins, accent Orbit), adaptées au thème. */
-export function EmptyArt({ kind, size = 120, className }: { kind: EmptyIllustration; size?: number; className?: string }) {
+export function EmptyArt({ kind, size = 150, className }: { kind: EmptyIllustration; size?: number; className?: string }) {
   const s = "var(--color-line-strong)";
   const f = "var(--color-surface)";
   const a = "var(--color-orbit-500)";

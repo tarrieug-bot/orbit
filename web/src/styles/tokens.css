@@ -10,7 +10,7 @@
  * et, sans JavaScript, sous @media (prefers-color-scheme: dark).
  * Un sous-arbre peut forcer un thème : <div data-theme="light|dark">.
  */
-@theme {
+@theme static {
   /* ── Typographie ─────────────────────────────────────────────── */
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;

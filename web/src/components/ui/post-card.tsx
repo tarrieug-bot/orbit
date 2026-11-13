@@ -111,7 +111,7 @@ export function PostCard({ thumbnailUrl, caption, network, format, formatLabel, 
         <dl className={cn("mt-auto grid gap-2 pt-3", metrics.length >= 4 ? "grid-cols-4" : "grid-cols-3")}>
           {metrics.map((m) => (
             <div key={m.label} className="min-w-0">
-              <dt className="flex items-center gap-1 truncate text-[10.5px] font-medium tracking-wide text-ink-3 uppercase">
+              <dt className="flex items-center gap-1 truncate text-[11px] text-ink-3 [&>svg]:shrink-0">
                 {m.icon}
                 {m.label}
               </dt>
