@@ -1012,7 +1012,7 @@ function fromHash(){ const h=location.hash.slice(1); if(VIEWS.find(v=>v.id===h)&
 window.addEventListener('hashchange',fromHash);
 /* démarrage : voir le module LIVE ci-dessous */
 /* ============================== MODE LIVE : API Meta réelle ============================== */
-const ORBIT_CONFIG = { appId:'', configId:'', apiVersion:'v25.0' };
+const ORBIT_CONFIG = { appId:'1452532180348433', configId:'1043988088713323', apiVersion:'v25.0' };
 const SCOPES = 'pages_show_list,pages_read_engagement,read_insights,instagram_basic,instagram_manage_insights,business_management';
 const LIVE = { on:false, user:null, diag:[], status:'', busy:false };
 function liveCfg(){ const c=store.get('meta',{}); return {appId:c.appId||ORBIT_CONFIG.appId, configId:c.configId||ORBIT_CONFIG.configId, apiVersion:c.apiVersion||ORBIT_CONFIG.apiVersion}; }
@@ -1262,7 +1262,7 @@ async function runLoads(list){
 function liveLogin(){
   const c=liveCfg(); if(!c.appId){ bootWelcome(); return; }
   if(!window.FB){ toast('Le SDK Facebook se charge, réessayez dans une seconde'); loadSDK().catch(err=>toast(err.message)); return; }
-  const opts = c.configId ? {config_id:c.configId, response_type:'token', override_default_response_type:true} : {scope:SCOPES, return_scopes:true, auth_type:'rerequest'};
+  const opts = c.configId ? {config_id:c.configId} : {scope:SCOPES, return_scopes:true, auth_type:'rerequest'};
   FB.login(resp=>{ if(resp&&resp.authResponse) afterLogin(); else toast('Connexion annulée'); }, opts);
 }
 async function afterLogin(){
