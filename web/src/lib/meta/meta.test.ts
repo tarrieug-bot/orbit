@@ -122,7 +122,7 @@ describe("client Graph", () => {
   });
   it("190 → MetaApiError d'authentification, sans jeton dans le message", async () => {
     const f = fakeFetch(() => fail(err190, 400));
-    const e = await graph(f.impl).get("1111").catch((x) => x);
+    const e = (await graph(f.impl).get("1111").catch((x: unknown) => x)) as MetaApiError;
     expect(e).toBeInstanceOf(MetaApiError);
     expect(e.isAuthError).toBe(true);
     expect(e.message).not.toContain("EAATEST");

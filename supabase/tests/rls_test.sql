@@ -113,6 +113,11 @@ begin
   exception when insufficient_privilege then null;
   end;
   begin
+    perform 1 from public.account_sync_state;
+    raise exception 'ÉCHEC client : état de collecte lisible';
+  exception when insufficient_privilege then null;
+  end;
+  begin
     insert into public.campaigns (brand_id, name, starts_on, ends_on)
     values ('20000000-0000-4000-8000-000000000001', 'x', current_date, current_date);
     raise exception 'ÉCHEC client : peut créer une campagne';
@@ -247,6 +252,11 @@ begin
   begin
     perform 1 from public.social_account_tokens;
     raise exception 'ÉCHEC manager : jetons lisibles';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform 1 from public.account_sync_state;
+    raise exception 'ÉCHEC manager : état de collecte lisible (service role uniquement)';
   exception when insufficient_privilege then null;
   end;
   begin
