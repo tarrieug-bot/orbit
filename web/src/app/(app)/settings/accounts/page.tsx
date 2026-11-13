@@ -3,10 +3,10 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Clock, KeyRound, Plus } from "lucide-react";
 import { SyncButton } from "@/components/views/sync-button";
 import { PageHeader } from "@/components/views/page-header";
-import { Avatar, Badge, buttonVariants, Card, EmptyState, NetworkIcon, StatusBadge, type StatusKind } from "@/components/ui";
-import { getConnectedAccounts, listBrands } from "@/lib/db";
+import { Avatar, Badge, buttonVariants, Callout, Card, EmptyState, NetworkIcon, StatusBadge, type StatusKind } from "@/components/ui";
+import { getConnectedAccounts, listBrands, todayISO } from "@/lib/db";
 import type { AccountStatus, AppLocale, Network, SyncStatus } from "@/lib/db/types";
-import { formatCompact, INTL_LOCALE } from "@/lib/metrics";
+import { diffDays, formatCompact, INTL_LOCALE } from "@/lib/metrics";
 
 export async function generateMetadata() {
   const t = await getTranslations();
@@ -18,13 +18,16 @@ const RUN: Record<SyncStatus, StatusKind> = { success: "success", partial: "warn
 const SOON: Network[] = ["tt", "li", "yt"];
 
 /** Comptes connectés : statut, dernière synchro, connexion Meta, synchro manuelle. */
-export default async function AccountsSettingsPage() {
+export default async function AccountsSettingsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const sp = await searchParams;
+  const one = (k: string) => (Array.isArray(sp[k]) ? sp[k]?.[0] : (sp[k] as string | undefined));
   const [accounts, brands] = await Promise.all([getConnectedAccounts(), listBrands()]);
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
   const dt = (iso: string | null) => (iso ? new Date(iso).toLocaleString(INTL_LOCALE[locale], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Martinique" }) : "—");
   const d = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString(INTL_LOCALE[locale], { day: "numeric", month: "short", year: "numeric" }) : "—");
-  const daysLeft = (iso: string | null) => (iso ? Math.round((new Date(iso).getTime() - Date.now()) / 86_400_000) : null);
+  const today = todayISO();
+  const daysLeft = (iso: string | null) => (iso ? diffDays(today, iso.slice(0, 10)) : null);
 
   return (
     <div className="space-y-6">
@@ -40,6 +43,15 @@ export default async function AccountsSettingsPage() {
           </a>
         }
       />
+
+      {one("connected") === "1" && (
+        <Callout status="success">{t("settings.accounts.callback.connected", { accounts: Number(one("accounts") ?? 0), brands: Number(one("brands") ?? 0) })}</Callout>
+      )}
+      {one("error") && (
+        <Callout status={one("error") === "cancelled" || one("error") === "demo" ? "info" : "critical"}>
+          {t(`settings.accounts.callback.${["state", "cancelled", "no_pages", "meta", "demo", "config", "forbidden"].includes(one("error") ?? "") ? one("error") : "unknown"}`)}
+        </Callout>
+      )}
 
       {brands.length === 0 && <EmptyState illustration="accounts" title={t("settings.accounts.empty")} description={t("settings.accounts.emptyHelp")} />}
 
@@ -58,6 +70,7 @@ export default async function AccountsSettingsPage() {
             <ul className="divide-y divide-line/70">
               {accs.map((a) => {
                 const left = daysLeft(a.tokenExpiresAt);
+                const reauth = a.status === "expired" && (a.statusMessage ?? "").startsWith("reauth_required");
                 const calls = a.lastRun?.details?.calls ?? [];
                 const failed = calls.filter((c) => !c.ok).length;
                 return (
@@ -74,7 +87,7 @@ export default async function AccountsSettingsPage() {
                         </p>
                       </div>
                     </div>
-                    <StatusBadge status={STATUS[a.status]}>{t(`settings.accounts.status.${a.status}`)}</StatusBadge>
+                    <StatusBadge status={STATUS[a.status]}>{reauth ? t("settings.accounts.status.reauth") : t(`settings.accounts.status.${a.status}`)}</StatusBadge>
                     <div className="min-w-44 text-xs text-ink-2">
                       <p className="flex items-center gap-1.5">
                         <Clock size={12} aria-hidden className="text-ink-3" />
@@ -93,7 +106,11 @@ export default async function AccountsSettingsPage() {
                         {t("settings.accounts.tokenExpires", { date: d(a.tokenExpiresAt) })}
                       </p>
                       {left != null && <p className={left < 10 ? "mt-1 font-medium text-warning" : "mt-1 text-ink-3"}>{t("settings.accounts.daysLeft", { days: left })}</p>}
-                      {a.statusMessage && <p className="mt-1 text-negative">{a.statusMessage}</p>}
+                      {reauth ? (
+                        <a href="/api/meta/connect" className="mt-1 block font-medium text-negative underline-offset-2 hover:underline">{t("settings.accounts.reauth")}</a>
+                      ) : (
+                        a.statusMessage && a.status !== "active" && <p className="mt-1 text-negative">{a.statusMessage}</p>
+                      )}
                     </div>
                     <SyncButton accountId={a.id} label={a.handle ?? a.name ?? ""} />
                   </li>

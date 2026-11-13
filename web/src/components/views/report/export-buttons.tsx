@@ -31,7 +31,8 @@ export function ExportButtons({ bodies, filename, disabled }: { bodies: Record<E
     setError(null);
     try {
       const res = await fetch("/api/reports/export", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(bodies[format]) });
-      if (res.status === 404 || res.status === 405 || res.status === 501) return setError("unavailable");
+      const isJson = (res.headers.get("Content-Type") ?? "").includes("json");
+      if ((res.status === 404 && !isJson) || res.status === 405 || res.status === 501) return setError("unavailable");
       if (res.status === 401 || res.status === 403) return setError("forbidden");
       if (!res.ok) return setError("failed");
       const blob = await res.blob();

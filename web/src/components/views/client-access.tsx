@@ -13,7 +13,6 @@ import { Select } from "@/components/ui";
 /** Inviter un client (e-mail, nom, langue, rubriques). */
 export function InviteClientButton({ brandId, brandName, demo }: { brandId: string; brandName: string; demo: boolean }) {
   const t = useTranslations("settings.clients");
-  const tn = useTranslations("nav");
   const tc = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [n, setN] = useState(0);

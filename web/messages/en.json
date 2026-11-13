@@ -403,7 +403,8 @@
         "expiring": "Expiring soon",
         "expired": "Expired",
         "error": "Error",
-        "disconnected": "Disconnected"
+        "disconnected": "Disconnected",
+        "reauth": "Reconnection required"
       },
       "subtitle": "Each brand groups its accounts across networks. Data is collected daily (D−1).",
       "empty": "No connected account",
@@ -420,7 +421,9 @@
         "unavailable": "Not available yet",
         "error": "Sync failed",
         "busy": "Sync already running",
-        "reauth": "Reconnection required"
+        "reauth": "Reconnection required",
+        "partial": "Partial sync (see Diagnostics)",
+        "demo": "Not available in demo mode"
       },
       "callback": {
         "connected": "{accounts, plural, one {# account connected} other {# accounts connected}} ({brands, plural, one {# brand} other {# brands}}).",

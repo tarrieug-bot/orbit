@@ -403,7 +403,8 @@
         "expiring": "Expire bientôt",
         "expired": "Expiré",
         "error": "Erreur",
-        "disconnected": "Déconnecté"
+        "disconnected": "Déconnecté",
+        "reauth": "Reconnexion requise"
       },
       "subtitle": "Chaque marque regroupe ses comptes de différents réseaux. La collecte est quotidienne (J−1).",
       "empty": "Aucun compte connecté",
@@ -420,7 +421,9 @@
         "unavailable": "Indisponible pour l'instant",
         "error": "Échec de la synchro",
         "busy": "Synchro déjà en cours",
-        "reauth": "Reconnexion requise"
+        "reauth": "Reconnexion requise",
+        "partial": "Synchro partielle (voir Diagnostic)",
+        "demo": "Indisponible en mode démo"
       },
       "callback": {
         "connected": "{accounts, plural, one {# compte connecté} other {# comptes connectés}} ({brands, plural, one {# marque} other {# marques}}).",
