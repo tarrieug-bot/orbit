@@ -51,6 +51,8 @@ export interface SyncOptions {
   daily?: boolean;
   /** backfill si le temps le permet (défaut true) */
   backfill?: boolean;
+  /** synchro manuelle : refait le quotidien même s'il a déjà été fait aujourd'hui */
+  force?: boolean;
   apiVersion?: string;
 }
 
@@ -96,7 +98,7 @@ export async function syncAccount(account: SocialAccountRow, state: AccountSyncS
   const network = account.network as "fb" | "ig";
   const calls: SyncCallLog[] = [];
   const steps: { step: string; ok: boolean; ms: number; range?: DateRange }[] = [];
-  const wantDaily = opts.daily !== false && state?.last_daily_on !== today;
+  const wantDaily = opts.daily !== false && (opts.force === true || state?.last_daily_on !== today);
   const kind = opts.trigger === "connect" ? "connect" : wantDaily ? "daily" : "backfill";
   const runId = await store.startRun({ account_id: account.id, kind, trigger: opts.trigger, range_from: null, range_to: null });
 
