@@ -1,20 +1,27 @@
 "use client";
 
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useId } from "react";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { AppLocale } from "@/lib/db/types";
 import { formatBucketLabel, formatCompact, formatNumber, formatPercent, type Granularity } from "@/lib/metrics";
+import { activeDot, axisProps, barProps, chartMargin, cursorBar, cursorLine, gridProps, xAxisProps } from "./charts/theme";
+import { ChartTooltipContent } from "./charts/chart-tooltip";
+import { ChartLegend } from "./charts/chart-legend";
 
 export interface TrendSeries {
   key: string;
   label: string;
+  /** hex ou var(--color-chart-n) */
   color: string;
+  /** trait pointillé, sans remplissage (période précédente) */
+  dashed?: boolean;
 }
 
 export interface TrendChartProps {
   /** lignes { key: "YYYY-MM-DD", <série>: number|null } — cf. toChartData() */
   data: Record<string, string | number | null>[];
   series: TrendSeries[];
-  type?: "area" | "bar";
+  type?: "area" | "bar" | "line";
   granularity?: Granularity;
   format?: "number" | "compact" | "percent";
   locale?: AppLocale;
@@ -22,53 +29,100 @@ export interface TrendChartProps {
   stacked?: boolean;
   /** "auto" : l'axe Y suit les données (ex. abonnés) ; "zero" : part de 0 (défaut) */
   yDomain?: "zero" | "auto";
+  /** légende HTML au-dessus du graphique (défaut : si plusieurs séries) */
+  legend?: boolean;
+  /** libellé de la ligne « Total » de l'infobulle (séries empilées) */
+  totalLabel?: string;
 }
 
-/** Graphique de tendance générique (Recharts) aux couleurs Orbit. */
-export function TrendChart({ data, series, type = "area", granularity = "day", format = "compact", locale = "fr", height = 260, stacked, yDomain = "zero" }: TrendChartProps) {
+/** Graphique de tendance générique (Recharts) au thème Orbit (clair / sombre). */
+export function TrendChart({ data, series, type = "area", granularity = "day", format = "compact", locale = "fr", height = 260, stacked, yDomain = "zero", legend, totalLabel }: TrendChartProps) {
+  const uid = useId().replace(/:/g, "");
   const fmt = (v: number) => (format === "percent" ? formatPercent(v, locale) : format === "number" ? formatNumber(v, locale) : formatCompact(v, locale));
-  const axis = { stroke: "#94A3B8", fontSize: 11, tickLine: false, axisLine: false } as const;
+  const showLegend = legend ?? series.length > 1;
+  const label = (key: string) => series.find((s) => s.key === key)?.label ?? key;
+
   const common = (
     <>
-      <CartesianGrid vertical={false} stroke="#E7E9F0" />
-      <XAxis dataKey="key" {...axis} tickFormatter={(v: string) => formatBucketLabel(v, granularity, locale)} minTickGap={24} />
-      <YAxis {...axis} width={48} tickFormatter={(v: number) => fmt(v)} domain={yDomain === "auto" ? ["auto", "auto"] : [0, "auto"]} />
+      <CartesianGrid {...gridProps} />
+      <XAxis dataKey="key" {...xAxisProps} tickFormatter={(v: string) => formatBucketLabel(v, granularity, locale)} minTickGap={28} />
+      <YAxis {...axisProps} width={44} tickFormatter={(v: number) => fmt(v)} domain={yDomain === "auto" ? ["auto", "auto"] : [0, "auto"]} />
       <Tooltip
-        cursor={{ stroke: "#C7D2FE", fill: "rgba(99,102,241,0.06)" }}
-        contentStyle={{ borderRadius: 12, border: "1px solid #E7E9F0", boxShadow: "0 12px 32px -8px rgba(15,23,42,.18)", fontSize: 12 }}
-        labelFormatter={(v) => formatBucketLabel(String(v), granularity, locale)}
-        formatter={(v, name) => [typeof v === "number" ? fmt(v) : "—", series.find((s) => s.key === name)?.label ?? String(name)]}
+        cursor={type === "bar" ? cursorBar : cursorLine}
+        content={(p) => (
+          <ChartTooltipContent
+            active={p.active}
+            payload={p.payload}
+            label={p.label}
+            labelFormatter={(v) => formatBucketLabel(v, granularity, locale)}
+            valueFormatter={(v) => fmt(v)}
+            nameFormatter={label}
+            total={stacked && totalLabel ? { label: totalLabel, format: fmt } : undefined}
+          />
+        )}
       />
-      {series.length > 1 && <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} formatter={(v: string) => series.find((s) => s.key === v)?.label ?? v} />}
     </>
   );
+
   return (
-    <div style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
-        {type === "bar" ? (
-          <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-            {common}
-            {series.map((s) => (
-              <Bar key={s.key} dataKey={s.key} fill={s.color} radius={[4, 4, 0, 0]} maxBarSize={28} stackId={stacked ? "s" : undefined} />
-            ))}
-          </BarChart>
-        ) : (
-          <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-            <defs>
-              {series.map((s) => (
-                <linearGradient key={s.key} id={`trend-${s.key}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={s.color} stopOpacity={0.22} />
-                  <stop offset="100%" stopColor={s.color} stopOpacity={0} />
-                </linearGradient>
+    <div>
+      {showLegend && <ChartLegend className="mb-3 px-1" items={series.map((s) => ({ key: s.key, label: s.label, color: s.color, dashed: s.dashed }))} />}
+      <div style={{ height }}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{ width: 600, height }}>
+          {type === "bar" ? (
+            <BarChart data={data} margin={chartMargin} barGap={2}>
+              {common}
+              {series.map((s, i) => (
+                <Bar
+                  key={s.key}
+                  dataKey={s.key}
+                  fill={s.color}
+                  {...barProps}
+                  radius={stacked && i < series.length - 1 ? [0, 0, 0, 0] : barProps.radius}
+                  stackId={stacked ? "s" : undefined}
+                  stroke={stacked ? "var(--color-surface)" : undefined}
+                  strokeWidth={stacked ? 1 : 0}
+                  fillOpacity={s.dashed ? 0.35 : 1}
+                />
               ))}
-            </defs>
-            {common}
-            {series.map((s) => (
-              <Area key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2} fill={`url(#trend-${s.key})`} dot={false} activeDot={{ r: 4, strokeWidth: 2, stroke: "#fff" }} connectNulls stackId={stacked ? "s" : undefined} />
-            ))}
-          </AreaChart>
-        )}
-      </ResponsiveContainer>
+            </BarChart>
+          ) : type === "line" ? (
+            <LineChart data={data} margin={chartMargin}>
+              {common}
+              {series.map((s) => (
+                <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2} strokeDasharray={s.dashed ? "4 4" : undefined} dot={false} activeDot={{ ...activeDot, fill: s.color }} connectNulls />
+              ))}
+            </LineChart>
+          ) : (
+            <AreaChart data={data} margin={chartMargin}>
+              <defs>
+                {series.map((s) => (
+                  <linearGradient key={s.key} id={`trend-${uid}-${s.key}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" style={{ stopColor: s.color, stopOpacity: stacked ? 0.5 : 0.2 }} />
+                    <stop offset="100%" style={{ stopColor: s.color, stopOpacity: stacked ? 0.15 : 0 }} />
+                  </linearGradient>
+                ))}
+              </defs>
+              {common}
+              {series.map((s) => (
+                <Area
+                  key={s.key}
+                  type="monotone"
+                  dataKey={s.key}
+                  stroke={s.color}
+                  strokeWidth={2}
+                  strokeDasharray={s.dashed ? "4 4" : undefined}
+                  fill={s.dashed ? "none" : `url(#trend-${uid}-${s.key})`}
+                  dot={false}
+                  activeDot={{ ...activeDot, fill: s.color }}
+                  connectNulls
+                  stackId={stacked ? "s" : undefined}
+                />
+              ))}
+            </AreaChart>
+          )}
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
