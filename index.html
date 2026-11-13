@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbit — Statistiques réseaux sociaux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f4f4f1; --surface:#fcfcfb; --surface-2:#f0efeb; --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#8a897f;
+  --line:#e1e0d9; --axis:#c3c2b7; --ring:rgba(11,11,11,.10);
+  --side:#121212; --side-ink:#d9d8d2; --side-mute:#8d8c85; --side-hover:#1f1f1e; --side-active:#2a2a28;
+  --s-fb:#2a78d6; --s-ig:#eb6834; --s-tt:#1baf7a; --s-li:#eda100; --s-yt:#e87ba4;
+  --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c7:#6250d6;
+  --good:#006300; --bad:#d03b3b;
+  --seq1:#cde2fb; --seq2:#9ec5f4; --seq3:#6da7ec; --seq4:#3987e5; --seq5:#256abf; --seq6:#184f95; --seq7:#0d366b;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+/* Sidebar */
+aside{background:var(--side);color:var(--side-ink);padding:18px 12px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px;font-weight:700;font-size:17px;color:#fff;letter-spacing:-.01em}
+.logo-mark{width:28px;height:28px;border-radius:8px;background:conic-gradient(from 200deg,#2a78d6,#eb6834,#2a78d6);display:grid;place-items:center}
+.logo-mark::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--side)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--side-ink);text-decoration:none;cursor:pointer;font-weight:500}
+.nav a:hover{background:var(--side-hover)}
+.nav a.on{background:var(--side-active);color:#fff}
+.nav svg{width:17px;height:17px;flex:none;opacity:.85}
+.side-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--side-mute);padding:0 10px;display:flex;justify-content:space-between;align-items:center}
+.side-h button{background:none;border:0;color:var(--side-mute);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
+.side-h button:hover{color:#fff}
+.side-search{margin:0 4px;padding:7px 10px;border-radius:8px;border:1px solid #2c2c2a;background:#1a1a19;color:#fff;width:calc(100% - 8px)}
+.brands{display:flex;flex-direction:column;gap:2px}
+.brand{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer}
+.brand:hover{background:var(--side-hover)}
+.brand.on{background:var(--side-active)}
+.brand .av{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-size:12px;color:#fff;flex:none}
+.brand .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;color:#eee}
+.brand .nets{display:flex;gap:3px}
+.nb{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:5px;font-size:9px;font-weight:700;color:#fff;flex:none}
+.nb.ig{background:var(--s-ig)}.nb.fb{background:var(--s-fb)}.nb.tt{background:var(--s-tt)}.nb.li{background:var(--s-li);color:#0b0b0b}.nb.yt{background:var(--s-yt)}
+.side-foot{margin-top:auto;padding:10px;border-top:1px solid #262624;font-size:12px;color:var(--side-mute)}
+/* Main */
+main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(244,244,241,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar h1{font-size:18px;margin:0;font-weight:700;letter-spacing:-.01em;margin-right:auto;display:flex;align-items:center;gap:10px}
+.topbar h1 .av{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:12px}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:9px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:5px 10px;border-radius:7px;cursor:pointer;font-weight:500;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.seg button:disabled{opacity:.45;cursor:not-allowed}
+.ctl{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+.ctl select,.ctl input{border:0;background:none;outline:none;cursor:pointer}
+.ctl input[type=date]{width:128px}
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--ink-2);font-weight:500;user-select:none}
+.toggle input{display:none}
+.toggle .sw{width:30px;height:18px;border-radius:9px;background:var(--axis);position:relative;transition:.15s}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.15s}
+.toggle input:checked+.sw{background:var(--ink)}
+.toggle input:checked+.sw::after{left:14px}
+.content{padding:24px 28px 60px;display:flex;flex-direction:column;gap:20px;max-width:1440px;width:100%}
+.period-note{font-size:13px;color:var(--ink-2)}
+.period-note b{color:var(--ink);font-weight:600}
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;min-width:0}
+.card h3{margin:0 0 2px;font-size:15px;font-weight:600}
+.card .sub{color:var(--ink-3);font-size:12.5px;margin-bottom:14px}
+.card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.card-h .sub{margin:0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g32{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.kpi .l{font-size:12.5px;color:var(--ink-2);font-weight:500;display:flex;align-items:center;gap:6px}
+.kpi .v{font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.up{color:var(--good);font-weight:600}.down{color:var(--bad);font-weight:600}.flat{color:var(--ink-2);font-weight:600}
+.chart-box{position:relative;height:260px}
+.chart-box.sm{height:200px}
+.chart-box.lg{height:300px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+/* Tables */
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font-size:12px;color:var(--ink-2);font-weight:600;text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+th:first-child,td:first-child{text-align:left}
+th.sorted{color:var(--ink)}
+td{padding:10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--surface-2)}
+tr.grp td{background:#f7f7f4;font-weight:600}
+tr.grp:hover td{background:var(--surface-2)}
+.acc-cell{display:flex;align-items:center;gap:8px}
+.acc-cell .av{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:11px}
+.muted{color:var(--ink-3)}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px;background:var(--surface-2);font-size:12px;color:var(--ink-2);font-weight:500}
+.pill.ok::before{content:"";width:6px;height:6px;border-radius:50%;background:#0ca30c}
+.pill.warn::before{content:"";width:6px;height:6px;border-radius:50%;background:#fab219}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:9px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--axis)}
+.btn.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.pri:hover{background:#2a2a28}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* Heatmap */
+.heat{display:grid;grid-template-columns:30px repeat(24,minmax(0,1fr));gap:2px;font-size:10.5px;color:var(--ink-3)}
+.heat .c{height:16px;border-radius:3px}
+.heat .c:hover{outline:2px solid var(--ink);outline-offset:1px}
+.heat .rl{display:flex;align-items:center}
+.heat .hl{text-align:center}
+.scale{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-3);margin-top:10px}
+.scale i{width:18px;height:10px;border-radius:2px;display:inline-block}
+/* Posts */
+.posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.post{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.thumb{aspect-ratio:16/10;position:relative;display:flex;align-items:flex-end;padding:10px;color:#fff}
+.thumb .tp{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.45);padding:3px 8px;border-radius:99px;font-size:11.5px;font-weight:600}
+.thumb .nbx{position:absolute;top:10px;right:10px}
+.thumb .rank{font-size:12px;font-weight:600;background:rgba(0,0,0,.45);padding:3px 8px;border-radius:99px}
+.post .body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.post .cap{font-size:13px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px}
+.post .meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:12px}
+.post .meta div{display:flex;flex-direction:column}
+.post .meta b{font-size:14px;font-variant-numeric:tabular-nums}
+.post .meta span{color:var(--ink-3)}
+.post .date{font-size:12px;color:var(--ink-3)}
+/* Bars list */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bars .row{display:grid;grid-template-columns:130px 1fr 56px;align-items:center;gap:10px;font-size:13px}
+.bars .track{height:10px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.bars .fill{height:100%;background:var(--s-fb);border-radius:0 5px 5px 0}
+.bars .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+/* Forms */
+.form{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.field input[type=text],.field input[type=date],.field select{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--surface);outline:none}
+.field input:focus,.field select:focus{border-color:var(--ink)}
+.checks{display:flex;flex-direction:column;gap:6px}
+.checks label{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:13.5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* Report doc */
+.report-wrap{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start}
+.report-side{position:sticky;top:84px}
+.doc{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:40px 44px;display:flex;flex-direction:column;gap:26px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.doc-cover{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:20px}
+.doc-cover h2{font-size:26px;margin:6px 0 4px;letter-spacing:-.02em}
+.doc-cover .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:600}
+.doc h4{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.doc h4 .n{width:24px;height:24px;border-radius:6px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px}
+.insights{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.insights li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--surface-2);border-radius:9px;font-size:13.5px;line-height:1.5}
+.insights li .ic{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;background:var(--ink)}
+.empty{padding:50px 20px;text-align:center;color:var(--ink-3)}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.alert{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;background:var(--surface-2);font-size:13px;cursor:pointer}
+.alert:hover{background:#e9e8e3}
+.alert .ic{flex:none;font-weight:700;width:20px;text-align:center}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:grid;place-items:center;z-index:100;padding:20px}
+.modal{background:var(--surface);border-radius:16px;padding:24px;width:min(560px,100%);max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:16px}
+.modal h3{margin:0;font-size:18px}
+.net-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.net-tile{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;background:var(--surface)}
+.net-tile:hover{border-color:var(--ink)}
+.net-tile.dis{opacity:.5;cursor:not-allowed}
+.net-tile.dis:hover{border-color:var(--line)}
+.net-tile .nb{width:30px;height:30px;font-size:12px;border-radius:8px}
+.net-tile b{font-size:14px}
+.net-tile span{font-size:12px;color:var(--ink-3)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-weight:500;opacity:0;transition:.2s;z-index:200;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+#tip{position:fixed;z-index:150;background:var(--ink);color:#fff;font-size:12px;padding:6px 9px;border-radius:7px;pointer-events:none;display:none;white-space:nowrap}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.tabs button{border:0;background:none;padding:8px 12px;cursor:pointer;color:var(--ink-2);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);border-color:var(--ink)}
+.sched{display:flex;flex-direction:column;gap:8px}
+.sched .it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px}
+.camp{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr auto;gap:14px;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line)}
+.camp:last-child{border-bottom:0}
+.camp .nm{font-weight:600}
+.camp .k{display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+.camp .k span{font-size:12px;color:var(--ink-3)}
+.camp .k b{font-size:15px}
+.spark{display:block}
+.boot{position:fixed;inset:0;background:var(--bg);z-index:300;place-items:center;padding:24px;overflow:auto}
+.boot-wrap{width:min(860px,100%)}
+.boot-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.boot-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.boot-card h3{margin:0;font-size:17px}
+.boot-card p{margin:0;line-height:1.5}
+.fb-btn{background:#1877f2;border-color:#1877f2;justify-content:center;padding:11px 16px}
+.fb-btn:hover{background:#166fe5}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:spin .8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (max-width:760px){.boot-grid{grid-template-columns:1fr}}
+.client-bar{background:#fff4d6;border-bottom:1px solid #f0d27a;padding:10px 28px;display:flex;gap:10px;align-items:center;font-size:13.5px}
+.client-bar span{margin-right:auto}
+.user-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px}
+@media (max-width:1100px){.g2,.g3,.g32,.report-wrap{grid-template-columns:1fr}.report-side{position:static}}
+@media (max-width:760px){.app{grid-template-columns:1fr}aside{position:static;height:auto}.content{padding:16px}.topbar{padding:10px 16px}.camp{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="logo"><div class="logo-mark"></div>Orbit</div>
+    <nav class="nav" id="nav"></nav>
+    <div>
+      <div class="side-h">Mes marques <button id="addBrandBtn" title="Ajouter une marque" onclick="openAddBrand()">+</button></div>
+      <div style="height:8px"></div>
+      <input class="side-search" id="brandSearch" placeholder="Rechercher une marque…" oninput="renderBrands()">
+      <div style="height:8px"></div>
+      <div class="brands" id="brands"></div>
+    </div>
+    <div class="side-foot" id="sideFoot"></div>
+  </aside>
+  <main>
+    <div id="clientBar"></div>
+    <div class="topbar" id="topbar"></div>
+    <div class="content" id="view"></div>
+  </main>
+</div>
+<div id="boot" class="boot" style="display:none"></div>
+<div id="modalRoot"></div>
+<div class="toast" id="toast"></div>
+<div id="tip"></div>
+
+<script>
+/* ============================== Utilitaires ============================== */
+const DAY = 864e5;
+const _now = new Date();
+const END = Date.UTC(_now.getUTCFullYear(),_now.getUTCMonth(),_now.getUTCDate()-1); // hier = dernier jour complet
+const START = END - 730*864e5; // 2 ans d'historique
+const N = Math.round((END-START)/DAY)+1;
+const T = N-1;
+const dayDate = i => new Date(START+i*DAY);
+const iso = i => dayDate(i).toISOString().slice(0,10);
+const idx = s => Math.round((Date.parse(s+'T00:00:00Z')-START)/DAY);
+const clampI = i => Math.max(0,Math.min(T,i));
+let LOC = 'fr'; const LOCALE = {fr:'fr-FR',en:'en-GB'};
+function withLoc(l,f){ const o=LOC; LOC=l||'fr'; try{ return f(); } finally { LOC=o; } }
+const fmt = n => Math.round(n).toLocaleString(LOCALE[LOC]);
+const fmtC = n => { const a=Math.abs(n), sp=LOC==='en'?'':' '; if(a>=1e6) return (n/1e6).toLocaleString(LOCALE[LOC],{maximumFractionDigits:1})+sp+'M'; if(a>=1e4) return (n/1e3).toLocaleString(LOCALE[LOC],{maximumFractionDigits:1})+sp+'k'; return fmt(n); };
+const pct = (n,d=1) => (n*100).toLocaleString(LOCALE[LOC],{minimumFractionDigits:d,maximumFractionDigits:d})+(LOC==='en'?'%':' %');
+const num = (n,d=1) => n.toLocaleString(LOCALE[LOC],{minimumFractionDigits:d,maximumFractionDigits:d});
+const fd = (i,o) => dayDate(i).toLocaleDateString(LOCALE[LOC],Object.assign({timeZone:'UTC'},o||{day:'numeric',month:'short',year:'numeric'}));
+/* Traductions des rapports (clé = texte français) */
+const EN = {
+  'Abonnés':'Followers','Nouveaux abonnés':'New followers','Portée':'Reach','Vues':'Views','Interactions':'Interactions',
+  "Taux d'engagement":'Engagement rate','Publications':'Posts','Visites du profil':'Profile visits','Clics vers le site':'Website clicks',
+  'sur la période':'over the period','— pas de période de comparaison':'— no comparison period',
+  'Synthèse':'Summary',"Évolution de l'audience":'Audience growth','Portée & vues':'Reach & views','Engagement':'Engagement',
+  'Performance par format':'Performance by format','Top publications':'Top posts','Analyse & recommandations':'Analysis & recommendations',
+  "J'aime":'Likes',"J'aime / réactions":'Likes / reactions','Commentaires':'Comments','Partages':'Shares','Enregistrements':'Saves',
+  'Portée par':'Reach per','Vues par':'Views per','jour':'day','semaine':'week','mois':'month',
+  'Format':'Format','Portée moy.':'Avg. reach','Interactions moy.':'Avg. interactions',"Taux d'eng.":'Eng. rate','Publication':'Post','Date':'Date',
+  'Aucune publication.':'No posts.','Aucune publication sur cette période.':'No posts in this period.',
+  'Rapport mensuel':'Monthly report','Rapport annuel':'Annual report','Rapport de campagne':'Campaign report','Rapport personnalisé':'Custom report',
+  'Année':'Year','(à date)':'(year to date)','Comparé à :':'Compared with:','Rapport généré le':'Report generated on','avec Orbit':'with Orbit',
+  'Taux d\'engagement = interactions ÷ portée (spectateurs uniques). Vues et spectateurs suivent les métriques Meta Graph API v25+.':'Engagement rate = interactions ÷ reach (unique viewers). Views and viewers follow Meta Graph API v25+ metrics.',
+  'Reel':'Reel','Carrousel':'Carousel','Photo':'Photo','Vidéo':'Video','Lien':'Link','Statut':'Status','Période':'Period'
+};
+const t = s => LOC==='en' ? (EN[s] ?? s) : s;
+const tl = (fr,en) => LOC==='en' ? en : fr;
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hashStr(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const store = {
+  get(k,d){try{const v=localStorage.getItem('orbit:'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('orbit:'+k,JSON.stringify(v))}catch(e){}}
+};
+
+/* ============================== Réseaux ============================== */
+const NETS = {
+  ig:{name:'Instagram',short:'IG',color:'--s-ig',live:true},
+  fb:{name:'Facebook',short:'FB',color:'--s-fb',live:true},
+  tt:{name:'TikTok',short:'TT',color:'--s-tt',live:false},
+  li:{name:'LinkedIn',short:'in',color:'--s-li',live:false},
+  yt:{name:'YouTube',short:'YT',color:'--s-yt',live:false},
+};
+const nb = n => `<span class="nb ${n}" title="${NETS[n].name}">${NETS[n].short}</span>`;
+const TYPES = {
+  ig:[{k:'reel',l:'Reel',w:.35,m:1.7,e:1.1,v:1},{k:'carousel',l:'Carrousel',w:.3,m:1.0,e:1.35},{k:'image',l:'Photo',w:.35,m:.85,e:.9}],
+  fb:[{k:'photo',l:'Photo',w:.45,m:1,e:1},{k:'video',l:'Vidéo',w:.25,m:1.35,e:1.1,v:1},{k:'link',l:'Lien',w:.2,m:.7,e:.55},{k:'status',l:'Statut',w:.1,m:.5,e:.8}]
+};
+const typeLabel = k => t((TYPES.ig.concat(TYPES.fb).find(x=>x.k===k)||{l:k}).l);
+
+/* ============================== Marques (démo) ============================== */
+const CAPTIONS = {
+  food:['Le brunch du dimanche est de retour ☕️🥐','Nouveau : notre jus mangue-passion pressé minute','Les coulisses de la cuisine, 6h du matin','Votre table vous attend en terrasse ce soir 🌅','Recette du chef : accras revisités','Happy hour de 17h à 19h, on vous attend !','Merci pour vos 500 avis ⭐️⭐️⭐️⭐️⭐️','Le dessert du mois : blanc-manger coco'],
+  fashion:['Nouvelle collection Madras — pièces uniques','Fabriqué à la main en Martinique 🧵','Dans l\'atelier : la naissance d\'un sac','Les bijoux graines, édition limitée','Shooting à l\'Anse Noire ✨','Vente privée ce week-end — lien en bio','Rencontre avec nos artisanes','Comment porter le wax au quotidien'],
+  fitness:['Challenge 30 jours : jour 1 💪','Nouveau cours : HIIT tropical à 7h','Transformation de Marc en 6 mois','3 exercices pour un dos solide','Portes ouvertes samedi — séance offerte','Le planning de la semaine est en ligne','Nutrition : que manger avant la séance ?','Bienvenue à nos 50 nouveaux membres !'],
+  hotel:['Réveil face au lagon 🌊','Offre spéciale séjour 3 nuits','Notre nouveau spa est ouvert','Coucher de soleil depuis le rooftop','Mariage de rêve au bord de l\'eau','Dîner les pieds dans le sable','Excursion catamaran avec nos partenaires','Les suites rénovées en images'],
+  auto:['Arrivage : SUV hybride, 12 000 km','Essai routier sur la route de la Trace','Révision offerte pour tout achat ce mois-ci','Notre garantie 24 mois expliquée','Le véhicule de la semaine','Reprise de votre ancien véhicule au meilleur prix','Portes ouvertes ce samedi 🚗','Conseils : préparer sa voiture pour la saison cyclonique'],
+};
+let ENTITIES = [
+  {id:'lumiere',name:'Café Lumière',sector:'Restauration',color:'#2a78d6',theme:'food',
+   accounts:[{id:'lumiere-ig',net:'ig',handle:'@cafelumiere',base:8400,growth:.0017,reach:.30,eng:.062,freq:4.5},
+             {id:'lumiere-fb',net:'fb',handle:'Café Lumière',base:5200,growth:.0005,reach:.16,eng:.034,freq:3}],
+   campaigns:[{id:'lum-1',name:'Carte d\'été',start:'2026-06-01',end:'2026-06-30',tags:'#cartedete #cafelumiere'},
+              {id:'lum-2',name:'Fête des mères',start:'2026-05-15',end:'2026-05-31',tags:'#fetedesmeres'},
+              {id:'lum-3',name:'Black Friday brunch',start:'2025-11-20',end:'2025-11-30',tags:'#brunch'}]},
+  {id:'mangrove',name:'Atelier Mangrove',sector:'Mode & artisanat',color:'#c2410c',theme:'fashion',
+   accounts:[{id:'mangrove-ig',net:'ig',handle:'@ateliermangrove',base:21500,growth:.0021,reach:.26,eng:.071,freq:5},
+             {id:'mangrove-fb',net:'fb',handle:'Atelier Mangrove',base:9800,growth:.0003,reach:.12,eng:.028,freq:2.5}],
+   campaigns:[{id:'man-1',name:'Collection Madras',start:'2026-09-01',end:'2026-09-30',tags:'#madras'},
+              {id:'man-2',name:'Vente privée Noël',start:'2025-12-01',end:'2025-12-24',tags:'#noel #ventepriveee'}]},
+  {id:'fitcar',name:'Fitness Caraïbes',sector:'Sport & bien-être',color:'#0f766e',theme:'fitness',
+   accounts:[{id:'fitcar-ig',net:'ig',handle:'@fitnesscaraibes',base:14200,growth:.0014,reach:.28,eng:.054,freq:6},
+             {id:'fitcar-fb',net:'fb',handle:'Fitness Caraïbes',base:18600,growth:-.00015,reach:.14,eng:.022,freq:4}],
+   campaigns:[{id:'fit-1',name:'Rentrée — 1 mois offert',start:'2026-08-25',end:'2026-09-20',tags:'#rentree'},
+              {id:'fit-2',name:'Challenge janvier',start:'2026-01-02',end:'2026-01-31',tags:'#challenge30j'}]},
+  {id:'lagon',name:'Hôtel Bleu Lagon',sector:'Hôtellerie',color:'#1d4ed8',theme:'hotel',
+   accounts:[{id:'lagon-ig',net:'ig',handle:'@hotelbleulagon',base:36800,growth:.0012,reach:.22,eng:.048,freq:4},
+             {id:'lagon-fb',net:'fb',handle:'Hôtel Bleu Lagon',base:27400,growth:.0004,reach:.15,eng:.026,freq:3}],
+   campaigns:[{id:'lag-1',name:'Haute saison 2026',start:'2026-01-05',end:'2026-02-28',tags:'#bleulagon'},
+              {id:'lag-2',name:'Ouverture du spa',start:'2026-10-01',end:'2026-10-31',tags:'#spa'}]},
+  {id:'autoplus',name:'Auto Plus',sector:'Automobile',color:'#374151',theme:'auto',
+   accounts:[{id:'autoplus-fb',net:'fb',handle:'Auto Plus Martinique',base:12900,growth:.0009,reach:.20,eng:.031,freq:5},
+             {id:'autoplus-ig',net:'ig',handle:'@autoplus972',base:4700,growth:.0024,reach:.34,eng:.045,freq:3}],
+   campaigns:[{id:'aut-1',name:'Portes ouvertes printemps',start:'2026-03-14',end:'2026-03-29',tags:'#portesouvertes'}]},
+];
+// Ajouts de l'utilisateur (marques, campagnes) conservés dans ce navigateur
+(function restore(){
+  const extra = store.get('brands',[]); extra.forEach(b=>{ if(!ENTITIES.find(e=>e.id===b.id)) ENTITIES.push(b); });
+  const camps = store.get('camps',{}); Object.entries(camps).forEach(([eid,list])=>{const e=ENTITIES.find(x=>x.id===eid); if(e) list.forEach(c=>{ if(!e.campaigns.find(x=>x.id===c.id)) e.campaigns.push(c)})});
+})();
+
+/* ============================== Génération des données ============================== */
+const DATA = {}; const POSTS = {};
+const KEYS = ['followers','gained','lost','reach','impr','inter','likes','comments','shares','saves','visits','clicks','posts','video'];
+function genAccount(ent, acc){
+  const r = rng(hashStr(acc.id));
+  const D = {}; KEYS.forEach(k=>D[k]=new Float64Array(N));
+  const posts = [];
+  let f = acc.base; const phase = r()*6.28;
+  const camps = ent.campaigns.map(c=>({id:c.id,a:idx(c.start),b:idx(c.end)}));
+  const types = TYPES[acc.net]; const caps = CAPTIONS[ent.theme]||CAPTIONS.food;
+  for(let i=0;i<N;i++){
+    const wd = dayDate(i).getUTCDay();
+    const camp = camps.find(c=>i>=c.a&&i<=c.b);
+    const boost = camp?1.55:1;
+    const season = 1+.22*Math.sin(2*Math.PI*i/365+phase);
+    const noise = ()=>.75+r()*.5;
+    const p = acc.freq/7*(camp?1.5:1);
+    let np = r()<p?1:0; if(r()<p*.22) np++;
+    let pr=0,it=0,li=0,co=0,sh=0,sv=0,vv=0;
+    for(let k=0;k<np;k++){
+      let x=r()*types.reduce((a,t)=>a+t.w,0), t=types[0]; for(const ty of types){ if(x<ty.w){t=ty;break} x-=ty.w; }
+      const viral = r()<.05?2.6+r()*2:1;
+      const reach = Math.round(t.m*f*acc.reach*season*boost*(.5+r()*1.1)*viral);
+      const er = acc.eng*t.e*(.6+r()*.9);
+      const inter = Math.round(reach*er);
+      const c = Math.round(inter*(.05+r()*.05)), s = Math.round(inter*(acc.net==='ig'?.04:.13)*(.6+r()*.8));
+      const sa = acc.net==='ig'?Math.round(inter*(.07+r()*.08)):0;
+      const l = Math.max(0,inter-c-s-sa);
+      const vid = t.v?Math.round(reach*(1.3+r()*1.2)):0;
+      const hours=[7,8,11,12,13,17,18,19,20,21];
+      posts.push({id:acc.id+'-'+i+'-'+k,acc:acc.id,net:acc.net,ent:ent.id,day:i,hour:hours[Math.floor(r()*hours.length)],type:t.k,
+        cap:caps[Math.floor(r()*caps.length)],reach,impr:Math.round(reach*(1.12+r()*.4)),likes:l,comments:c,shares:s,saves:sa,inter,er:reach?inter/reach:0,video:vid,camp:camp?camp.id:null,hue:Math.floor(r()*360)});
+      pr+=reach; it+=inter; li+=l; co+=c; sh+=s; sv+=sa; vv+=vid;
+    }
+    const amb = f*acc.reach*.3*season*boost*noise()*((wd===0||wd===6)?1.12:1);
+    const ambInter = Math.round(amb*acc.eng*.1);
+    D.reach[i] = Math.round(amb+pr*.8);
+    D.impr[i] = Math.round(D.reach[i]*(1.35+r()*.35));
+    D.inter[i] = it+ambInter; D.likes[i]=li+ambInter; D.comments[i]=co; D.shares[i]=sh; D.saves[i]=sv; D.video[i]=vv; D.posts[i]=np;
+    const g = Math.max(0,Math.round(Math.abs(f*acc.growth)*noise()*boost*(1+np*.3)+f*.0004*r()));
+    const lo = Math.round(acc.growth<0 ? g+Math.abs(f*acc.growth)*1.6*noise() : g*(.22+r()*.2));
+    f += g-lo; D.gained[i]=g; D.lost[i]=lo; D.followers[i]=Math.round(f);
+    D.visits[i] = Math.round(D.reach[i]*(.022+r()*.018));
+    D.clicks[i] = Math.round(D.visits[i]*(.07+r()*.06));
+  }
+  DATA[acc.id]=D; POSTS[acc.id]=posts;
+}
+ENTITIES.forEach(e=>e.accounts.forEach(a=>genAccount(e,a)));
+
+/* ============================== État ============================== */
+const S = {
+  view:'overview', entity:'lumiere', nets:{ig:true,fb:true}, compare:true,
+  period:{key:'30d'}, custom:{s:iso(T-29),e:iso(T)},
+  ovSort:{k:'followers',dir:-1}, postSort:'er', postType:'all', postNet:'all',
+  reachMetric:'reach', formatMetric:'er',
+  report:null
+};
+const VIEWS = [
+  {id:'overview',l:'Vue d\'ensemble',ic:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>'},
+  {id:'analytics',l:'Analytics',ic:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>'},
+  {id:'posts',l:'Publications',ic:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+  {id:'audience',l:'Audience',ic:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-2-6-5-7"/>'},
+  {id:'campaigns',l:'Campagnes',ic:'<path d="M3 11l15-6v14L3 13z"/><path d="M7 13v5a2 2 0 0 0 4 0v-4"/>'},
+  {id:'reports',l:'Rapports',ic:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>'},
+  {id:'diagnostic',l:'Diagnostic API',ic:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'},
+  {id:'accounts',l:'Comptes connectés',ic:'<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>'},
+];
+const ENTITY_VIEWS = ['analytics','posts','audience','campaigns'];
+/* Espace client (lecture seule) */
+const CLIENT_VIEWS = [['analytics','Analytics'],['posts','Publications'],['audience','Audience'],['campaigns','Campagnes'],['reports','Rapports']];
+const DEFAULT_CLIENTS = {lumiere:{users:[{email:'direction@cafelumiere.fr',name:'Direction Café Lumière',lang:'fr',since:'2026-09-02'}],views:['analytics','posts','audience','campaigns','reports']}};
+const clientCfg = id => { const all=store.get('clients',DEFAULT_CLIENTS); return all[id]||{users:[],views:CLIENT_VIEWS.map(v=>v[0])}; };
+const saveClientCfg = (id,cfg) => { const all=store.get('clients',DEFAULT_CLIENTS); all[id]=cfg; store.set('clients',all); };
+const isClient = () => !!S.client;
+const allowed = v => !isClient() || clientCfg(S.client).views.includes(v);
+const ent = () => ENTITIES.find(e=>e.id===S.entity)||ENTITIES[0];
+const activeNets = () => Object.keys(S.nets).filter(k=>S.nets[k]);
+const accsOf = e => e.accounts.filter(a=>S.nets[a.net]);
+const allAccs = () => ENTITIES.flatMap(e=>accsOf(e));
+
+/* ============================== Périodes ============================== */
+const PRESETS = [
+  {k:'7d',l:'7 jours'},{k:'30d',l:'30 jours'},{k:'90d',l:'90 jours'},
+  {k:'month',l:'Ce mois-ci'},{k:'lastmonth',l:'Mois dernier'},
+  {k:'year',l:'Cette année'},{k:'lastyear',l:'Année 2025'},{k:'custom',l:'Dates personnalisées'}
+];
+function rangeFor(key, e0){
+  const y=dayDate(T).getUTCFullYear(), m=dayDate(T).getUTCMonth();
+  const ymd=(Y,M,D)=>idx(new Date(Date.UTC(Y,M,D)).toISOString().slice(0,10));
+  switch(key){
+    case '7d': return {s:T-6,e:T};
+    case '30d': return {s:T-29,e:T};
+    case '90d': return {s:T-89,e:T};
+    case 'month': return {s:ymd(y,m,1),e:T};
+    case 'lastmonth': return {s:ymd(y,m-1,1),e:ymd(y,m,0)};
+    case 'year': return {s:ymd(y,0,1),e:T};
+    case 'lastyear': return {s:ymd(y-1,0,1),e:ymd(y-1,11,31)};
+    case 'custom': { let s=clampI(idx(S.custom.s)), e=clampI(idx(S.custom.e)); if(isNaN(s))s=T-29; if(isNaN(e))e=T; if(e<s)[s,e]=[e,s]; return {s,e}; }
+  }
+  if(key.startsWith('camp:')){ const id=key.slice(5); const c=(e0||ent()).campaigns.find(c=>c.id===id)||ENTITIES.flatMap(x=>x.campaigns).find(c=>c.id===id); if(c) return {s:clampI(idx(c.start)),e:clampI(idx(c.end))}; }
+  return {s:T-29,e:T};
+}
+const R = () => rangeFor(S.period.key);
+function prevRange(r){ const len=r.e-r.s+1; const s=r.s-len, e=r.s-1; return s<0?null:{s,e}; }
+function periodLabel(r){ return r.s===r.e?fd(r.s):`${fd(r.s,{day:'numeric',month:'short'})} – ${fd(r.e)}`; }
+
+/* ============================== Agrégations ============================== */
+function sumArr(a,s,e){let t=0;for(let i=s;i<=e;i++)t+=a[i];return t}
+function metrics(accs,r){
+  const m={followers:0,fStart:0}; KEYS.forEach(k=>{if(k!=='followers')m[k]=0});
+  if(!r) return null;
+  for(const a of accs){ const D=DATA[a.id]; m.followers+=D.followers[r.e]; m.fStart+= r.s>0?D.followers[r.s-1]:D.followers[0]-D.gained[0]+D.lost[0];
+    for(const k of KEYS){ if(k!=='followers') m[k]+=sumArr(D[k],r.s,r.e); } }
+  m.net=m.gained-m.lost; m.er=m.reach?m.inter/m.reach:0; m.growth=m.fStart?m.net/m.fStart:0;
+  m.days=r.e-r.s+1; m.perPost=m.posts?m.inter/m.posts:0;
+  return m;
+}
+function buckets(r){
+  const len=r.e-r.s+1, out=[];
+  if(len<=62){ for(let i=r.s;i<=r.e;i++) out.push({l:fd(i,{day:'numeric',month:'short'}),s:i,e:i}); return {mode:'jour',b:out}; }
+  if(len<=210){ for(let i=r.s;i<=r.e;i+=7) out.push({l:fd(i,{day:'numeric',month:'short'}),s:i,e:Math.min(r.e,i+6)}); return {mode:'semaine',b:out}; }
+  let i=r.s; while(i<=r.e){ const d=dayDate(i); const nx=idx(new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1)).toISOString().slice(0,10)); out.push({l:fd(i,{month:'short',year:'2-digit'}),s:i,e:Math.min(r.e,nx-1)}); i=nx; }
+  return {mode:'mois',b:out};
+}
+function series(accs,key,bk){ return bk.map(b=>accs.reduce((t,a)=>t+(key==='followers'?DATA[a.id].followers[b.e]:sumArr(DATA[a.id][key],b.s,b.e)),0)); }
+function postsIn(accs,r){ return accs.flatMap(a=>POSTS[a.id].filter(p=>p.day>=r.s&&p.day<=r.e)); }
+
+/* ============================== Composants ============================== */
+function delta(cur,prev,opt={}){
+  if(prev==null||!isFinite(prev)) return `<span class="muted">${t('— pas de période de comparaison')}</span>`;
+  if(opt.pts){ const d=(cur-prev)*100; const cls=Math.abs(d)<.05?'flat':d>0?'up':'down'; return `<span class="${cls}">${d>0?'▲':d<0?'▼':'■'} ${d>0?'+':''}${num(d,2)} pt</span> <span class="muted">vs ${pct(prev,2)}</span>`; }
+  if(prev===0) return '<span class="muted">—</span>';
+  const d=(cur-prev)/Math.abs(prev); const cls=Math.abs(d)<.005?'flat':d>0?'up':'down';
+  return `<span class="${cls}">${d>0?'▲':d<0?'▼':'■'} ${d>0?'+':''}${pct(d,1)}</span> <span class="muted">vs ${fmtC(prev)}</span>`;
+}
+const KPI_DEFS = [
+  {k:'followers',l:'Abonnés',f:m=>fmt(m.followers),d:(m,p)=>`<span class="${m.net>=0?'up':'down'}">${m.net>=0?'▲ +':'▼ '}${fmt(m.net)}</span> <span class="muted">${t('sur la période')} (${m.growth>=0?'+':''}${pct(m.growth,2)})</span>`},
+  {k:'gained',l:'Nouveaux abonnés',f:m=>fmt(m.gained),d:(m,p)=>delta(m.gained,p&&p.gained)},
+  {k:'reach',l:'Portée',f:m=>fmtC(m.reach),d:(m,p)=>delta(m.reach,p&&p.reach)},
+  {k:'impr',l:'Vues',f:m=>fmtC(m.impr),d:(m,p)=>delta(m.impr,p&&p.impr)},
+  {k:'inter',l:'Interactions',f:m=>fmtC(m.inter),d:(m,p)=>delta(m.inter,p&&p.inter)},
+  {k:'er',l:'Taux d\'engagement',f:m=>pct(m.er,2),d:(m,p)=>delta(m.er,p&&p.er,{pts:1})},
+  {k:'posts',l:'Publications',f:m=>fmt(m.posts),d:(m,p)=>delta(m.posts,p&&p.posts)},
+  {k:'visits',l:'Visites du profil',f:m=>fmtC(m.visits),d:(m,p)=>delta(m.visits,p&&p.visits)},
+  {k:'clicks',l:'Clics vers le site',f:m=>fmt(m.clicks),d:(m,p)=>delta(m.clicks,p&&p.clicks)},
+];
+function kpiTiles(m,p,keys){ const defs=keys?KPI_DEFS.filter(d=>keys.includes(d.k)):KPI_DEFS; return `<div class="kpis">${defs.map(d=>`<div class="kpi"><div class="l">${t(d.l)}</div><div class="v">${d.f(m)}</div><div class="d">${S.compare||d.k==='followers'?d.d(m,p):'&nbsp;'}</div></div>`).join('')}</div>`; }
+function sparkSVG(vals,color,w=110,h=30){
+  if(!vals.length) return ''; const mn=Math.min(...vals), mx=Math.max(...vals), rg=mx-mn||1;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1||1)*(w-4)+2).toFixed(1)},${(h-3-(v-mn)/rg*(h-6)).toFixed(1)}`).join(' ');
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${pts}"/></svg>`;
+}
+function legend(items){ return `<div class="legend">${items.map(([l,c])=>`<span><i style="background:${c}"></i>${l}</span>`).join('')}</div>`; }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+async function copy(text,msg){ try{ await navigator.clipboard.writeText(text); toast(msg||'Copié dans le presse-papiers'); }catch(e){ openModal(`<h3>Copier manuellement</h3><p class="muted">Le presse-papiers n'est pas accessible ici. Sélectionnez le texte ci-dessous :</p><textarea style="width:100%;height:260px;font-family:monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:10px">${esc(text)}</textarea><div style="text-align:right"><button class="btn" onclick="closeModal()">Fermer</button></div>`); } }
+
+/* ============================== Charts ============================== */
+const CH = {};
+function destroyCharts(){ Object.keys(CH).forEach(k=>{CH[k].destroy();delete CH[k]}); }
+function baseOpts(extra={}){
+  const grid=css('--line'), ink2=css('--ink-2'), L=LOC;
+  return Object.assign({
+    responsive:true, maintainAspectRatio:false, animation:{duration:250},
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#0b0b0b',titleFont:{weight:'600'},padding:10,cornerRadius:8,boxPadding:4,
+      callbacks:{label:c=>withLoc(L,()=>` ${c.dataset.label} : ${c.dataset._fmt?c.dataset._fmt(c.raw):fmt(c.raw)}`)}}},
+    scales:{x:{grid:{display:false},border:{color:css('--axis')},ticks:{color:ink2,maxRotation:0,autoSkip:true,maxTicksLimit:8,font:{size:11}}},
+            y:{grid:{color:grid},border:{display:false},ticks:{color:ink2,font:{size:11},callback:v=>withLoc(L,()=>fmtC(v)),maxTicksLimit:6}}}
+  },extra);
+}
+function mkChart(id,cfg){ const el=document.getElementById(id); if(!el) return; if(CH[id]) CH[id].destroy(); CH[id]=new Chart(el,cfg); }
+function lineDS(label,data,color,extra={}){ return Object.assign({label,data,borderColor:color,backgroundColor:color,borderWidth:2,pointRadius:0,pointHoverRadius:4,pointHoverBorderColor:'#fff',pointHoverBorderWidth:2,tension:.3},extra); }
+function barDS(label,data,color,extra={}){ return Object.assign({label,data,backgroundColor:color,borderRadius:3,borderSkipped:false,borderColor:css('--surface'),borderWidth:{top:1,bottom:0,left:0,right:0},maxBarThickness:28},extra); }
+
+/* ============================== Rendu global ============================== */
+function render(){
+  if(location.hash.slice(1)!==S.view) history.replaceState(null,'','#'+S.view);
+  if(isClient()&&!allowed(S.view)){ S.view=clientCfg(S.client).views[0]||'analytics'; }
+  if(isClient()) S.entity=S.client;
+  destroyCharts(); renderNav(); renderBrands(); renderTop(); renderClientBar();
+  const v=document.getElementById('view');
+  const fn={overview:vOverview,analytics:vAnalytics,posts:vPosts,audience:vAudience,campaigns:vCampaigns,reports:vReports,accounts:vAccounts,diagnostic:vDiagnostic}[S.view]||vOverview;
+  if(LIVE.on && (S.view!=='reports'||(S.report&&S.report.generated))){
+    const need=neededLoads(); const needDemo = S.view==='audience' && ent().demo===undefined;
+    if(need.length||needDemo||LIVE.busy){ v.innerHTML=loadingCard(); if(!LIVE.busy) runLoads(need); return; }
+  }
+  fn(v);
+}
+function go(view,entity){
+  if(isClient()){ entity=S.client; if(!allowed(view)) view=clientCfg(S.client).views[0]||'analytics'; }
+  if(entity) S.entity=entity; S.view=view; render(); window.scrollTo(0,0); }
+function enterClient(id){ closeModal(); S.client=id; const u=clientCfg(id).users[0]; S.report=null; S.entity=id; S.report=defaultReport(); if(u) S.report.lang=u.lang; S.entity=id; S.nets={ig:true,fb:true,tt:false,li:false,yt:false}; if(S.report) S.report.entity=id; go(clientCfg(id).views[0]||'analytics',id); toast('Aperçu de l\'espace client'); }
+function exitClient(){ const id=S.client; S.client=null; go('accounts'); }
+function renderNav(){
+  document.getElementById('nav').innerHTML = VIEWS.filter(v=>v.id==='diagnostic'?(LIVE.on&&!isClient()):true).filter(v=>isClient()?(v.id!=='overview'&&v.id!=='accounts'&&allowed(v.id)):true).map(v=>`<a class="${S.view===v.id?'on':''}" onclick="go('${v.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${v.ic}</svg>${v.l}</a>`).join('');
+}
+function initials(n){ return n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function renderBrands(){
+  const q=(document.getElementById('brandSearch').value||'').toLowerCase();
+  document.getElementById('brandSearch').style.display=isClient()?'none':'';
+  document.getElementById('addBrandBtn').style.display=isClient()?'none':'';
+  document.getElementById('sideFoot').innerHTML=isClient()?'Espace client · lecture seule<br>Données mises à jour chaque jour à 06:00':LIVE.on?`Connecté à Meta : ${esc((LIVE.user||{}).name||'')}<br><a href="#" style="color:#d9d8d2" onclick="event.preventDefault();liveLogout()">Se déconnecter</a>`:'Démo — données simulées.<br><a href="#" style="color:#d9d8d2" onclick="event.preventDefault();bootWelcome()">Connecter mes vrais comptes →</a>';
+  document.getElementById('brands').innerHTML = ENTITIES.filter(e=>isClient()?e.id===S.client:e.name.toLowerCase().includes(q)).map(e=>`
+    <div class="brand ${ENTITY_VIEWS.includes(S.view)&&S.entity===e.id?'on':''}" onclick="go('${ENTITY_VIEWS.includes(S.view)?S.view:'analytics'}','${e.id}')" title="Ouvrir les statistiques de ${esc(e.name)}">
+      <div class="av" style="background:${e.color}">${initials(e.name)}</div><div class="nm">${esc(e.name)}</div>
+      <div class="nets">${[...new Set(e.accounts.map(a=>a.net))].map(nb).join('')}</div></div>`).join('') || '<div style="padding:8px 10px;color:var(--side-mute);font-size:13px">Aucune marque</div>';
+}
+function renderClientBar(){
+  const el=document.getElementById('clientBar');
+  if(!isClient()){ el.innerHTML=''; return; }
+  const e=ENTITIES.find(x=>x.id===S.client);
+  el.innerHTML=`<div class="client-bar"><span>👁 Aperçu de l'espace client de <b>${esc(e.name)}</b> — c'est ce que verra votre client (lecture seule, sa marque uniquement).</span><button class="btn sm" onclick="openClientAccess('${e.id}')">Réglages d'accès</button><button class="btn sm pri" onclick="exitClient()">Quitter l'aperçu</button></div>`;
+}
+function renderTop(){
+  const e=ent(); const isEnt=ENTITY_VIEWS.includes(S.view);
+  const title = S.view==='overview'?'Vue d\'ensemble':S.view==='reports'?'Rapports':S.view==='accounts'?'Comptes connectés':
+    `<span class="av" style="background:${e.color}">${initials(e.name)}</span>${esc(e.name)} <span class="muted" style="font-weight:500;font-size:14px">· ${VIEWS.find(v=>v.id===S.view).l}</span>`;
+  const showPeriod = !['reports','accounts'].includes(S.view);
+  const camps = isEnt?e.campaigns:[];
+  const pk=S.period.key;
+  document.getElementById('topbar').innerHTML = `<h1>${title}</h1>
+    ${showPeriod?`<div class="seg" role="group" aria-label="Réseaux">
+      ${Object.entries(NETS).map(([k,n])=>`<button class="${S.nets[k]?'on':''}" ${n.live?'':'disabled title="Bientôt disponible"'} onclick="toggleNet('${k}')">${nb(k)}${n.live?'':'<span style="font-size:11px">bientôt</span>'}</button>`).join('')}
+    </div>
+    <div class="ctl"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <select onchange="setPeriod(this.value)" aria-label="Période">
+        ${PRESETS.map(p=>`<option value="${p.k}" ${pk===p.k?'selected':''}>${p.l}</option>`).join('')}
+        ${camps.length?`<optgroup label="Campagnes">${camps.map(c=>`<option value="camp:${c.id}" ${pk==='camp:'+c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</optgroup>`:''}
+      </select></div>
+    ${pk==='custom'?`<div class="ctl"><input type="date" min="${iso(0)}" max="${iso(T)}" value="${S.custom.s}" onchange="S.custom.s=this.value;render()"> → <input type="date" min="${iso(0)}" max="${iso(T)}" value="${S.custom.e}" onchange="S.custom.e=this.value;render()"></div>`:''}
+    <label class="toggle"><input type="checkbox" ${S.compare?'checked':''} onchange="S.compare=this.checked;render()"><span class="sw"></span>Comparer</label>`:''}`;
+}
+function toggleNet(k){ S.nets[k]=!S.nets[k]; if(!activeNets().length) S.nets[k]=true; render(); }
+function setPeriod(v){ S.period.key=v; render(); }
+function periodHeader(r){ const p=prevRange(r); return `<div class="period-note">Période : <b>${periodLabel(r)}</b> (${r.e-r.s+1} j)${S.compare?(p?` · comparée à ${periodLabel(p)}`:' · pas de données avant le 1er janv. 2025 pour comparer'):''}</div>`; }
+
+/* ============================== Vue d'ensemble ============================== */
+function vOverview(v){
+  const r=R(), pr=prevRange(r); const accs=allAccs();
+  const m=metrics(accs,r), p=pr&&metrics(accs,pr);
+  // lignes
+  const rows = ENTITIES.map(e=>{ const a=accsOf(e); if(!a.length) return null; const mm=metrics(a,r), pp=pr&&metrics(a,pr);
+    return {e,m:mm,p:pp,subs:a.map(ac=>({a:ac,m:metrics([ac],r),p:pr&&metrics([ac],pr)}))}; }).filter(Boolean);
+  const sk=S.ovSort; const val=(x)=>x.m[sk.k]; rows.sort((a,b)=>(val(a)-val(b))*sk.dir);
+  const cols=[['followers','Abonnés'],['net','Évol. abonnés'],['reach','Portée'],['inter','Interactions'],['er','Taux d\'eng.'],['posts','Publications']];
+  const bk=buckets({s:Math.max(0,r.e-29),e:r.e}).b;
+  const cell=(mm,pp,k)=>k==='er'?pct(mm.er,2):k==='net'?`<span class="${mm.net>=0?'up':'down'}">${mm.net>=0?'+':''}${fmt(mm.net)}</span>`:fmtC(mm[k]);
+  const dcell=(mm,pp)=> (S.compare&&pp&&pp.reach)? (()=>{const d=(mm.reach-pp.reach)/pp.reach;return `<span class="${d>=0?'up':'down'}" style="font-size:12px">${d>=0?'▲':'▼'} ${(Math.abs(d)*100).toFixed(0)} %</span>`})():'';
+  // alertes
+  const alerts=[];
+  rows.forEach(x=>x.subs.forEach(s=>{
+    if(!s.p) return;
+    if(s.m.net<0) alerts.push({e:x.e,ic:'▼',c:'var(--bad)',t:`<b>${esc(x.e.name)}</b> · ${NETS[s.a.net].name} perd des abonnés (${fmt(s.m.net)} sur la période)`});
+    if(s.p.er && (s.m.er-s.p.er)/s.p.er < -.15) alerts.push({e:x.e,ic:'▼',c:'var(--bad)',t:`<b>${esc(x.e.name)}</b> · ${NETS[s.a.net].name} : taux d'engagement en baisse (${pct(s.m.er,2)} vs ${pct(s.p.er,2)})`});
+    if(s.p.reach && (s.m.reach-s.p.reach)/s.p.reach > .25) alerts.push({e:x.e,ic:'▲',c:'var(--good)',t:`<b>${esc(x.e.name)}</b> · ${NETS[s.a.net].name} : portée en forte hausse (+${((s.m.reach-s.p.reach)/s.p.reach*100).toFixed(0)} %)`});
+    const lastPost = POSTS[s.a.id].filter(p=>p.day<=r.e).slice(-1)[0];
+    if(lastPost && r.e-lastPost.day>7) alerts.push({e:x.e,ic:'!',c:'#b07a00',t:`<b>${esc(x.e.name)}</b> · ${NETS[s.a.net].name} : aucune publication depuis ${r.e-lastPost.day} jours`});
+  }));
+  v.innerHTML = `${periodHeader(r)}
+    ${kpiTiles(m,p,['followers','gained','reach','impr','inter','er','posts','visits'])}
+    <div class="card"><div class="card-h"><div><h3>Toutes les marques</h3><div class="sub">Cliquez sur une ligne pour ouvrir ses statistiques détaillées. Tendance = portée quotidienne sur 30 jours.</div></div>
+      <button class="btn sm" onclick="copyOverviewCSV()">Copier en CSV</button></div>
+      <div style="overflow:auto"><table><thead><tr><th>Marque / compte</th>${cols.map(([k,l])=>`<th class="${sk.k===k?'sorted':''}" onclick="sortOv('${k}')">${l}${sk.k===k?(sk.dir<0?' ↓':' ↑'):''}</th>`).join('')}<th style="cursor:default">Tendance portée</th></tr></thead><tbody>
+      ${rows.map(x=>`<tr class="click grp" onclick="go('analytics','${x.e.id}')"><td><div class="acc-cell"><div class="av" style="background:${x.e.color}">${initials(x.e.name)}</div>${esc(x.e.name)} <span class="muted" style="font-weight:400">· ${esc(x.e.sector)}</span></div></td>
+          ${cols.map(([k])=>`<td>${cell(x.m,x.p,k)}${k==='reach'?' '+dcell(x.m,x.p):''}</td>`).join('')}<td>${sparkSVG(series(accsOf(x.e),'reach',bk),'#52514e')}</td></tr>
+        ${x.subs.map(s=>`<tr class="click" onclick="S.nets={ig:false,fb:false,tt:false,li:false,yt:false};S.nets['${s.a.net}']=true;go('analytics','${x.e.id}')"><td style="padding-left:44px"><div class="acc-cell">${nb(s.a.net)}<span class="muted">${esc(s.a.handle)}</span></div></td>
+          ${cols.map(([k])=>`<td class="muted">${cell(s.m,s.p,k)}${k==='reach'?' '+dcell(s.m,s.p):''}</td>`).join('')}<td>${sparkSVG(series([s.a],'reach',bk),css(NETS[s.a.net].color))}</td></tr>`).join('')}`).join('')}
+      </tbody></table></div></div>
+    <div class="grid g32">
+      <div class="card"><h3>Portée par marque</h3><div class="sub">Somme des comptes sélectionnés, ${buckets(r).mode} par ${buckets(r).mode}</div>
+        ${legend(activeNets().filter(n=>NETS[n].live).map(n=>[NETS[n].name,css(NETS[n].color)]))}
+        <div class="chart-box lg"><canvas id="ovBrands"></canvas></div></div>
+      <div class="card"><h3>Points d'attention</h3><div class="sub">Détectés automatiquement sur la période</div>
+        <div class="alerts">${alerts.length?alerts.slice(0,8).map(a=>`<div class="alert" onclick="go('analytics','${a.e.id}')"><span class="ic" style="color:${a.c}">${a.ic}</span><span>${a.t}</span></div>`).join(''):'<div class="muted">Rien à signaler 👌</div>'}</div></div>
+    </div>`;
+  // chart : barres groupées par marque, une série par réseau
+  const nets=activeNets().filter(n=>NETS[n].live);
+  mkChart('ovBrands',{type:'bar',data:{labels:rows.map(x=>x.e.name),datasets:nets.map(n=>barDS(NETS[n].name,rows.map(x=>x.subs.filter(s=>s.a.net===n).reduce((t,s)=>t+s.m.reach,0)),css(NETS[n].color)))},
+    options:baseOpts({indexAxis:'y',scales:{x:{grid:{color:css('--line')},border:{display:false},ticks:{color:css('--ink-2'),callback:v=>fmtC(v),maxTicksLimit:6}},y:{grid:{display:false},ticks:{color:css('--ink')}}}})});
+}
+function sortOv(k){ S.ovSort = S.ovSort.k===k?{k,dir:-S.ovSort.dir}:{k,dir:-1}; render(); }
+function copyOverviewCSV(){
+  const r=R(); const lines=[['Marque','Réseau','Compte','Abonnés','Évolution abonnés','Nouveaux abonnés','Portée','Vues','Interactions','Taux engagement','Publications','Visites profil','Clics site'].join(';')];
+  ENTITIES.forEach(e=>accsOf(e).forEach(a=>{const m=metrics([a],r); lines.push([e.name,NETS[a.net].name,a.handle,m.followers,m.net,m.gained,m.reach,m.impr,m.inter,(m.er*100).toFixed(2).replace('.',','),m.posts,m.visits,m.clicks].join(';'))}));
+  copy(lines.join('\n'),'Tableau copié (CSV) — collez-le dans Excel ou Sheets');
+}
+
+/* ============================== Analytics (marque) ============================== */
+function vAnalytics(v){
+  const e=ent(), r=R(), pr=prevRange(r), accs=accsOf(e);
+  if(!accs.length){ v.innerHTML=`<div class="card empty">Aucun compte de cette marque sur les réseaux sélectionnés.</div>`; return; }
+  const m=metrics(accs,r), p=pr&&metrics(accs,pr);
+  const {b:bk,mode}=buckets(r);
+  const ps=postsIn(accs,r);
+  const top=[...ps].sort((a,b)=>b.er-a.er).slice(0,5);
+  v.innerHTML = `${periodHeader(r)}
+    ${kpiTiles(m,p)}
+    <div class="grid g2">
+      <div class="card"><h3>Évolution des abonnés</h3><div class="sub">Total en fin de ${mode}</div>${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box"><canvas id="cFol"></canvas></div></div>
+      <div class="card"><h3>Abonnés gagnés et perdus</h3><div class="sub">Par ${mode}, tous comptes sélectionnés</div>${legend([['Gagnés',css('--c3')],['Perdus',css('--c5')]])}<div class="chart-box"><canvas id="cGain"></canvas></div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><div><h3>Visibilité</h3><div class="sub">Par ${mode} et par réseau</div></div>
+        <div class="seg">${[['reach','Portée'],['impr','Vues'],['visits','Visites'],['clicks','Clics']].map(([k,l])=>`<button class="${S.reachMetric===k?'on':''}" onclick="S.reachMetric='${k}';render()">${l}</button>`).join('')}</div></div>
+        ${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box"><canvas id="cReach"></canvas></div></div>
+      <div class="card"><h3>Interactions par type</h3><div class="sub">Par ${mode} — J'aime / réactions, commentaires, partages, enregistrements</div>
+        ${legend([['J\'aime',css('--c3')],['Commentaires',css('--c4')],['Partages',css('--c5')],['Enregistrements',css('--c7')]])}<div class="chart-box"><canvas id="cInter"></canvas></div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h3>Taux d'engagement</h3><div class="sub">Interactions ÷ portée, par ${mode}</div>${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box"><canvas id="cEr"></canvas></div></div>
+      <div class="card"><div class="card-h"><div><h3>Performance par format</h3><div class="sub">Moyenne par publication sur la période</div></div>
+        <div class="seg">${[['er','Taux d\'eng.'],['reach','Portée'],['inter','Interactions']].map(([k,l])=>`<button class="${S.formatMetric===k?'on':''}" onclick="S.formatMetric='${k}';render()">${l}</button>`).join('')}</div></div>
+        ${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box"><canvas id="cFmt"></canvas></div></div>
+    </div>
+    <div class="grid g32">
+      <div class="card"><div class="card-h"><div><h3>Top publications</h3><div class="sub">Classées par taux d'engagement</div></div><button class="btn sm" onclick="go('posts')">Toutes les publications →</button></div>
+        ${postTable(top)}</div>
+      <div class="card"><h3>Meilleurs moments pour publier</h3><div class="sub">Abonnés en ligne (moyenne), heure locale</div>${heatmap(e)}</div>
+    </div>`;
+  const labels=bk.map(b=>b.l);
+  mkChart('cFol',{type:'line',data:{labels,datasets:accs.map(a=>lineDS(NETS[a.net].name,series([a],'followers',bk),css(NETS[a.net].color)))},options:baseOpts({scales:{...baseOpts().scales,y:{...baseOpts().scales.y,beginAtZero:false}}})});
+  const g=series(accs,'gained',bk), l=series(accs,'lost',bk).map(x=>-x);
+  mkChart('cGain',{type:'bar',data:{labels,datasets:[barDS('Gagnés',g,css('--c3')),barDS('Perdus',l,css('--c5'),{_fmt:v=>fmt(-v)})]},options:baseOpts({scales:{x:{...baseOpts().scales.x,stacked:true},y:{...baseOpts().scales.y,stacked:true}}})});
+  mkChart('cReach',{type:'line',data:{labels,datasets:accs.map(a=>lineDS(NETS[a.net].name,series([a],S.reachMetric,bk),css(NETS[a.net].color)))},options:baseOpts()});
+  const stk={x:{...baseOpts().scales.x,stacked:true},y:{...baseOpts().scales.y,stacked:true}};
+  mkChart('cInter',{type:'bar',data:{labels,datasets:[['likes','J\'aime','--c3'],['comments','Commentaires','--c4'],['shares','Partages','--c5'],['saves','Enregistrements','--c7']].map(([k,lb,c])=>barDS(lb,series(accs,k,bk),css(c)))},options:baseOpts({scales:stk})});
+  mkChart('cEr',{type:'line',data:{labels,datasets:accs.map(a=>{const it=series([a],'inter',bk), rc=series([a],'reach',bk); return lineDS(NETS[a.net].name,it.map((x,i)=>rc[i]?x/rc[i]:0),css(NETS[a.net].color),{_fmt:v=>pct(v,2)})})},
+    options:baseOpts({scales:{...baseOpts().scales,y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,callback:v=>pct(v,1)}}}})});
+  // formats
+  const fmts=[...new Set(accs.flatMap(a=>TYPES[a.net].map(t=>t.l)))];
+  const fm=S.formatMetric;
+  mkChart('cFmt',{type:'bar',data:{labels:fmts,datasets:accs.map(a=>barDS(NETS[a.net].name,fmts.map(fl=>{const pp=ps.filter(x=>x.acc===a.id&&typeLabel(x.type)===fl); if(!pp.length) return null; return fm==='er'?pp.reduce((t,x)=>t+x.inter,0)/pp.reduce((t,x)=>t+x.reach,0):pp.reduce((t,x)=>t+x[fm],0)/pp.length;}),css(NETS[a.net].color),{_fmt:v=>fm==='er'?pct(v,2):fmt(v)}))},
+    options:baseOpts({interaction:{mode:'nearest',intersect:true},scales:{...baseOpts().scales,y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,callback:v=>fm==='er'?pct(v,0):fmtC(v)}}}})});
+  bindHeat();
+}
+function postTable(list){
+  if(!list.length) return `<div class="empty">${t('Aucune publication sur cette période.')}</div>`;
+  return `<div style="overflow:auto"><table><thead><tr>${['Publication','Date','Portée','Interactions',"Taux d'eng."].map(h=>`<th style="cursor:default">${t(h)}</th>`).join('')}</tr></thead><tbody>
+  ${list.map(p=>`<tr><td><div class="acc-cell">${nb(p.net)}<span style="max-width:200px;overflow:hidden;text-overflow:ellipsis;display:inline-block">${esc(p.cap)}</span> <span class="pill">${typeLabel(p.type)}</span></div></td><td class="muted">${fd(p.day,{day:'numeric',month:'short'})}</td><td>${fmt(p.reach)}</td><td>${fmt(p.inter)}</td><td><b>${pct(p.er,2)}</b></td></tr>`).join('')}</tbody></table></div>`;
+}
+function heatVals(e){
+  const r=rng(hashStr(e.id+'heat')); const out=[];
+  for(let d=0;d<7;d++){ const row=[]; for(let h=0;h<24;h++){ const we=d>=5;
+    let v=.05+.55*Math.exp(-((h-(we?11:12.5))**2)/6)+.85*Math.exp(-((h-(we?19:20))**2)/5)+.25*Math.exp(-((h-8)**2)/3); if(h<6) v*=.3; v*= .85+r()*.3; if(we) v*=1.08; row.push(v);} out.push(row); }
+  const mx=Math.max(...out.flat()); return out.map(r=>r.map(v=>v/mx));
+}
+function heatmap(e){
+  const hl=LIVE.on?heatLive(e):null; const vals=hl?hl.vals:heatVals(e), days=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'], steps=['--seq1','--seq2','--seq3','--seq4','--seq5','--seq6','--seq7'].map(css);
+  let best={v:0}; vals.forEach((r,d)=>r.forEach((v,h)=>{if(v>best.v)best={v,d,h}}));
+  const cell=v=>steps[Math.min(6,Math.floor(v*7))];
+  return `<div class="heat"><div></div>${Array.from({length:24},(_,h)=>`<div class="hl">${h%3===0?h+'h':''}</div>`).join('')}
+    ${vals.map((r,d)=>`<div class="rl">${days[d]}</div>${r.map((v,h)=>`<div class="c" style="background:${cell(v)}" data-tip="${days[d]} ${h}h–${h+1}h · ${Math.round(v*100)} % du pic d'activité"></div>`).join('')}`).join('')}</div>
+    <div class="scale">Moins actifs ${steps.map(s=>`<i style="background:${s}"></i>`).join('')} Plus actifs</div>
+    <div style="margin-top:12px;font-size:13px">⏱ Meilleur créneau : <b>${best.d!==undefined?`${days[best.d]} à ${best.h}h`:'—'}</b></div>${hl?`<div class="muted" style="font-size:12px;margin-top:6px">${hl.note}</div>`:''}`;
+}
+function bindHeat(){ document.querySelectorAll('[data-tip]').forEach(el=>{ el.onmouseenter=ev=>{const t=document.getElementById('tip');t.textContent=el.dataset.tip;t.style.display='block'}; el.onmousemove=ev=>{const t=document.getElementById('tip');t.style.left=(ev.clientX+12)+'px';t.style.top=(ev.clientY-30)+'px'}; el.onmouseleave=()=>document.getElementById('tip').style.display='none'; }); }
+
+/* ============================== Publications ============================== */
+function vPosts(v){
+  const e=ent(), r=R(); let accs=accsOf(e); if(S.postNet!=='all') accs=accs.filter(a=>a.net===S.postNet);
+  let ps=postsIn(accs,r); if(S.postType!=='all') ps=ps.filter(p=>p.type===S.postType);
+  const sk=S.postSort; ps.sort((a,b)=>sk==='date'?b.day-a.day||b.hour-a.hour:b[sk]-a[sk]);
+  const types=[...new Set(accsOf(e).flatMap(a=>TYPES[a.net]).map(t=>t.k))];
+  const shown=ps.slice(0,60);
+  v.innerHTML = `${periodHeader(r)}
+  <div class="card" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <div class="ctl">Format <select onchange="S.postType=this.value;render()"><option value="all">Tous</option>${types.map(t=>`<option value="${t}" ${S.postType===t?'selected':''}>${typeLabel(t)}</option>`).join('')}</select></div>
+    <div class="ctl">Réseau <select onchange="S.postNet=this.value;render()"><option value="all">Tous</option>${[...new Set(accsOf(e).map(a=>a.net))].map(n=>`<option value="${n}" ${S.postNet===n?'selected':''}>${NETS[n].name}</option>`).join('')}</select></div>
+    <div class="ctl">Trier par <select onchange="S.postSort=this.value;render()">${[['er','Taux d\'engagement'],['reach','Portée'],['inter','Interactions'],['comments','Commentaires'],['saves','Enregistrements'],['date','Date (récent)']].map(([k,l])=>`<option value="${k}" ${sk===k?'selected':''}>${l}</option>`).join('')}</select></div>
+    <span class="muted" style="margin-left:auto">${fmt(ps.length)} publications${ps.length>60?' · 60 affichées':''}</span>
+    <button class="btn sm" onclick="copyPostsCSV()">Copier en CSV</button>
+  </div>
+  ${shown.length?`<div class="posts-grid">${shown.map((p,i)=>`<div class="post">
+    <${p.url?`a href="${esc(p.url)}" target="_blank" rel="noopener"`:'div'} class="thumb" style="${p.img?`background:#222 url('${esc(p.img)}') center/cover`:`background:linear-gradient(150deg,hsl(${p.hue} 45% 55%),hsl(${(p.hue+40)%360} 50% 30%))`}">
+      <span class="tp">${typeLabel(p.type)}</span><span class="nbx">${nb(p.net)}</span>
+      ${sk!=='date'?`<span class="rank">#${i+1}</span>`:''}</${p.url?'a':'div'}>
+    <div class="body"><div class="date">${fd(p.day,{weekday:'short',day:'numeric',month:'short',year:'numeric'})} · ${p.hour}h${p.camp?` · <span class="pill">${esc((e.campaigns.find(c=>c.id===p.camp)||{}).name||'')}</span>`:''}</div>
+      <div class="cap">${esc(p.cap)}</div>
+      <div class="meta"><div><b>${fmtC(p.reach)}</b><span>Portée</span></div><div><b>${fmtC(p.inter)}</b><span>Interact.</span></div><div><b>${pct(p.er,1)}</b><span>Eng.</span></div>
+        <div><b>${fmt(p.likes)}</b><span>J'aime</span></div><div><b>${fmt(p.comments)}</b><span>Comm.</span></div><div><b>${p.net==='ig'?fmt(p.saves):fmt(p.shares)}</b><span>${p.net==='ig'?'Enreg.':'Partages'}</span></div></div>
+    </div></div>`).join('')}</div>`:'<div class="card empty">Aucune publication ne correspond à ces filtres.</div>'}`;
+}
+function copyPostsCSV(){
+  const e=ent(), r=R(); const ps=postsIn(accsOf(e),r).sort((a,b)=>a.day-b.day);
+  copy(['Date;Heure;Réseau;Format;Légende;Portée;Vues;J\'aime;Commentaires;Partages;Enregistrements;Interactions;Taux engagement'].concat(ps.map(p=>[iso(p.day),p.hour+'h',NETS[p.net].name,typeLabel(p.type),'"'+p.cap.replace(/"/g,'""')+'"',p.reach,p.impr,p.likes,p.comments,p.shares,p.saves,p.inter,(p.er*100).toFixed(2).replace('.',',')].join(';'))).join('\n'),`${ps.length} publications copiées (CSV)`);
+}
+
+/* ============================== Audience ============================== */
+function demo(e){
+  const r=rng(hashStr(e.id+'demo'));
+  const ages=['13-17','18-24','25-34','35-44','45-54','55-64','65+'];
+  const peak={food:2,fashion:2,fitness:2,hotel:3,auto:3}[e.theme]??2;
+  const w=ages.map((_,i)=>Math.exp(-((i-peak)**2)/2.2)*(.8+r()*.4)); const tw=w.reduce((a,b)=>a+b,0);
+  const fShare={food:.62,fashion:.74,fitness:.55,hotel:.58,auto:.32}[e.theme]??.5;
+  const cities=[['Fort-de-France',.31],['Le Lamentin',.14],['Schœlcher',.09],['Le Robert',.06],['Ducos',.05],['Paris',.05],['Pointe-à-Pitre',.04],['Rivière-Salée',.03]].map(([c,v])=>[c,v*(.8+r()*.4)]);
+  const countries=[['Martinique',.68],['France métropolitaine',.17],['Guadeloupe',.07],['Guyane',.03],['Canada',.02],['Autres',.03]];
+  return {ages,women:w.map(x=>x/tw*fShare),men:w.map(x=>x/tw*(1-fShare)),fShare,cities:cities.sort((a,b)=>b[1]-a[1]),countries};
+}
+function vAudience(v){
+  if(LIVE.on) return vAudienceLive(v);
+  const e=ent(), r=R(), accs=accsOf(e); const d=demo(e); const m=metrics(accs,r), p=prevRange(r)&&metrics(accs,prevRange(r));
+  const maxC=d.cities[0][1];
+  v.innerHTML=`${periodHeader(r)}
+  ${kpiTiles(m,p,['followers','gained','visits','clicks'])}
+  <div class="grid g2">
+    <div class="card"><h3>Âge et genre</h3><div class="sub">Répartition des abonnés · ${pct(d.fShare,0)} femmes, ${pct(1-d.fShare,0)} hommes</div>${legend([['Femmes',css('--c3')],['Hommes',css('--c7')]])}<div class="chart-box"><canvas id="cAge"></canvas></div></div>
+    <div class="card"><h3>Villes principales</h3><div class="sub">Part des abonnés</div><div class="bars">${d.cities.map(([c,v])=>`<div class="row"><span>${c}</span><div class="track"><div class="fill" style="width:${v/maxC*100}%"></div></div><span class="val">${pct(v,1)}</span></div>`).join('')}</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Pays</h3><div class="sub">Part des abonnés</div><div class="bars">${d.countries.map(([c,v])=>`<div class="row"><span>${c}</span><div class="track"><div class="fill" style="width:${v/d.countries[0][1]*100}%"></div></div><span class="val">${pct(v,0)}</span></div>`).join('')}</div></div>
+    <div class="card"><h3>Abonnés en ligne</h3><div class="sub">Activité moyenne par jour et par heure</div>${heatmap(e)}</div>
+  </div>`;
+  mkChart('cAge',{type:'bar',data:{labels:d.ages,datasets:[barDS('Femmes',d.women,css('--c3'),{_fmt:v=>pct(v,1)}),barDS('Hommes',d.men,css('--c7'),{_fmt:v=>pct(v,1)})]},
+    options:baseOpts({scales:{...baseOpts().scales,y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,callback:v=>pct(v,0)}}}})});
+  bindHeat();
+}
+
+function vAudienceLive(v){
+  const e=ent(), r=R(), accs=accsOf(e); const d=liveDemo(e)||{}; const m=metrics(accs,r), p=prevRange(r)&&metrics(accs,prevRange(r));
+  const na=t=>`<div class="empty" style="padding:30px 10px">${t}</div>`;
+  const bars=(rows,dec)=>rows&&rows.length?`<div class="bars">${rows.map(([c,x])=>`<div class="row"><span>${esc(c)}</span><div class="track"><div class="fill" style="width:${x/rows[0][1]*100}%"></div></div><span class="val">${pct(x,dec)}</span></div>`).join('')}</div>`:na('Non disponible — Meta ne fournit la démographie que pour les comptes Instagram professionnels de 100 abonnés ou plus.');
+  v.innerHTML=`${periodHeader(r)}
+  ${kpiTiles(m,p,['followers','gained','visits','clicks'])}
+  <div class="grid g2">
+    <div class="card"><h3>Âge et genre</h3><div class="sub">Abonnés Instagram${d.ages?` · ${pct(d.fShare,0)} femmes, ${pct(d.mShare,0)} hommes`:''}</div>${d.ages?`${legend([['Femmes',css('--c3')],['Hommes',css('--c7')]])}<div class="chart-box"><canvas id="cAge"></canvas></div>`:na('Non disponible pour ce compte (Instagram professionnel de 100 abonnés ou plus requis).')}</div>
+    <div class="card"><h3>Villes principales</h3><div class="sub">Part des abonnés Instagram</div>${bars(d.cities,1)}</div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Pays</h3><div class="sub">Part des abonnés Instagram</div>${bars(d.countries,0)}</div>
+    <div class="card"><h3>Meilleurs moments</h3><div class="sub">Par jour et par heure</div>${heatmap(e)}</div>
+  </div>`;
+  if(d.ages) mkChart('cAge',{type:'bar',data:{labels:d.ages,datasets:[barDS('Femmes',d.women,css('--c3'),{_fmt:x=>pct(x,1)}),barDS('Hommes',d.men,css('--c7'),{_fmt:x=>pct(x,1)})]},
+    options:baseOpts({scales:{...baseOpts().scales,y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,callback:x=>pct(x,0)}}}})});
+  bindHeat();
+}
+
+/* ============================== Campagnes ============================== */
+function vCampaigns(v){
+  const e=ent(), accs=accsOf(e);
+  const list=[...e.campaigns].sort((a,b)=>b.start.localeCompare(a.start));
+  v.innerHTML=`<div class="card"><div class="card-h"><div><h3>Campagnes de ${esc(e.name)}</h3><div class="sub">Chaque campagne est comparée à la période de même durée qui la précède.</div></div>${isClient()?'':'<button class="btn pri" onclick="openAddCampaign()">+ Nouvelle campagne</button>'}</div>
+    ${list.length?list.map(c=>{const r={s:clampI(idx(c.start)),e:clampI(idx(c.end))}; const m=metrics(accs,r), pr=prevRange(r), p=pr&&metrics(accs,pr); const future=idx(c.start)>T;
+      return `<div class="camp"><div><div class="nm">${esc(c.name)}</div><div class="muted" style="font-size:12.5px">${fd(idx(c.start))} → ${fd(idx(c.end))} · ${esc(c.tags||'')}</div></div>
+      ${future?'<div class="muted" style="grid-column:span 4">Campagne à venir</div>':`
+      <div class="k"><span>Portée</span><b>${fmtC(m.reach)}</b>${p?`<small>${delta(m.reach,p.reach).split('</span>')[0]}</span></small>`:''}</div>
+      <div class="k"><span>Interactions</span><b>${fmtC(m.inter)}</b>${p?`<small>${delta(m.inter,p.inter).split('</span>')[0]}</span></small>`:''}</div>
+      <div class="k"><span>Taux d'eng.</span><b>${pct(m.er,2)}</b></div>
+      <div class="k"><span>Nouveaux abonnés</span><b>+${fmt(m.gained)}</b>${p?`<small>${delta(m.gained,p.gained).split('</span>')[0]}</span></small>`:''}</div>`}
+      <div style="display:flex;gap:6px">${future?'':`<button class="btn sm" onclick="S.period.key='camp:${c.id}';go('analytics')">Analyser</button><button class="btn sm" onclick="reportFor('campaign','${c.id}')">Rapport</button>`}</div></div>`}).join(''):'<div class="empty">Aucune campagne. Créez-en une pour suivre ses résultats.</div>'}
+  </div>`;
+}
+function openAddCampaign(){
+  openModal(`<h3>Nouvelle campagne — ${esc(ent().name)}</h3>
+  <form class="form" onsubmit="event.preventDefault();saveCampaign(this)">
+    <div class="field"><label>Nom</label><input type="text" name="name" required placeholder="Ex. Soldes d'été"></div>
+    <div class="row2"><div class="field"><label>Début</label><input type="date" name="start" required value="${iso(T-13)}"></div><div class="field"><label>Fin</label><input type="date" name="end" required value="${iso(T)}"></div></div>
+    <div class="field"><label>Hashtags / mots-clés (optionnel)</label><input type="text" name="tags" placeholder="#soldes #ete"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" class="btn" onclick="closeModal()">Annuler</button><button class="btn pri">Créer la campagne</button></div>
+  </form>`);
+}
+function saveCampaign(f){
+  const e=ent(); let s=f.start.value, en=f.end.value; if(en<s)[s,en]=[en,s];
+  const c={id:'u'+Date.now().toString(36),name:f.name.value.trim()||'Campagne',start:s,end:en,tags:f.tags.value.trim()};
+  e.campaigns.push(c); const all=store.get('camps',{}); (all[e.id]=all[e.id]||[]).push(c); store.set('camps',all);
+  closeModal(); toast('Campagne créée'); render();
+}
+
+/* ============================== Rapports ============================== */
+const SECTIONS=[['summary','Synthèse des KPI'],['audience','Évolution de l\'audience'],['reach','Portée & vues'],['engagement','Engagement'],['formats','Performance par format'],['top','Top publications'],['insights','Analyse & recommandations']];
+function defaultReport(){ const e=ent(); return {entity:e.id,type:'month',month:iso(T).slice(0,7),year:String(dayDate(T).getUTCFullYear()),camp:(e.campaigns[0]||{}).id||'',s:iso(T-29),e:iso(T),nets:{ig:true,fb:true},sections:Object.fromEntries(SECTIONS.map(s=>[s[0],true])),compare:true,lang:'fr',generated:false}; }
+function reportFor(type,campId){ S.report=defaultReport(); S.report.type=type; if(campId) S.report.camp=campId; S.report.generated=true; go('reports'); }
+function reportRange(rp){
+  if(rp.type==='month'){ const [y,m]=rp.month.split('-').map(Number); const s=idx(`${rp.month}-01`); const e=idx(new Date(Date.UTC(y,m,0)).toISOString().slice(0,10)); return {s:clampI(s),e:clampI(e),label:dayDate(s).toLocaleDateString(LOCALE[LOC],{timeZone:'UTC',month:'long',year:'numeric'}),kind:t('Rapport mensuel')}; }
+  if(rp.type==='year'){ const s=idx(rp.year+'-01-01'), e=idx(rp.year+'-12-31'); return {s:clampI(s),e:clampI(e),label:t('Année')+' '+rp.year+(clampI(e)<e?' '+t('(à date)'):''),kind:t('Rapport annuel')}; }
+  if(rp.type==='campaign'){ const en=ENTITIES.find(x=>x.id===rp.entity); const c=en.campaigns.find(c=>c.id===rp.camp); if(!c) return null; return {s:clampI(idx(c.start)),e:clampI(idx(c.end)),label:c.name,kind:t('Rapport de campagne'),camp:c}; }
+  let s=clampI(idx(rp.s)), e=clampI(idx(rp.e)); if(e<s)[s,e]=[e,s]; return {s,e,label:periodLabel({s,e}),kind:t('Rapport personnalisé')};
+}
+function monthsOptions(){ const out=[]; let y=dayDate(T).getUTCFullYear(), m=dayDate(T).getUTCMonth(); while(y>2025||(y===2025&&m>=0)){ const k=`${y}-${String(m+1).padStart(2,'0')}`; out.push([k,new Date(Date.UTC(y,m,1)).toLocaleDateString('fr-FR',{timeZone:'UTC',month:'long',year:'numeric'})]); m--; if(m<0){m=11;y--} } return out; }
+function vReports(v){
+  if(!S.report) S.report=defaultReport();
+  if(isClient()) S.report.entity=S.client;
+  const rp=S.report, en=ENTITIES.find(x=>x.id===rp.entity)||ENTITIES[0];
+  const sched=store.get('sched',[{id:'s1',entity:'lumiere',type:'Mensuel',to:'client@cafelumiere.fr',day:'1er du mois'}]);
+  v.innerHTML=`<div class="report-wrap">
+    <div class="report-side"><div class="card"><h3>Créer un rapport</h3><div class="sub">Mensuel, campagne, annuel ou dates libres</div>
+      <form class="form" onsubmit="event.preventDefault();S.report.generated=true;render()">
+        <div class="field"><label>Marque</label><select ${isClient()?'disabled':''} onchange="S.report.entity=this.value;S.report.camp=(ENTITIES.find(x=>x.id===this.value).campaigns[0]||{}).id||'';render()">${ENTITIES.map(x=>`<option value="${x.id}" ${x.id===rp.entity?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
+        <div class="field"><label>Langue du rapport</label><div class="seg" style="display:flex">${[['fr','🇫🇷 Français'],['en','🇬🇧 English']].map(([k,l])=>`<button type="button" style="flex:1" class="${(rp.lang||'fr')===k?'on':''}" onclick="S.report.lang='${k}';render()">${l}</button>`).join('')}</div></div>
+        <div class="field"><label>Type de rapport</label><div class="seg" style="display:flex">${[['month','Mois'],['campaign','Campagne'],['year','Année'],['custom','Dates']].map(([k,l])=>`<button type="button" style="flex:1" class="${rp.type===k?'on':''}" onclick="S.report.type='${k}';render()">${l}</button>`).join('')}</div></div>
+        ${rp.type==='month'?`<div class="field"><label>Mois</label><select onchange="S.report.month=this.value;render()">${monthsOptions().map(([k,l])=>`<option value="${k}" ${rp.month===k?'selected':''}>${l}</option>`).join('')}</select></div>`:''}
+        ${rp.type==='year'?`<div class="field"><label>Année</label><select onchange="S.report.year=this.value;render()">${['2026','2025'].map(y=>`<option ${rp.year===y?'selected':''}>${y}</option>`).join('')}</select></div>`:''}
+        ${rp.type==='campaign'?`<div class="field"><label>Campagne</label>${en.campaigns.length?`<select onchange="S.report.camp=this.value;render()">${en.campaigns.map(c=>`<option value="${c.id}" ${rp.camp===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select>`:'<span class="muted">Aucune campagne pour cette marque.</span>'}</div>`:''}
+        ${rp.type==='custom'?`<div class="row2"><div class="field"><label>Du</label><input type="date" min="${iso(0)}" max="${iso(T)}" value="${rp.s}" onchange="S.report.s=this.value;render()"></div><div class="field"><label>Au</label><input type="date" min="${iso(0)}" max="${iso(T)}" value="${rp.e}" onchange="S.report.e=this.value;render()"></div></div>`:''}
+        <div class="field"><label>Réseaux</label><div class="checks">${[...new Set(en.accounts.map(a=>a.net))].map(n=>`<label><input type="checkbox" ${rp.nets[n]!==false?'checked':''} onchange="S.report.nets['${n}']=this.checked;render()"> ${nb(n)} ${NETS[n].name}</label>`).join('')}</div></div>
+        <div class="field"><label>Sections</label><div class="checks">${SECTIONS.map(([k,l])=>`<label><input type="checkbox" ${rp.sections[k]?'checked':''} onchange="S.report.sections['${k}']=this.checked;render()"> ${l}</label>`).join('')}</div></div>
+        <label class="toggle"><input type="checkbox" ${rp.compare?'checked':''} onchange="S.report.compare=this.checked;render()"><span class="sw"></span>Comparer à la période précédente</label>
+        <button class="btn pri" style="justify-content:center">Générer le rapport</button>
+      </form></div>
+      ${isClient()?'':`<div class="card" style="margin-top:16px"><div class="card-h"><div><h3>Envois programmés</h3><div class="sub">Rapports envoyés automatiquement</div></div><button class="btn sm" onclick="openSchedule()">+ Programmer</button></div>
+        <div class="sched">${sched.map(s=>`<div class="it"><div><b>${esc((ENTITIES.find(x=>x.id===s.entity)||{}).name||s.entity)}</b> · ${esc(s.type)} · ${s.lang==='en'?'EN':'FR'}<div class="muted" style="font-size:12px">${esc(s.to)} · ${esc(s.day)}</div></div><button class="btn sm" onclick="delSched('${s.id}')" title="Supprimer">✕</button></div>`).join('')||'<div class="muted">Aucun envoi programmé.</div>'}</div></div>`}
+    </div>
+    <div id="reportDoc">${rp.generated?'':`<div class="card empty"><div style="font-size:34px;margin-bottom:8px">📄</div>Configurez le rapport à gauche puis cliquez sur <b>Générer le rapport</b>.</div>`}</div>
+  </div>`;
+  if(rp.generated) renderReport();
+}
+function renderReport(){ withLoc(S.report.lang,renderReportInner); }
+function renderReportInner(){
+  const rp=S.report, en=ENTITIES.find(x=>x.id===rp.entity); const rr=reportRange(rp); const box=document.getElementById('reportDoc');
+  const accs=en.accounts.filter(a=>rp.nets[a.net]!==false);
+  if(!rr||!accs.length){ box.innerHTML='<div class="card empty">Sélectionnez au moins un réseau et une période valide.</div>'; return; }
+  const pr=rp.compare?prevRange(rr):null; const m=metrics(accs,rr), p=pr&&metrics(accs,pr);
+  const {b:bk,mode}=buckets(rr); const labels=bk.map(b=>b.l); const ps=postsIn(accs,rr);
+  const top=[...ps].sort((a,b)=>b.er-a.er).slice(0,6);
+  const sec=rp.sections; let n=0; const H=t=>`<h4><span class="n">${++n}</span>${t}</h4>`;
+  const saveC=S.compare; S.compare=rp.compare;
+  const ins=insights(en,accs,rr,m,p,ps);
+  box.innerHTML=`<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;flex-wrap:wrap">
+      <span class="pill" style="margin-right:auto">${rp.lang==='en'?'🇬🇧 Rapport en anglais':'🇫🇷 Rapport en français'}</span>
+      <button class="btn sm" onclick="copyReportText()">Copier le résumé</button>
+      <button class="btn sm" onclick="copyReportCSV()">Copier les données (CSV)</button>
+      <button class="btn sm" onclick="openExportInfo()">Exporter en PDF / PowerPoint</button></div>
+    <div class="doc">
+    <div class="doc-cover"><div><div class="eyebrow">${rr.kind}</div><h2>${esc(en.name)} — ${esc(rr.label)}</h2>
+      <div class="muted">${periodLabel(rr)} · ${accs.map(a=>NETS[a.net].name+' '+a.handle).join(' · ')}${pr?`<br>${t('Comparé à :')} ${periodLabel(pr)}`:''}</div></div>
+      <div class="av" style="width:52px;height:52px;border-radius:12px;background:${en.color};color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px">${initials(en.name)}</div></div>
+    ${sec.summary?`<section>${H(t('Synthèse'))}${kpiTiles(m,p,['followers','gained','reach','impr','inter','er','posts','visits'])}</section>`:''}
+    ${sec.audience?`<section>${H(t("Évolution de l'audience"))}${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box sm"><canvas id="rFol"></canvas></div></section>`:''}
+    ${sec.reach?`<section>${H(t('Portée & vues'))}<div class="grid g2"><div><div class="sub">${t('Portée par')} ${t(mode)}</div>${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box sm"><canvas id="rReach"></canvas></div></div><div><div class="sub">${t('Vues par')} ${t(mode)}</div>${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box sm"><canvas id="rImpr"></canvas></div></div></div></section>`:''}
+    ${sec.engagement?`<section>${H(t('Engagement'))}${legend([["J'aime",'--c3'],['Commentaires','--c4'],['Partages','--c5'],['Enregistrements','--c7']].map(([l,c])=>[t(l),css(c)]))}<div class="chart-box sm"><canvas id="rInter"></canvas></div>
+      <div class="kpis" style="margin-top:14px">${[["J'aime / réactions",m.likes],['Commentaires',m.comments],['Partages',m.shares],['Enregistrements',m.saves]].map(([l,x])=>`<div class="kpi"><div class="l">${t(l)}</div><div class="v" style="font-size:20px">${fmt(x)}</div></div>`).join('')}</div></section>`:''}
+    ${sec.formats?`<section>${H(t('Performance par format'))}${formatTable(accs,ps)}</section>`:''}
+    ${sec.top?`<section>${H(t('Top publications'))}${postTable(top)}</section>`:''}
+    ${sec.insights?`<section>${H(t('Analyse & recommandations'))}<ul class="insights">${ins.map(t=>`<li><span class="ic">✓</span><span>${t}</span></li>`).join('')}</ul></section>`:''}
+    <div class="muted" style="font-size:11.5px;border-top:1px solid var(--line);padding-top:12px">${t('Rapport généré le')} ${new Date().toLocaleDateString(LOCALE[LOC],{day:'numeric',month:'long',year:'numeric'})} ${t('avec Orbit')} · ${t("Taux d'engagement = interactions ÷ portée (spectateurs uniques). Vues et spectateurs suivent les métriques Meta Graph API v25+.")}</div>
+  </div>`;
+  S.compare=saveC;
+  const opts=baseOpts({animation:false});
+  if(sec.audience) mkChart('rFol',{type:'line',data:{labels,datasets:accs.map(a=>lineDS(NETS[a.net].name,series([a],'followers',bk),css(NETS[a.net].color)))},options:baseOpts({animation:false,scales:{...opts.scales,y:{...opts.scales.y,beginAtZero:false}}})});
+  if(sec.reach){ mkChart('rReach',{type:'line',data:{labels,datasets:accs.map(a=>lineDS(NETS[a.net].name,series([a],'reach',bk),css(NETS[a.net].color)))},options:opts});
+    mkChart('rImpr',{type:'line',data:{labels,datasets:accs.map(a=>lineDS(NETS[a.net].name,series([a],'impr',bk),css(NETS[a.net].color)))},options:baseOpts({animation:false})}); }
+  if(sec.engagement) mkChart('rInter',{type:'bar',data:{labels,datasets:[['likes',"J'aime",'--c3'],['comments','Commentaires','--c4'],['shares','Partages','--c5'],['saves','Enregistrements','--c7']].map(([k,lb,c])=>barDS(t(lb),series(accs,k,bk),css(c)))},options:baseOpts({animation:false,scales:{x:{...opts.scales.x,stacked:true},y:{...opts.scales.y,stacked:true}}})});
+  S._lastReport={en,rr,pr,m,p,accs,ps,ins,lang:LOC};
+}
+function formatTable(accs,ps){
+  const rows=[]; accs.forEach(a=>TYPES[a.net].forEach(t=>{const pp=ps.filter(x=>x.acc===a.id&&x.type===t.k); if(!pp.length) return; const re=pp.reduce((s,x)=>s+x.reach,0), it=pp.reduce((s,x)=>s+x.inter,0); rows.push({a,t,n:pp.length,reach:re/pp.length,inter:it/pp.length,er:it/re});}));
+  rows.sort((a,b)=>b.er-a.er); if(!rows.length) return `<div class="empty">${t('Aucune publication.')}</div>`;
+  const mx=Math.max(...rows.map(r=>r.er));
+  return `<table><thead><tr>${['Format','Publications','Portée moy.','Interactions moy.',"Taux d'eng."].map(h=>`<th style="cursor:default">${t(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td><div class="acc-cell">${nb(r.a.net)} ${t(r.t.l)}</div></td><td>${r.n}</td><td>${fmt(r.reach)}</td><td>${fmt(r.inter)}</td><td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><div style="width:80px;height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${r.er/mx*100}%;background:${css(NETS[r.a.net].color)}"></div></div><b>${pct(r.er,2)}</b></div></td></tr>`).join('')}</tbody></table>`;
+}
+function insights(en,accs,r,m,p,ps){
+  const out=[]; const ch=(a,b)=>b?(a-b)/b:null; const sg=x=>(x>=0?'+':'')+pct(x,1); const E=LOC==='en';
+  out.push(E?`The community reaches <b>${fmt(m.followers)} followers</b> (${m.net>=0?'+':''}${fmt(m.net)} over the period, i.e. ${sg(m.growth)}).`
+            :`La communauté atteint <b>${fmt(m.followers)} abonnés</b> (${m.net>=0?'+':''}${fmt(m.net)} sur la période, soit ${sg(m.growth)}).`);
+  if(p){ const cr=ch(m.reach,p.reach), ci=ch(m.inter,p.inter);
+    out.push(E?`Reach ${cr>=0?'grew':'fell'} by <b>${sg(cr)}</b> and interactions ${ci>=0?'grew':'fell'} by <b>${sg(ci)}</b> compared with the previous period.`
+              :`La portée ${cr>=0?'progresse':'recule'} de <b>${sg(cr)}</b> et les interactions ${ci>=0?'progressent':'reculent'} de <b>${sg(ci)}</b> par rapport à la période précédente.`);
+    const de=(m.er-p.er)*100; out.push(E?`Engagement rate stands at <b>${pct(m.er,2)}</b> (${de>=0?'+':''}${num(de,2)} pt).`:`Le taux d'engagement s'établit à <b>${pct(m.er,2)}</b> (${de>=0?'+':''}${num(de,2)} pt).`); }
+  const byT={}; ps.forEach(x=>{const k=x.net+'|'+x.type; (byT[k]=byT[k]||{r:0,i:0,n:0,net:x.net,type:x.type}); byT[k].r+=x.reach; byT[k].i+=x.inter; byT[k].n++;});
+  const ts=Object.values(byT).filter(x=>x.n>=2).map(x=>({...x,er:x.i/x.r})).sort((a,b)=>b.er-a.er);
+  if(ts.length>1){ const f=ts[0], l=ts[ts.length-1];
+    out.push(E?`Most engaging format: <b>${NETS[f.net].name} ${typeLabel(f.type)}</b> (${pct(f.er,2)} engagement over ${f.n} posts), versus ${pct(l.er,2)} for ${NETS[l.net].name} ${typeLabel(l.type)}. Recommendation: increase the share of ${typeLabel(f.type).toLowerCase()}s in the content plan.`
+              :`Format le plus engageant : <b>${typeLabel(f.type)} ${NETS[f.net].name}</b> (${pct(f.er,2)} d'engagement sur ${f.n} publications), contre ${pct(l.er,2)} pour ${typeLabel(l.type)} ${NETS[l.net].name}. Recommandation : augmenter la part de ${typeLabel(f.type).toLowerCase()}s dans le planning.`); }
+  const best=[...ps].sort((a,b)=>b.er-a.er)[0];
+  if(best) out.push(E?`Best-performing post: “${esc(best.cap)}” (${NETS[best.net].name}, ${fd(best.day,{day:'numeric',month:'long'})}) with ${fmt(best.inter)} interactions and ${pct(best.er,2)} engagement.`
+                     :`Publication la plus performante : « ${esc(best.cap)} » (${NETS[best.net].name}, ${fd(best.day,{day:'numeric',month:'long'})}) avec ${fmt(best.inter)} interactions et ${pct(best.er,2)} d'engagement.`);
+  const days=E?['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']:['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  const bd={}; ps.forEach(x=>{const d=dayDate(x.day).getUTCDay(); (bd[d]=bd[d]||{r:0,i:0}); bd[d].r+=x.reach; bd[d].i+=x.inter;});
+  const bdl=Object.entries(bd).map(([d,v])=>({d,er:v.i/v.r})).sort((a,b)=>b.er-a.er);
+  if(bdl.length>2) out.push(E?`Posts published on <b>${days[bdl[0].d]}</b> get the best engagement; <b>${days[bdl[bdl.length-1].d]}</b> is the weakest day.`
+                             :`Les publications du <b>${days[bdl[0].d]}</b> obtiennent le meilleur engagement ; le <b>${days[bdl[bdl.length-1].d]}</b> est le jour le moins performant.`);
+  const perW=m.posts/(m.days/7);
+  out.push(E?`Posting frequency: <b>${num(perW,1)} posts / week</b>${perW<3?' — a steadier pace (3 to 5 per week) would help reach.':'.'}`
+            :`Rythme de publication : <b>${num(perW,1)} publications / semaine</b>${perW<3?' — un rythme plus soutenu (3 à 5 par semaine) aiderait la portée.':'.'}`);
+  return out;
+}
+function copyReportText(){
+  const L=S._lastReport; if(!L) return;
+  const txt=withLoc(L.lang,()=>`${L.en.name} — ${L.rr.kind} · ${L.rr.label}\n${t('Période')} : ${periodLabel(L.rr)}\n\n`+
+    [['Abonnés',`${fmt(L.m.followers)} (${L.m.net>=0?'+':''}${fmt(L.m.net)})`],['Portée',fmt(L.m.reach)],['Vues',fmt(L.m.impr)],['Interactions',fmt(L.m.inter)],["Taux d'engagement",pct(L.m.er,2)],['Publications',fmt(L.m.posts)]].map(([k,v])=>`${t(k)} : ${v}`).join('\n')+'\n\n'+
+    L.ins.map(x=>'• '+x.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"')).join('\n'));
+  copy(txt,L.lang==='en'?'Résumé (anglais) copié':'Résumé copié — prêt à coller dans un e-mail');
+}
+function copyReportCSV(){
+  const L=S._lastReport; if(!L) return; const E=L.lang==='en';
+  const head=E?'Date;Network;Followers;New;Lost;Reach;Views;Interactions;Likes;Comments;Shares;Saves;Posts;Profile visits;Clicks':'Date;Réseau;Abonnés;Nouveaux;Perdus;Portée;Vues;Interactions;J\'aime;Commentaires;Partages;Enregistrements;Publications;Visites profil;Clics';
+  const lines=[head];
+  for(let i=L.rr.s;i<=L.rr.e;i++) L.accs.forEach(a=>{const D=DATA[a.id]; lines.push([iso(i),NETS[a.net].name,D.followers[i],D.gained[i],D.lost[i],D.reach[i],D.impr[i],D.inter[i],D.likes[i],D.comments[i],D.shares[i],D.saves[i],D.posts[i],D.visits[i],D.clicks[i]].join(';'))});
+  copy(lines.join('\n'),'Données quotidiennes copiées (CSV)');
+}
+function openExportInfo(){ openModal(`<h3>Export PDF / PowerPoint</h3><p>Dans la version de production, ce bouton génère côté serveur un PDF ou un .pptx dans la langue choisie (${S.report&&S.report.lang==='en'?'anglais':'français'}), aux couleurs de la marque, et peut l'envoyer par e-mail au client. Le logo de l'agence pourra être ajouté plus tard.</p><p class="muted">Ce prototype tourne dans un environnement qui bloque les téléchargements : utilisez « Copier le résumé » ou « Copier les données (CSV) » en attendant.</p><div style="text-align:right"><button class="btn pri" onclick="closeModal()">Compris</button></div>`); }
+function openSchedule(){
+  openModal(`<h3>Programmer un envoi automatique</h3><form class="form" onsubmit="event.preventDefault();saveSched(this)">
+    <div class="field"><label>Marque</label><select name="entity">${ENTITIES.map(x=>`<option value="${x.id}" ${x.id===S.report.entity?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>Fréquence</label><select name="type"><option>Mensuel</option><option>Hebdomadaire</option><option>Trimestriel</option><option>Annuel</option></select></div>
+    <div class="field"><label>Destinataires</label><input type="text" name="to" required placeholder="client@exemple.fr, equipe@agence.fr"></div>
+    <div class="field"><label>Langue</label><select name="lang"><option value="fr">Français</option><option value="en">English</option></select></div>
+    <div class="field"><label>Jour d'envoi</label><select name="day"><option>1er du mois</option><option>Lundi matin</option><option>Fin de période</option></select></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" class="btn" onclick="closeModal()">Annuler</button><button class="btn pri">Programmer</button></div></form>`);
+}
+function saveSched(f){ const l=store.get('sched',[{id:'s1',entity:'lumiere',type:'Mensuel',to:'client@cafelumiere.fr',day:'1er du mois'}]); l.push({id:'s'+Date.now(),entity:f.entity.value,type:f.type.value,to:f.to.value,day:f.day.value,lang:f.lang.value}); store.set('sched',l); closeModal(); toast('Envoi programmé (simulation)'); render(); }
+function delSched(id){ store.set('sched',store.get('sched',[{id:'s1',entity:'lumiere',type:'Mensuel',to:'client@cafelumiere.fr',day:'1er du mois'}]).filter(s=>s.id!==id)); render(); }
+
+/* ============================== Comptes ============================== */
+function vAccounts(v){
+  v.innerHTML=`<div class="card"><div class="card-h"><div><h3>Comptes connectés</h3><div class="sub">Chaque marque regroupe ses comptes de différents réseaux.</div></div>
+    <div style="display:flex;gap:8px"><button class="btn" onclick="openAddBrand()">+ Nouvelle marque</button><button class="btn pri" onclick="openConnect()">+ Connecter un compte</button></div></div>
+    <div style="overflow:auto"><table><thead><tr><th style="cursor:default">Marque / compte</th><th style="cursor:default">Abonnés</th><th style="cursor:default">Statut</th><th style="cursor:default">Dernière synchro</th><th style="cursor:default">Autorisation</th></tr></thead><tbody>
+    ${ENTITIES.map(e=>`<tr class="grp"><td colspan="4"><div class="acc-cell"><div class="av" style="background:${e.color}">${initials(e.name)}</div>${esc(e.name)} <span class="muted" style="font-weight:400">· ${esc(e.sector)}</span></div></td><td><button class="btn sm" onclick="openClientAccess('${e.id}')">👤 Accès client (${clientCfg(e.id).users.length})</button></td></tr>
+      ${e.accounts.map((a,i)=>`<tr><td style="padding-left:44px"><div class="acc-cell">${nb(a.net)} ${esc(a.handle)}</div></td><td>${fmt(DATA[a.id].followers[T])}</td><td><span class="pill ${!LIVE.on&&i%5===3?'warn':'ok'}">${!LIVE.on&&i%5===3?'À renouveler':'Connecté'}</span></td><td class="muted">${LIVE.on?(a.loadedFrom<N?'chargé':'pas encore chargé'):'aujourd\'hui 06:00'}</td><td class="muted">${LIVE.on?'session en cours':(i%5===3?'expire dans 6 j':'valide 54 j')}</td></tr>`).join('')}
+      ${['tt','li','yt'].map(n=>`<tr><td style="padding-left:44px"><div class="acc-cell" style="opacity:.55">${nb(n)} <span class="muted">${NETS[n].name} — bientôt disponible</span></div></td><td></td><td></td><td></td><td></td></tr>`).join('')}`).join('')}
+    </tbody></table></div></div>`;
+}
+function openClientAccess(id){
+  const e=ENTITIES.find(x=>x.id===id), cfg=clientCfg(id);
+  openModal(`<h3>Accès client — ${esc(e.name)}</h3>
+  <p class="muted" style="margin:0">Vos clients se connectent à leur propre espace en <b>lecture seule</b> : ils ne voient que leur marque, ne peuvent ni connecter/déconnecter de compte, ni créer de campagne, ni programmer d'envoi. Ils peuvent générer et copier leurs rapports.</p>
+  <div class="field"><label>Personnes invitées</label><div class="sched">${cfg.users.map((u,i)=>`<div class="user-row"><div><b>${esc(u.name||u.email)}</b><div class="muted" style="font-size:12px">${esc(u.email)} · espace en ${u.lang==='en'?'anglais':'français'} · depuis le ${fd(idx(u.since))}</div></div><button class="btn sm" onclick="removeClientUser('${id}',${i})">Retirer</button></div>`).join('')||'<div class="muted">Personne n\'a encore accès.</div>'}</div></div>
+  <form class="form" onsubmit="event.preventDefault();addClientUser('${id}',this)" style="border-top:1px solid var(--line);padding-top:14px">
+    <div class="row2"><div class="field"><label>Nom</label><input type="text" name="name" placeholder="Ex. Marie Dupont"></div><div class="field"><label>E-mail</label><input type="text" name="email" required placeholder="client@exemple.fr"></div></div>
+    <div class="field"><label>Langue de l'espace et des rapports</label><select name="lang"><option value="fr">Français</option><option value="en">English</option></select></div>
+    <div style="text-align:right"><button class="btn">Envoyer l'invitation</button></div>
+  </form>
+  <div class="field"><label>Rubriques visibles par le client</label><div class="checks">${CLIENT_VIEWS.map(([k,l])=>`<label><input type="checkbox" ${cfg.views.includes(k)?'checked':''} onchange="toggleClientView('${id}','${k}',this.checked)"> ${l}</label>`).join('')}</div></div>
+  <div style="display:flex;justify-content:space-between;gap:8px"><button class="btn" onclick="closeModal()">Fermer</button><button class="btn pri" onclick="enterClient('${id}')">👁 Prévisualiser l'espace client</button></div>`);
+}
+function addClientUser(id,f){ const cfg=clientCfg(id); const email=f.email.value.trim(); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Adresse e-mail invalide'); return; }
+  cfg.users.push({email,name:f.name.value.trim(),lang:f.lang.value,since:iso(T)}); saveClientCfg(id,cfg); toast('Invitation enregistrée (simulation — aucun e-mail envoyé)'); openClientAccess(id); if(S.view==='accounts') render(); }
+function removeClientUser(id,i){ const cfg=clientCfg(id); cfg.users.splice(i,1); saveClientCfg(id,cfg); openClientAccess(id); if(S.view==='accounts') render(); }
+function toggleClientView(id,k,on){ const cfg=clientCfg(id); cfg.views=CLIENT_VIEWS.map(v=>v[0]).filter(v=>v===k?on:cfg.views.includes(v)); if(!cfg.views.length){ cfg.views=[k]; toast('Au moins une rubrique doit rester visible'); openClientAccess(id); } saveClientCfg(id,cfg); if(isClient()) render(); }
+function openConnect(){
+  openModal(`<h3>Connecter un compte</h3><p class="muted" style="margin:0">Choisissez le réseau. Facebook et Instagram passent par une seule connexion Meta (pages et comptes Instagram professionnels liés).</p>
+  <div class="net-tiles">${Object.entries(NETS).map(([k,n])=>`<div class="net-tile ${n.live?'':'dis'}" ${n.live?`onclick="openAddBrand('${k}')"`:''}>${nb(k)}<b>${n.name}</b><span>${n.live?(k==='ig'?'Compte professionnel / créateur':'Page Facebook'):'Bientôt disponible'}</span></div>`).join('')}</div>
+  <div style="text-align:right"><button class="btn" onclick="closeModal()">Fermer</button></div>`);
+}
+function openAddBrand(pre){
+  if(LIVE.on){ openModal(`<h3>Ajouter des Pages ou comptes Instagram</h3><p>Relancez la connexion Facebook et cochez les Pages supplémentaires dans « Modifier les paramètres ». Elles apparaîtront automatiquement comme nouvelles marques.</p><div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn" onclick="closeModal()">Annuler</button><button class="btn pri" onclick="closeModal();liveLogin()">Relancer la connexion Facebook</button></div>`); return; }
+  openModal(`<h3>Ajouter une marque</h3><p class="muted" style="margin:0">Simulation : en production, la connexion ouvre la fenêtre d'autorisation Meta, puis vous choisissez les pages et comptes à importer.</p>
+  <form class="form" onsubmit="event.preventDefault();saveBrand(this)">
+    <div class="field"><label>Nom de la marque</label><input type="text" name="name" required placeholder="Ex. Boulangerie Soleil"></div>
+    <div class="field"><label>Secteur</label><select name="theme"><option value="food">Restauration</option><option value="fashion">Mode & artisanat</option><option value="fitness">Sport & bien-être</option><option value="hotel">Hôtellerie & tourisme</option><option value="auto">Automobile</option></select></div>
+    <div class="field"><label>Comptes à connecter</label><div class="checks">
+      <label><input type="checkbox" name="ig" ${pre!=='fb'?'checked':''}> ${nb('ig')} Instagram</label>
+      <label><input type="checkbox" name="fb" ${pre!=='ig'?'checked':''}> ${nb('fb')} Facebook</label>
+      <label style="opacity:.5"><input type="checkbox" disabled> ${nb('tt')} TikTok (bientôt)</label>
+      <label style="opacity:.5"><input type="checkbox" disabled> ${nb('li')} LinkedIn (bientôt)</label>
+      <label style="opacity:.5"><input type="checkbox" disabled> ${nb('yt')} YouTube (bientôt)</label></div></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" class="btn" onclick="closeModal()">Annuler</button><button class="btn pri">Connecter via Meta</button></div>
+  </form>`);
+}
+function saveBrand(f){
+  const name=f.name.value.trim(); if(!name) return; if(!f.ig.checked&&!f.fb.checked){ toast('Choisissez au moins un compte'); return; }
+  const id='b'+Date.now().toString(36); const slug=name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'');
+  const r=rng(hashStr(id)); const colors=['#7c3aed','#b45309','#0e7490','#be123c','#15803d','#4338ca'];
+  const theme=f.theme.value; const sector=f.theme.options[f.theme.selectedIndex].text;
+  const accounts=[]; if(f.ig.checked) accounts.push({id:id+'-ig',net:'ig',handle:'@'+slug,base:Math.round(2000+r()*15000),growth:.001+r()*.0015,reach:.25+r()*.1,eng:.04+r()*.03,freq:3+r()*3});
+  if(f.fb.checked) accounts.push({id:id+'-fb',net:'fb',handle:name,base:Math.round(2000+r()*12000),growth:.0002+r()*.0006,reach:.12+r()*.08,eng:.02+r()*.015,freq:2+r()*2});
+  const b={id,name,sector,color:colors[Math.floor(r()*colors.length)],theme,accounts,campaigns:[]};
+  ENTITIES.push(b); b.accounts.forEach(a=>genAccount(b,a)); const ex=store.get('brands',[]); ex.push(b); store.set('brands',ex);
+  closeModal(); toast(`${name} connectée — historique importé`); go('analytics',id);
+}
+
+/* ============================== Modale ============================== */
+function openModal(html){ document.getElementById('modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`; const i=document.querySelector('.modal input[type=text]'); if(i) i.focus(); }
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+/* ============================== Démarrage ============================== */
+Chart.defaults.font.family='Inter, system-ui, sans-serif';
+function fromHash(){ const h=location.hash.slice(1); if(VIEWS.find(v=>v.id===h)&&h!==S.view){ S.view=h; render(); } }
+window.addEventListener('hashchange',fromHash);
+/* démarrage : voir le module LIVE ci-dessous */
+/* ============================== MODE LIVE : API Meta réelle ============================== */
+const ORBIT_CONFIG = { appId:'', configId:'', apiVersion:'v25.0' };
+const SCOPES = 'pages_show_list,pages_read_engagement,read_insights,instagram_basic,instagram_manage_insights,business_management';
+const LIVE = { on:false, user:null, diag:[], status:'', busy:false };
+function liveCfg(){ const c=store.get('meta',{}); return {appId:c.appId||ORBIT_CONFIG.appId, configId:c.configId||ORBIT_CONFIG.configId, apiVersion:c.apiVersion||ORBIT_CONFIG.apiVersion}; }
+function diag(kind, what, ok, msg){ LIVE.diag.unshift({t:new Date().toLocaleTimeString('fr-FR'), kind, what, ok, msg:String(msg||'').replace(/access_token=[^&\s]+/g,'access_token=…')}); if(LIVE.diag.length>600) LIVE.diag.pop(); }
+const ux = i => Math.floor((START + i*DAY)/1000);
+const dayOfEnd = t => Math.floor((Date.parse(t) - DAY - START)/DAY);
+const dayOfTs = t => Math.floor((Date.parse(t) - START)/DAY);
+const val = v => typeof v==='number' ? v : (v && typeof v==='object' ? Object.values(v).reduce((a,b)=>a+(typeof b==='number'?b:0),0) : 0);
+
+let sdkPromise=null;
+function loadSDK(){
+  if(sdkPromise) return sdkPromise;
+  sdkPromise = new Promise((res,rej)=>{
+    if(window.FB){ res(); return; }
+    const c=liveCfg();
+    window.fbAsyncInit=()=>{ FB.init({appId:c.appId, cookie:true, xfbml:false, version:c.apiVersion}); res(); };
+    const s=document.createElement('script'); s.src='https://connect.facebook.net/fr_FR/sdk.js'; s.async=true; s.crossOrigin='anonymous';
+    s.onerror=()=>{ sdkPromise=null; rej(new Error('Le SDK Facebook n\'a pas pu être chargé (bloqueur de publicités, réseau ?).')); };
+    document.head.appendChild(s);
+  });
+  return sdkPromise;
+}
+function api(path, params={}, method='GET'){
+  return new Promise((res,rej)=>{ FB.api(path, method, params, r=>{
+    if(!r) return rej(new Error('Réponse vide'));
+    if(r.error) return rej(Object.assign(new Error(r.error.message||'Erreur API'),{code:r.error.code}));
+    res(r); }); });
+}
+async function getUrl(url){ const r=await fetch(url); const j=await r.json(); if(j.error) throw Object.assign(new Error(j.error.message),{code:j.error.code}); return j; }
+async function batch(urls){
+  const out=[];
+  for(let i=0;i<urls.length;i+=50){
+    const chunk=urls.slice(i,i+50);
+    let r; try{ r=await api('/', {batch:JSON.stringify(chunk.map(u=>({method:'GET',relative_url:u}))), include_headers:false}, 'POST'); }
+    catch(err){ chunk.forEach(()=>out.push({ok:false,error:err.message})); continue; }
+    (Array.isArray(r)?r:[]).forEach(x=>{ if(!x){ out.push({ok:false,error:'délai dépassé'}); return; } let b={}; try{ b=JSON.parse(x.body); }catch(e){}
+      out.push(x.code===200?{ok:true,body:b}:{ok:false,error:(b.error&&b.error.message)||('HTTP '+x.code)}); });
+  }
+  return out;
+}
+function mkAcc(e,a){ a.ent=e.id; a.has={}; a.loadedFrom=N; a.mediaSeen=new Set(); a.mediaFrom=N; DATA[a.id]={}; KEYS.forEach(k=>DATA[a.id][k]=new Float64Array(N)); POSTS[a.id]=[]; return a; }
+
+/* ---------- Facebook ---------- */
+const FB_MET = [['followers','page_follows'],['gained','page_daily_follows_unique'],['lost','page_daily_unfollows_unique'],['reach','page_total_media_view_unique'],['impr','page_media_view'],['inter','page_post_engagements'],['visits','page_views_total']];
+const BAD = {};
+async function loadFbRange(acc,s,e){
+  const D=DATA[acc.id];
+  for(const [key,m] of FB_MET){
+    if(BAD['fb:'+m]) continue;
+    let total=0, failed=false;
+    for(let a=s;a<=e;a+=89){ const b=Math.min(e,a+88);
+      try{
+        const r=await api(`/${acc.ext}/insights`,{metric:m,period:'day',since:ux(a),until:ux(b+1),access_token:acc.token});
+        const ser=(r.data||[])[0]; (ser?ser.values:[]).forEach(v=>{ const i=dayOfEnd(v.end_time); if(i>=0&&i<N){ D[key][i]=val(v.value); total++; } });
+        acc.has[key]=true;
+      }catch(err){ failed=true; diag('Facebook',`${acc.handle} · ${m}`,false,err.message); if(err.code===100) BAD['fb:'+m]=true; if(err.code===190) throw err; break; }
+    }
+    if(!failed) diag('Facebook',`${acc.handle} · ${m}`,true,`${total} valeurs (${fd(s)} → ${fd(e)})`);
+  }
+}
+async function loadFbPosts(acc,s,e){
+  const base='id,message,created_time,permalink_url,full_picture,status_type,shares,reactions.summary(total_count).limit(0),comments.summary(total_count).limit(0)';
+  let fields = BAD['fbpost:ins'] ? base : base+',insights.metric(post_total_media_view_unique,post_media_view)';
+  let url=null, got=0;
+  while(true){
+    let r;
+    try{ r = url ? await getUrl(url) : await api(`/${acc.ext}/published_posts`,{fields,since:ux(s),until:ux(e+1),limit:50,access_token:acc.token}); }
+    catch(err){
+      if(err.code===190) throw err;
+      if(!url && fields!==base){ BAD['fbpost:ins']=true; diag('Facebook',`${acc.handle} · statistiques par publication`,false,err.message); fields=base; continue; }
+      diag('Facebook',`${acc.handle} · publications`,false,err.message); break;
+    }
+    (r.data||[]).forEach(p=>addFbPost(acc,p)); got+=(r.data||[]).length;
+    if(r.paging&&r.paging.next&&got<1500) url=r.paging.next; else break;
+  }
+  diag('Facebook',`${acc.handle} · publications`,true,`${got} publication(s)${BAD['fbpost:ins']?' (sans portée par publication)':''}`);
+}
+function addFbPost(acc,p){
+  if(acc.mediaSeen.has(p.id)) return; acc.mediaSeen.add(p.id);
+  const day=dayOfTs(p.created_time); if(day<0||day>T) return;
+  const likes=(p.reactions&&p.reactions.summary&&p.reactions.summary.total_count)||0, comments=(p.comments&&p.comments.summary&&p.comments.summary.total_count)||0, shares=(p.shares&&p.shares.count)||0;
+  let reach=0, views=0; ((p.insights&&p.insights.data)||[]).forEach(m=>{ const v=val(((m.values||[])[0]||{}).value); if(m.name==='post_total_media_view_unique') reach=v; if(m.name==='post_media_view') views=v; });
+  const st=p.status_type||''; const type=st.includes('video')?'video':st.includes('photo')?'photo':st==='shared_story'?'link':'status';
+  const inter=likes+comments+shares;
+  POSTS[acc.id].push({id:p.id,acc:acc.id,net:'fb',ent:acc.ent,day,hour:new Date(p.created_time).getHours(),type,cap:(p.message||'(publication sans texte)').slice(0,240),
+    reach,impr:views,likes,comments,shares,saves:0,inter,er:reach?inter/reach:(acc.followersNow?inter/acc.followersNow:0),video:0,camp:null,hue:hashStr(p.id)%360,img:p.full_picture||'',url:p.permalink_url||''});
+  const D=DATA[acc.id]; D.posts[day]++; D.likes[day]+=likes; D.comments[day]+=comments; D.shares[day]+=shares; if(!acc.has.inter) D.inter[day]+=inter;
+}
+
+/* ---------- Instagram ---------- */
+const IG_TOTALS = ['views','total_interactions','likes','comments','shares','saves','profile_views','profile_links_taps'];
+const IG_MAP = {views:'impr',total_interactions:'inter',likes:'likes',comments:'comments',shares:'shares',saves:'saves',profile_views:'visits',profile_links_taps:'clicks'};
+async function probeIg(acc){
+  if(acc.igValid) return;
+  acc.igValid=[]; const p={period:'day',metric_type:'total_value',since:ux(T-6),until:ux(T+1),access_token:acc.token};
+  for(const m of IG_TOTALS){
+    try{ await api(`/${acc.ext}/insights`,Object.assign({metric:m},p)); acc.igValid.push(m); }
+    catch(err){ if(err.code===190) throw err; diag('Instagram',`${acc.handle} · ${m}`,false,err.message); }
+  }
+  try{ await api(`/${acc.ext}/insights`,Object.assign({metric:'follows_and_unfollows',breakdown:'follow_type'},p)); acc.igFollows=true; }
+  catch(err){ acc.igFollows=false; diag('Instagram',`${acc.handle} · follows_and_unfollows`,false,err.message); }
+  diag('Instagram',`${acc.handle} · métriques disponibles`,true,acc.igValid.concat(acc.igFollows?['follows_and_unfollows']:[]).join(', ')||'aucune');
+}
+async function loadIgRange(acc,s,e){
+  await probeIg(acc); const D=DATA[acc.id];
+  let n=0, failed=false;
+  for(let a=s;a<=e;a+=29){ const b=Math.min(e,a+28);
+    try{ const r=await api(`/${acc.ext}/insights`,{metric:'reach',period:'day',since:ux(a),until:ux(b+1),access_token:acc.token});
+      (((r.data||[])[0])||{values:[]}).values.forEach(v=>{ const i=dayOfEnd(v.end_time); if(i>=0&&i<N){ D.reach[i]=val(v.value); n++; } }); acc.has.reach=true; }
+    catch(err){ if(err.code===190) throw err; failed=true; diag('Instagram',`${acc.handle} · reach quotidien`,false,err.message); break; }
+  }
+  if(!failed) diag('Instagram',`${acc.handle} · reach quotidien`,true,`${n} jours`);
+  const days=[]; for(let i=s;i<=e;i++) days.push(i);
+  if(acc.igValid.length){
+    const res=await batch(days.map(i=>`${acc.ext}/insights?metric=${acc.igValid.join(',')}&period=day&metric_type=total_value&since=${ux(i)}&until=${ux(i+1)}&access_token=${acc.token}`));
+    let ok=0, ko=0, last='';
+    res.forEach((x,k)=>{ const i=days[k]; if(!x.ok){ ko++; last=x.error; return; } ok++;
+      (x.body.data||[]).forEach(m=>{ const key=IG_MAP[m.name]; if(key){ D[key][i]=m.total_value?val(m.total_value.value):0; acc.has[key]=true; } }); });
+    diag('Instagram',`${acc.handle} · totaux quotidiens`,ko===0,`${ok} jour(s) OK${ko?` · ${ko} en erreur : ${last}`:''}`);
+  }
+  if(acc.igFollows){
+    const res=await batch(days.map(i=>`${acc.ext}/insights?metric=follows_and_unfollows&breakdown=follow_type&period=day&metric_type=total_value&since=${ux(i)}&until=${ux(i+1)}&access_token=${acc.token}`));
+    let ok=0;
+    res.forEach((x,k)=>{ if(!x.ok) return; ok++; const i=days[k];
+      const br=((((x.body.data||[])[0]||{}).total_value||{}).breakdowns||[])[0]; ((br&&br.results)||[]).forEach(r=>{ const t=(r.dimension_values||[])[0]; if(t==='FOLLOWER') D.gained[i]=r.value||0; else if(t==='NON_FOLLOWER') D.lost[i]=r.value||0; }); });
+    acc.has.gained=ok>0; diag('Instagram',`${acc.handle} · abonnements / désabonnements`,ok>0,`${ok} jour(s)`);
+  }
+  if(!acc.has.gained && e>=T-29){
+    try{ const r=await api(`/${acc.ext}/insights`,{metric:'follower_count',period:'day',since:ux(Math.max(s,T-29)),until:ux(e+1),access_token:acc.token});
+      (((r.data||[])[0])||{values:[]}).values.forEach(v=>{ const i=dayOfEnd(v.end_time); if(i>=0&&i<N) D.gained[i]=val(v.value); }); acc.has.gained=true; diag('Instagram',`${acc.handle} · follower_count`,true,'30 derniers jours'); }
+    catch(err){ diag('Instagram',`${acc.handle} · follower_count`,false,err.message); }
+  }
+}
+async function loadIgMedia(acc,s){
+  if(acc.mediaFrom<=s) return;
+  const fresh=[]; let url=null, stop=false, pages=0;
+  while(!stop && pages<40){ pages++;
+    let r; try{ r = url ? await getUrl(url) : await api(`/${acc.ext}/media`,{fields:'id,caption,media_type,media_product_type,timestamp,permalink,thumbnail_url,media_url,like_count,comments_count',limit:50,access_token:acc.token}); }
+    catch(err){ if(err.code===190) throw err; diag('Instagram',`${acc.handle} · publications`,false,err.message); break; }
+    for(const m of r.data||[]){ if(dayOfTs(m.timestamp)<s){ stop=true; break; } if(!acc.mediaSeen.has(m.id)){ acc.mediaSeen.add(m.id); fresh.push(m); } }
+    if(!stop && r.paging && r.paging.next) url=r.paging.next; else break;
+  }
+  acc.mediaFrom=s;
+  if(fresh.length && !acc.mediaValid){
+    acc.mediaValid=[];
+    for(const m of ['reach','views','saved','shares','total_interactions']){
+      try{ await api(`/${fresh[0].id}/insights`,{metric:m,access_token:acc.token}); acc.mediaValid.push(m); }
+      catch(err){ diag('Instagram',`${acc.handle} · statistique de publication « ${m} »`,false,err.message); }
+    }
+  }
+  const res = (acc.mediaValid&&acc.mediaValid.length) ? await batch(fresh.map(m=>`${m.id}/insights?metric=${acc.mediaValid.join(',')}&access_token=${acc.token}`)) : [];
+  let ko=0;
+  fresh.forEach((m,k)=>{ const ins={}; const x=res[k]; if(x&&x.ok) (x.body.data||[]).forEach(d=>{ ins[d.name]=d.total_value?val(d.total_value.value):val(((d.values||[])[0]||{}).value); }); else if(x) ko++; addIgPost(acc,m,ins); });
+  diag('Instagram',`${acc.handle} · publications`,true,`${fresh.length} publication(s)${ko?` · ${ko} sans statistiques`:''}`);
+}
+function addIgPost(acc,m,ins){
+  const day=dayOfTs(m.timestamp); if(day<0||day>T) return;
+  const type = (m.media_product_type==='REELS'||m.media_type==='VIDEO')?'reel':m.media_type==='CAROUSEL_ALBUM'?'carousel':'image';
+  const likes=m.like_count||0, comments=m.comments_count||0, saves=ins.saved||0, shares=ins.shares||0;
+  const inter=ins.total_interactions||(likes+comments+saves+shares), reach=ins.reach||0;
+  POSTS[acc.id].push({id:m.id,acc:acc.id,net:'ig',ent:acc.ent,day,hour:new Date(m.timestamp).getHours(),type,cap:(m.caption||'(sans légende)').slice(0,240),
+    reach,impr:ins.views||0,likes,comments,shares,saves,inter,er:reach?inter/reach:(acc.followersNow?inter/acc.followersNow:0),video:type==='reel'?(ins.views||0):0,camp:null,hue:hashStr(m.id)%360,img:m.thumbnail_url||m.media_url||'',url:m.permalink||''});
+  const D=DATA[acc.id]; D.posts[day]++;
+  if(!acc.has.likes){ D.likes[day]+=likes; D.comments[day]+=comments; D.saves[day]+=saves; D.shares[day]+=shares; }
+  if(!acc.has.inter) D.inter[day]+=inter;
+}
+function fixFollowers(a){
+  const D=DATA[a.id];
+  if(a.has.followers){ for(let i=1;i<N;i++) if(!D.followers[i]&&D.followers[i-1]) D.followers[i]=D.followers[i-1]; if(!D.followers[T]) D.followers[T]=a.followersNow||0; return; }
+  D.followers[T]=a.followersNow||0;
+  for(let i=T-1;i>=0;i--) D.followers[i]=Math.max(0,D.followers[i+1]-(D.gained[i+1]-D.lost[i+1]));
+}
+
+/* ---------- Audience ---------- */
+async function loadDemo(e){
+  if(e.demo!==undefined) return;
+  const ig=e.accounts.find(a=>a.net==='ig'); if(!ig){ e.demo=null; e.online=null; return; }
+  const get=async bd=>{ let last='';
+    for(const extra of [{},{timeframe:'this_month'},{timeframe:'last_90_days'}]){
+      try{ const r=await api(`/${ig.ext}/insights`,Object.assign({metric:'follower_demographics',period:'lifetime',metric_type:'total_value',breakdown:bd,access_token:ig.token},extra));
+        const b=((((r.data||[])[0]||{}).total_value||{}).breakdowns||[])[0]; diag('Instagram',`${ig.handle} · démographie (${bd})`,true,`${((b&&b.results)||[]).length} valeurs`); return (b&&b.results)||[]; }
+      catch(err){ last=err.message; }
+    }
+    diag('Instagram',`${ig.handle} · démographie (${bd})`,false,last); return null; };
+  e.demo={ag:await get('age,gender'), city:await get('city'), country:await get('country')};
+  try{ const r=await api(`/${ig.ext}/insights`,{metric:'online_followers',period:'lifetime',since:ux(T-6),until:ux(T+1),access_token:ig.token});
+    e.online=((r.data||[])[0]||{}).values||null; diag('Instagram',`${ig.handle} · abonnés en ligne`,!!(e.online&&e.online.length),e.online?`${e.online.length} jour(s)`:'vide'); }
+  catch(err){ e.online=null; diag('Instagram',`${ig.handle} · abonnés en ligne`,false,err.message); }
+}
+function liveDemo(e){
+  const d=e.demo; if(!d) return null; const out={};
+  if(d.ag&&d.ag.length){
+    const ages=[...new Set(d.ag.map(r=>r.dimension_values[0]))].sort();
+    const tot=d.ag.reduce((a,r)=>a+r.value,0)||1; const g=(age,sx)=>d.ag.filter(r=>r.dimension_values[0]===age&&r.dimension_values[1]===sx).reduce((a,r)=>a+r.value,0)/tot;
+    out.ages=ages; out.women=ages.map(a=>g(a,'F')); out.men=ages.map(a=>g(a,'M')); out.fShare=out.women.reduce((a,b)=>a+b,0); out.mShare=out.men.reduce((a,b)=>a+b,0);
+  }
+  const top=(rows,n,name)=>{ if(!rows||!rows.length) return null; const tot=rows.reduce((a,r)=>a+r.value,0)||1; return rows.map(r=>[name(r.dimension_values[0]),r.value/tot]).sort((a,b)=>b[1]-a[1]).slice(0,n); };
+  let dn=null; try{ dn=new Intl.DisplayNames(['fr'],{type:'region'}); }catch(err){}
+  out.cities=top(d.city,8,c=>c); out.countries=top(d.country,6,c=>{ try{ return dn?dn.of(c):c; }catch(err){ return c; } });
+  return out;
+}
+function heatLive(e){
+  const vals=Array.from({length:7},()=>Array(24).fill(0)), cnt=Array.from({length:7},()=>Array(24).fill(0));
+  if(e.online&&e.online.length&&e.online.some(v=>v.value&&Object.keys(v.value).length)){
+    e.online.forEach(v=>{ const row=(new Date(Date.parse(v.end_time)-DAY).getUTCDay()+6)%7; Object.entries(v.value||{}).forEach(([h,x])=>{ vals[row][+h]+=x; cnt[row][+h]++; }); });
+    vals.forEach((r,d)=>r.forEach((x,h)=>{ vals[d][h]=cnt[d][h]?x/cnt[d][h]:0; }));
+    const mx=Math.max(...vals.flat())||1; return {vals:vals.map(r=>r.map(x=>x/mx)), note:'Abonnés Instagram en ligne (7 derniers jours, heure du Pacifique selon Meta).'};
+  }
+  const ps=e.accounts.flatMap(a=>POSTS[a.id]||[]);
+  ps.forEach(p=>{ const row=(dayDate(p.day).getUTCDay()+6)%7; vals[row][p.hour]+=p.er; cnt[row][p.hour]++; });
+  vals.forEach((r,d)=>r.forEach((x,h)=>{ vals[d][h]=cnt[d][h]?x/cnt[d][h]:0; }));
+  const mx=Math.max(...vals.flat())||1;
+  return {vals:vals.map(r=>r.map(x=>x/mx)), note: ps.length?`Calculé à partir de l'engagement moyen de vos ${ps.length} publications chargées (Meta ne fournit pas les abonnés en ligne pour ce compte).`:'Pas encore assez de publications chargées.'};
+}
+
+/* ---------- Chargement à la demande ---------- */
+function neededLoads(){
+  if(!LIVE.on) return [];
+  let accs=[], r=null;
+  if(S.view==='overview'){ accs=allAccs(); r=R(); }
+  else if(ENTITY_VIEWS.includes(S.view)){ accs=accsOf(ent()); r=R(); }
+  else if(S.view==='reports'&&S.report&&S.report.generated){ const en=ENTITIES.find(x=>x.id===S.report.entity); const rr=en&&reportRange(S.report); if(rr){ accs=en.accounts.filter(a=>S.report.nets[a.net]!==false); r=rr; } }
+  if(!r) return [];
+  const pr=prevRange(r); let s0=Math.max(0,pr?pr.s:r.s);
+  if(S.view==='campaigns') ent().campaigns.forEach(c=>{ const a=clampI(idx(c.start)), b=clampI(idx(c.end)); s0=Math.min(s0,Math.max(0,a-(b-a+1))); });
+  return accs.filter(a=>a.loadedFrom>s0).map(a=>({a,s:s0}));
+}
+function loadingCard(){ return `<div class="card empty"><div class="spinner"></div><b>Chargement des statistiques depuis Meta…</b><div class="muted" id="loadStatus" style="margin-top:6px">${esc(LIVE.status)}</div><div class="muted" style="margin-top:10px;font-size:12px">La première fois, comptez quelques secondes par compte. Les périodes déjà chargées s'affichent ensuite instantanément.</div></div>`; }
+async function runLoads(list){
+  LIVE.busy=true;
+  try{
+    for(const {a,s} of list){
+      const e=a.loadedFrom-1; if(e<s) continue;
+      LIVE.status=`${NETS[a.net].name} · ${a.handle} · ${fd(s)} → ${fd(e)}`; const el=document.getElementById('loadStatus'); if(el) el.textContent=LIVE.status;
+      if(a.net==='fb'){ await loadFbRange(a,s,e); await loadFbPosts(a,s,e); } else { await loadIgRange(a,s,e); await loadIgMedia(a,s); }
+      a.loadedFrom=s; fixFollowers(a);
+    }
+    if(S.view==='audience') await loadDemo(ent());
+  }catch(err){
+    if(err.code===190){ LIVE.busy=false; toast('Session Facebook expirée : reconnectez-vous'); bootWelcome(); return; }
+    diag('Orbit','Chargement',false,err.message); toast('Erreur de chargement : voir Diagnostic API');
+  }
+  LIVE.busy=false; render();
+}
+
+/* ---------- Connexion ---------- */
+function liveLogin(){
+  const c=liveCfg(); if(!c.appId){ bootWelcome(); return; }
+  if(!window.FB){ toast('Le SDK Facebook se charge, réessayez dans une seconde'); loadSDK().catch(err=>toast(err.message)); return; }
+  const opts = c.configId ? {config_id:c.configId, response_type:'token', override_default_response_type:true} : {scope:SCOPES, return_scopes:true, auth_type:'rerequest'};
+  FB.login(resp=>{ if(resp&&resp.authResponse) afterLogin(); else toast('Connexion annulée'); }, opts);
+}
+async function afterLogin(){
+  bootMsg('Connexion réussie — récupération de vos pages et comptes Instagram…');
+  try{
+    const me=await api('/me',{fields:'id,name'}); LIVE.user=me;
+    let r=await api('/me/accounts',{fields:'id,name,access_token,category,followers_count,fan_count,instagram_business_account{id,username,followers_count,media_count}',limit:100});
+    let pages=(r.data||[]).slice(); let guard=0; while(r.paging&&r.paging.next&&guard++<10){ r=await getUrl(r.paging.next); pages=pages.concat(r.data||[]); }
+    diag('Meta','Pages accessibles',pages.length>0,`${pages.length} page(s) · utilisateur ${me.name}`);
+    if(!pages.length){ bootMsg(`Connecté en tant que <b>${esc(me.name)}</b>, mais aucune Page Facebook n'est accessible.<br><br>Dans la fenêtre de connexion Facebook, cliquez sur « Modifier les paramètres » et cochez les Pages (et comptes Instagram) à autoriser.<br><br><button class="btn pri" onclick="liveLogin()">Réessayer</button> <button class="btn" onclick="startDemo()">Voir la démo</button>`, true); return; }
+    const colors=['#2a78d6','#c2410c','#0f766e','#1d4ed8','#374151','#7c3aed','#b45309','#0e7490','#be123c','#15803d'];
+    Object.keys(DATA).forEach(k=>delete DATA[k]); Object.keys(POSTS).forEach(k=>delete POSTS[k]);
+    const camps=store.get('camps',{});
+    ENTITIES = pages.sort((a,b)=>a.name.localeCompare(b.name)).map((p,k)=>{
+      const e={id:'p'+p.id,name:p.name,sector:p.category||'Page Facebook',color:colors[k%colors.length],theme:'food',accounts:[],campaigns:(camps['p'+p.id]||[]).slice()};
+      e.accounts.push(mkAcc(e,{id:'fb-'+p.id,net:'fb',handle:p.name,ext:p.id,token:p.access_token,followersNow:p.followers_count||p.fan_count||0}));
+      const ig=p.instagram_business_account; if(ig) e.accounts.push(mkAcc(e,{id:'ig-'+ig.id,net:'ig',handle:'@'+ig.username,ext:ig.id,token:p.access_token,followersNow:ig.followers_count||0}));
+      return e; });
+    LIVE.on=true; store.set('mode','live'); S.client=null; S.entity=ENTITIES[0].id; S.period.key='30d'; S.report=null; S.nets={ig:true,fb:true,tt:false,li:false,yt:false};
+    document.getElementById('boot').style.display='none'; go('overview');
+  }catch(err){ diag('Meta','Connexion',false,err.message); bootMsg(`Erreur : ${esc(err.message)}<br><br><button class="btn pri" onclick="liveLogin()">Réessayer</button> <button class="btn" onclick="bootWelcome()">Retour</button>`, true); }
+}
+function liveLogout(){ try{ if(window.FB) FB.logout(()=>{}); }catch(e){} LIVE.on=false; store.set('mode',''); location.hash=''; location.reload(); }
+function liveRefresh(){ ENTITIES.forEach(e=>{ e.demo=undefined; e.online=undefined; e.accounts.forEach(a=>{ const ent0=ENTITIES.find(x=>x.id===a.ent); Object.assign(a,{has:{},loadedFrom:N,mediaSeen:new Set(),mediaFrom:N,igValid:undefined,mediaValid:undefined}); KEYS.forEach(k=>DATA[a.id][k].fill(0)); POSTS[a.id]=[]; }); }); toast('Données rechargées depuis Meta'); render(); }
+
+/* ---------- Écran d'accueil ---------- */
+function bootMsg(html, final){ const b=document.getElementById('boot'); b.style.display='grid'; b.innerHTML=`<div class="boot-card" style="max-width:520px;text-align:center">${final?'':'<div class="spinner"></div>'}<div>${html}</div></div>`; }
+function bootWelcome(){
+  const c=liveCfg(); const b=document.getElementById('boot'); b.style.display='grid';
+  b.innerHTML=`<div class="boot-wrap"><div class="logo" style="color:var(--ink);justify-content:center;font-size:22px"><div class="logo-mark"></div>Orbit</div>
+  <p class="muted" style="text-align:center;margin:6px 0 22px">Les statistiques Facebook et Instagram de toutes vos marques, en un clic.</p>
+  <div class="boot-grid">
+    <div class="boot-card"><h3>Connecter mes comptes</h3><p class="muted">Connexion Facebook : Orbit lit les statistiques des Pages et comptes Instagram professionnels que vous gérez. Lecture seule — rien n'est publié ni modifié, et aucun jeton n'est conservé après la fermeture de l'onglet.</p>
+      ${c.appId?`<button class="btn pri fb-btn" onclick="liveLogin()">Se connecter avec Facebook</button><div class="muted" style="font-size:12px;margin-top:10px">Application Meta ${esc(c.appId)} · <a href="#" onclick="event.preventDefault();openMetaConfig()">modifier</a></div>`
+      :`<form class="form" onsubmit="event.preventDefault();saveMetaConfig(this)"><div class="field"><label>Identifiant de l'application Meta (App ID)</label><input type="text" name="appId" required placeholder="ex. 123456789012345"></div><div class="field"><label>Configuration ID (Facebook Login for Business, optionnel)</label><input type="text" name="configId" placeholder="laisser vide si non utilisé"></div><button class="btn pri">Enregistrer</button></form>`}
+    </div>
+    <div class="boot-card"><h3>Explorer la démo</h3><p class="muted">5 marques fictives avec 2 ans de données simulées, pour découvrir toutes les fonctions (rapports FR/EN, espace client, campagnes…).</p><button class="btn" onclick="startDemo()">Ouvrir la démo</button></div>
+  </div></div>`;
+}
+function openMetaConfig(){ const c=liveCfg();
+  openModal(`<h3>Application Meta</h3><form class="form" onsubmit="event.preventDefault();saveMetaConfig(this);closeModal()">
+    <div class="field"><label>App ID</label><input type="text" name="appId" required value="${esc(c.appId)}"></div>
+    <div class="field"><label>Configuration ID (optionnel)</label><input type="text" name="configId" value="${esc(c.configId)}"></div>
+    <div class="field"><label>Version de l'API</label><input type="text" name="apiVersion" value="${esc(c.apiVersion)}"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" class="btn" onclick="closeModal()">Annuler</button><button class="btn pri">Enregistrer et recharger</button></div></form>`); }
+function saveMetaConfig(f){ const c=store.get('meta',{}); c.appId=f.appId.value.trim(); c.configId=f.configId.value.trim(); if(f.apiVersion) c.apiVersion=f.apiVersion.value.trim()||'v25.0'; store.set('meta',c); store.set('mode','live'); location.reload(); }
+function startDemo(){ store.set('mode','demo'); document.getElementById('boot').style.display='none'; LIVE.on=false; render(); }
+
+/* ---------- Vue Diagnostic ---------- */
+function vDiagnostic(v){
+  const c=liveCfg(); const ok=LIVE.diag.filter(d=>d.ok).length, ko=LIVE.diag.length-ok;
+  v.innerHTML=`<div class="kpis">
+    <div class="kpi"><div class="l">Utilisateur Facebook</div><div class="v" style="font-size:18px">${esc((LIVE.user||{}).name||'—')}</div></div>
+    <div class="kpi"><div class="l">Pages / comptes</div><div class="v">${ENTITIES.length} / ${ENTITIES.reduce((a,e)=>a+e.accounts.length,0)}</div></div>
+    <div class="kpi"><div class="l">Appels réussis</div><div class="v up">${ok}</div></div>
+    <div class="kpi"><div class="l">Appels en erreur</div><div class="v ${ko?'down':''}">${ko}</div></div></div>
+  <div class="card"><div class="card-h"><div><h3>Journal des appels à l'API Meta</h3><div class="sub">App ${esc(c.appId)} · API ${esc(c.apiVersion)} · les erreurs indiquent les métriques que Meta ne fournit pas pour ce compte ou cette version.</div></div>
+    <div style="display:flex;gap:8px"><button class="btn sm" onclick="copyDiag()">Copier le diagnostic</button><button class="btn sm" onclick="liveRefresh()">Recharger les données</button></div></div>
+    <div style="overflow:auto"><table><thead><tr><th style="cursor:default">Heure</th><th style="cursor:default;text-align:left">Source</th><th style="cursor:default;text-align:left">Appel</th><th style="cursor:default;text-align:left">Résultat</th></tr></thead><tbody>
+    ${LIVE.diag.map(d=>`<tr><td class="muted">${d.t}</td><td style="text-align:left">${esc(d.kind)}</td><td style="text-align:left;white-space:normal">${esc(d.what)}</td><td style="text-align:left;white-space:normal"><span class="${d.ok?'up':'down'}">${d.ok?'✓':'✕'}</span> ${esc(d.msg)}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Aucun appel pour l\'instant.</td></tr>'}
+    </tbody></table></div></div>`;
+}
+function copyDiag(){ copy(LIVE.diag.map(d=>`${d.t}\t${d.kind}\t${d.ok?'OK':'ERREUR'}\t${d.what}\t${d.msg}`).join('\n'),'Diagnostic copié'); }
+
+/* ---------- Démarrage ---------- */
+function boot(){
+  const h=location.hash.slice(1); if(VIEWS.find(v=>v.id===h)) S.view=h;
+  const mode=store.get('mode',''), c=liveCfg();
+  if(mode==='demo'){ render(); return; }
+  if(c.appId){
+    bootMsg('Connexion à Meta…');
+    loadSDK().then(()=>{ FB.getLoginStatus(r=>{ if(r&&r.status==='connected') afterLogin(); else bootWelcome(); }); })
+      .catch(err=>{ bootMsg(`${esc(err.message)}<br><br><button class="btn" onclick="startDemo()">Voir la démo</button>`, true); });
+    return;
+  }
+  bootWelcome();
+}
+boot();
+
+</script>
+</body>
+</html>
