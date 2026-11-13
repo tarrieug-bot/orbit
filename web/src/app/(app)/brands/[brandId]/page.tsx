@@ -122,7 +122,7 @@ export default async function BrandAnalyticsPage({ params, searchParams }: { par
 
       <KpiGrid totals={data.totals} previous={data.previous} series={data.series} color={brand.color} columns={5} keys={KPI_DEFINITIONS.map((d) => d.key)} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader title={t("analytics.followersEvolution")} description={t("analytics.followersEvolutionHelp", per)} />
           <CardContent>
@@ -195,7 +195,7 @@ export default async function BrandAnalyticsPage({ params, searchParams }: { par
         )}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Card className="overflow-hidden">
           <CardHeader
             title={t("analytics.topPosts")}

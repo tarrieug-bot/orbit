@@ -115,7 +115,7 @@ export async function ReportPreview({ config, brand, range, campaign }: { config
         {has("reach") && (
           <section>
             {heading(tr("sections.reach"))}
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div>
                 <p className="mb-2 text-[13px] font-medium text-ink-2">{tr("reachBy", { granularity: perLabel })}</p>
                 <MetricChart data={perAcc} series={accSeries("reach")} granularity={granularity} locale={lang} height={220} />

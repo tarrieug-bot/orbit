@@ -76,7 +76,7 @@ export default async function AudiencePage({ searchParams }: { searchParams: Pag
       {!ig ? (
         <EmptyState icon={<Users size={22} />} title={t("audience.noIgTitle")} description={t("audience.noData")} />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader
               title={t("audience.ageGender")}

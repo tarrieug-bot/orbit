@@ -85,7 +85,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pag
         <OverviewTable rows={rows} />
       </Card>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <Card>
           <CardHeader title={t("overview.reachByBrand")} description={t("overview.reachByBrandHelp")} />
           <CardContent>

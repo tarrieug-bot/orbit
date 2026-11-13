@@ -32,7 +32,7 @@ export default async function ClientsSettingsPage() {
         {t("settings.clients.readOnlyNote")}
       </p>
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         {brands.map((b) => {
           const clients = rows.filter((r) => r.brandId === b.id);
           return (

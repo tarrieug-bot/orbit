@@ -20,7 +20,7 @@ export function PageSkeleton({ hero = false, kpis = 8, charts = 2, grid = false 
           ))}
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {Array.from({ length: charts }, (_, i) => (
             <Skeleton key={i} className="h-80 rounded-card" />
           ))}

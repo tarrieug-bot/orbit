@@ -42,7 +42,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Page
   const filename = `${brand.slug}-${config.type}-${range?.from ?? today}`;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
       <div className="space-y-6 xl:sticky xl:top-24 xl:self-start">
         <ReportBuilder
           config={config}
