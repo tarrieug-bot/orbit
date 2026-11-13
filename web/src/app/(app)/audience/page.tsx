@@ -1,88 +1,154 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Users } from "lucide-react";
-import { Avatar, Card, CardContent, CardHeader, EmptyState } from "@/components/ui";
+import { Info, Users } from "lucide-react";
+import { BrandHero } from "@/components/views/brand-hero";
+import { BrandSwitcher } from "@/components/views/brand-switcher";
+import { MetricChart } from "@/components/views/charts";
+import { Heatmap } from "@/components/views/heatmap";
+import { KpiGrid } from "@/components/views/kpi-grid";
+import { filterQuery } from "@/components/views/page-header";
+import { PeriodNote } from "@/components/views/period-note";
+import { ShareBars } from "@/components/views/share-bars";
+import { Card, CardContent, CardHeader, EmptyState, NetworkIcon } from "@/components/ui";
 import { resolveBrandParam } from "@/lib/auth/guards";
-import { getAudience, type PageSearchParams } from "@/lib/db";
+import { getAudience, getBrandMetrics, getPageFilters, listBrands, type PageSearchParams } from "@/lib/db";
 import type { AppLocale } from "@/lib/db/types";
 import { formatPercent, INTL_LOCALE } from "@/lib/metrics";
 
-/** Audience (démographie Instagram). Point de départ — propriété : front. */
+export async function generateMetadata() {
+  const t = await getTranslations();
+  return { title: t("nav.audience") };
+}
+
+/** Audience (démographie Instagram, villes, pays, abonnés en ligne). */
 export default async function AudiencePage({ searchParams }: { searchParams: PageSearchParams }) {
-  const brand = await resolveBrandParam((await searchParams).brand, "audience");
+  const sp = await searchParams;
+  const brand = await resolveBrandParam(sp.brand, "audience");
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
-  const data = brand ? await getAudience(brand.id) : null;
-  if (!brand || !data) return <EmptyState icon={<Users size={22} />} title={t("audience.title")} description={t("audience.noData")} />;
+  if (!brand) return <EmptyState icon={<Users size={22} />} title={t("audience.title")} description={t("empty.noAccess")} />;
+
+  const filters = await getPageFilters(sp, brand.id);
+  const [data, metrics, brands] = await Promise.all([getAudience(brand.id), getBrandMetrics(brand.id, filters), listBrands()]);
+  const ig = brand.accounts.find((a) => a.network === "ig");
+  const hasFb = brand.accounts.some((a) => a.network === "fb");
+  const audienceBrands = brands.filter((b) => b.sections.includes("audience"));
 
   let regions: Intl.DisplayNames | null = null;
   try {
     regions = new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" });
-  } catch {}
-  const max = Math.max(...data.ageGender.map((r) => r.female + r.male), 0.0001);
+  } catch {
+    regions = null;
+  }
+  const hasDemo = !!data && data.ageGender.length > 0;
+  const unavailable = (msg: string) => (
+    <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-line-strong bg-surface-2/60 px-6 py-10 text-center text-sm text-ink-2">
+      <Info size={18} className="text-ink-3" aria-hidden />
+      {msg}
+    </div>
+  );
+  const days = t("common.weekdaysShort").split(",");
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      <Card className="lg:col-span-2">
-        <CardHeader title={t("audience.ageGender")} action={<Avatar src={data.account.avatarUrl} name={data.account.handle ?? ""} color={brand.color} size="sm" network="ig" />} />
-        <CardContent className="space-y-2.5">
-          {data.ageGender.map((r) => (
-            <div key={r.age} className="grid grid-cols-[56px_1fr] items-center gap-3 text-xs">
-              <span className="tabular font-medium text-ink-2">{r.age}</span>
-              <div className="flex h-5 overflow-hidden rounded-full bg-surface-2">
-                <div className="bg-[#EC4899]" style={{ width: `${(r.female / max) * 100}%` }} title={`${t("audience.women")} ${formatPercent(r.female, locale)}`} />
-                <div className="bg-orbit-500" style={{ width: `${(r.male / max) * 100}%` }} title={`${t("audience.men")} ${formatPercent(r.male, locale)}`} />
-              </div>
-            </div>
-          ))}
-          <p className="pt-2 text-xs text-ink-2">
-            <span className="mr-1 inline-block h-2 w-2 rounded-full bg-[#EC4899]" /> {t("audience.women")} {formatPercent(data.genderShares.female, locale)}
-            <span className="mr-1 ml-4 inline-block h-2 w-2 rounded-full bg-orbit-500" /> {t("audience.men")} {formatPercent(data.genderShares.male, locale)}
-          </p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader title={t("audience.cities")} />
-        <CardContent>
-          <ShareList items={data.cities.map((c) => ({ label: c.key.split(",")[0], share: c.share }))} locale={locale} />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader title={t("audience.countries")} />
-        <CardContent>
-          <ShareList items={data.countries.map((c) => ({ label: regions?.of(c.key) ?? c.key, share: c.share }))} locale={locale} />
-        </CardContent>
-      </Card>
-      {data.onlineHeatmap && (
-        <Card className="lg:col-span-2">
-          <CardHeader title={t("audience.online")} />
-          <CardContent>
-            <div className="grid grid-cols-[repeat(24,minmax(0,1fr))] gap-[3px]">
-              {data.onlineHeatmap.flatMap((row, d) =>
-                row.map((v, h) => <div key={`${d}-${h}`} className="aspect-square rounded-[3px]" style={{ background: `rgba(99,102,241,${0.06 + v * 0.94})` }} title={`${h} h`} />),
+    <div className="space-y-6">
+      <BrandSwitcher brands={audienceBrands} currentId={brand.id} label={t("common.brands")} hrefFor={(id) => `/audience${filterQuery(sp, { brand: id })}`} />
+      <BrandHero brand={brand} accounts={brand.accounts} locale={locale} followersLabel={t("kpi.followers.label").toLowerCase()} />
+
+      {metrics && (
+        <>
+          <PeriodNote range={metrics.range} previous={metrics.previousRange} />
+          <KpiGrid totals={metrics.totals} previous={metrics.previous} series={metrics.series} color={brand.color} keys={["followers", "followersGained", "profileVisits", "linkClicks"]} />
+        </>
+      )}
+
+      {hasFb && (
+        <p className="flex items-start gap-2.5 rounded-card border border-info/20 bg-info-soft/60 px-4 py-3 text-[13px] text-ink-2">
+          <NetworkIcon network="fb" size={16} className="mt-0.5" />
+          {t("audience.fbNote")}
+        </p>
+      )}
+
+      {!ig ? (
+        <EmptyState icon={<Users size={22} />} title={t("audience.noIgTitle")} description={t("audience.noData")} />
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card>
+            <CardHeader
+              title={t("audience.ageGender")}
+              description={
+                hasDemo
+                  ? t("audience.ageGenderHelp", { women: formatPercent(data.genderShares.female, locale, 0), men: formatPercent(data.genderShares.male, locale, 0) })
+                  : t("audience.igFollowers")
+              }
+              action={<NetworkIcon network="ig" size={18} />}
+            />
+            <CardContent>
+              {hasDemo ? (
+                <MetricChart
+                  type="bar"
+                  xKind="category"
+                  format="percent"
+                  locale={locale}
+                  data={data.ageGender.map((r) => ({ key: r.age, female: r.female, male: r.male }))}
+                  series={[
+                    { key: "female", label: t("audience.women"), color: "#EC4899" },
+                    { key: "male", label: t("audience.men"), color: "#4F46E5" },
+                  ]}
+                />
+              ) : (
+                unavailable(t("audience.demoUnavailable"))
               )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader title={t("audience.cities")} description={t("audience.shareOfFollowers")} />
+            <CardContent>
+              {data?.cities.length ? <ShareBars items={data.cities.map((c) => ({ label: c.key.split(",")[0], share: c.share }))} locale={locale} /> : unavailable(t("audience.demoUnavailable"))}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader title={t("audience.countries")} description={t("audience.shareOfFollowers")} />
+            <CardContent>
+              {data?.countries.length ? (
+                <ShareBars
+                  digits={0}
+                  items={data.countries.map((c) => ({
+                    label: regions?.of(c.key) ?? c.key,
+                    share: c.share,
+                    icon: <span aria-hidden className="text-base leading-none">{flag(c.key)}</span>,
+                  }))}
+                  locale={locale}
+                />
+              ) : (
+                unavailable(t("audience.demoUnavailable"))
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader title={t("audience.online")} description={t("audience.onlineHelp")} />
+            <CardContent>
+              {data?.onlineHeatmap ? (
+                <Heatmap
+                  values={data.onlineHeatmap}
+                  dayLabels={days}
+                  cellLabel={(d, h, v) => t("heatmap.cell", { day: d, from: h, to: h + 1, value: Math.round(v * 100) })}
+                  bestLabel={(d, h) => t("heatmap.best", { day: d, hour: h })}
+                  lessLabel={t("heatmap.less")}
+                  moreLabel={t("heatmap.more")}
+                  note={t("heatmap.noteOnline")}
+                />
+              ) : (
+                unavailable(t("audience.onlineUnavailable"))
+              )}
+            </CardContent>
+          </Card>
+          {data && <p className="text-xs text-ink-3 lg:col-span-2">{t("audience.snapshot", { date: new Date(`${data.date}T12:00:00Z`).toLocaleDateString(INTL_LOCALE[locale], { day: "numeric", month: "long", year: "numeric" }) })}</p>}
+        </div>
       )}
     </div>
   );
 }
 
-function ShareList({ items, locale }: { items: { label: string; share: number }[]; locale: AppLocale }) {
-  const max = Math.max(...items.map((i) => i.share), 0.0001);
-  return (
-    <ul className="space-y-2.5">
-      {items.map((i) => (
-        <li key={i.label} className="text-[13px]">
-          <div className="flex justify-between">
-            <span className="text-ink">{i.label}</span>
-            <span className="tabular text-ink-2">{formatPercent(i.share, locale)}</span>
-          </div>
-          <div className="mt-1 h-1.5 rounded-full bg-surface-2">
-            <div className="h-full rounded-full bg-orbit-gradient" style={{ width: `${(i.share / max) * 100}%` }} />
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
+/** Drapeau emoji d'un code pays ISO alpha-2. */
+function flag(code: string): string {
+  return /^[A-Z]{2}$/i.test(code) ? String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1a5 + c.charCodeAt(0))) : "🌐";
 }

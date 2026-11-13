@@ -23,7 +23,12 @@
     "accounts": "Accounts",
     "back": "Back",
     "weekdaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
-    "weekdaysLong": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
+    "weekdaysLong": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "retry": "Retry"
   },
   "nav": {
     "overview": "Overview",
@@ -237,7 +242,16 @@
     "cities": "Top cities",
     "countries": "Top countries",
     "online": "Followers online",
-    "noData": "Demographics are only available for Instagram professional accounts (Meta does not provide them for Facebook Pages)."
+    "noData": "Demographics are only available for Instagram professional accounts (Meta does not provide them for Facebook Pages).",
+    "fbNote": "Meta does not provide demographics for Facebook Pages: the breakdowns below are for Instagram followers.",
+    "noIgTitle": "No Instagram account for this brand",
+    "igFollowers": "Instagram followers",
+    "ageGenderHelp": "Instagram followers · {women} women, {men} men",
+    "shareOfFollowers": "Share of Instagram followers",
+    "onlineHelp": "Average activity by day and hour",
+    "demoUnavailable": "Not available — Meta only provides demographics for professional Instagram accounts with 100 followers or more.",
+    "onlineUnavailable": "Meta has not provided online followers for this account yet.",
+    "snapshot": "Audience data as of {date}."
   },
   "campaigns": {
     "title": "Campaigns",
@@ -247,6 +261,35 @@
       "upcoming": "Upcoming",
       "running": "Running",
       "finished": "Finished"
+    },
+    "listTitle": "{brand} campaigns",
+    "listHelp": "Each campaign is compared with the period of equal length just before it.",
+    "emptyHelp": "Create one to track its results and generate its report in one click.",
+    "days": "{days} d",
+    "upcomingHelp": "Upcoming campaign: results will appear once it starts.",
+    "analyze": "Analyse",
+    "report": "Report",
+    "edit": "Edit",
+    "editTitle": "Edit campaign",
+    "create": "Create campaign",
+    "delete": "Delete",
+    "deleteTitle": "Delete this campaign?",
+    "deleteHelp": "“{name}” will be deleted. Related posts are kept.",
+    "formHelp": "Campaign name, dates and keywords.",
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Summer sale",
+      "start": "Start",
+      "end": "End",
+      "hashtags": "Hashtags / keywords",
+      "hashtagsHint": "Separated by spaces (optional)",
+      "description": "Description (optional)",
+      "color": "Colour"
+    },
+    "errors": {
+      "forbidden": "Only the agency team can do this.",
+      "invalid": "Please check the form fields.",
+      "failed": "Saving failed. Please try again."
     }
   },
   "reports": {

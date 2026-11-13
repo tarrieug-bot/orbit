@@ -23,7 +23,12 @@
     "accounts": "Comptes",
     "back": "Retour",
     "weekdaysShort": "Lun,Mar,Mer,Jeu,Ven,Sam,Dim",
-    "weekdaysLong": "lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche"
+    "weekdaysLong": "lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "retry": "Réessayer"
   },
   "nav": {
     "overview": "Vue d'ensemble",
@@ -237,7 +242,16 @@
     "cities": "Villes principales",
     "countries": "Pays principaux",
     "online": "Abonnés en ligne",
-    "noData": "La démographie n'est disponible que pour les comptes Instagram professionnels (Meta ne la fournit pas pour les Pages Facebook)."
+    "noData": "La démographie n'est disponible que pour les comptes Instagram professionnels (Meta ne la fournit pas pour les Pages Facebook).",
+    "fbNote": "Meta ne fournit pas la démographie des Pages Facebook : les répartitions ci-dessous concernent les abonnés Instagram.",
+    "noIgTitle": "Aucun compte Instagram pour cette marque",
+    "igFollowers": "Abonnés Instagram",
+    "ageGenderHelp": "Abonnés Instagram · {women} femmes, {men} hommes",
+    "shareOfFollowers": "Part des abonnés Instagram",
+    "onlineHelp": "Activité moyenne par jour et par heure",
+    "demoUnavailable": "Non disponible — Meta ne fournit la démographie que pour les comptes Instagram professionnels de 100 abonnés ou plus.",
+    "onlineUnavailable": "Meta n'a pas encore fourni les abonnés en ligne pour ce compte.",
+    "snapshot": "Données d'audience au {date}."
   },
   "campaigns": {
     "title": "Campagnes",
@@ -247,6 +261,35 @@
       "upcoming": "À venir",
       "running": "En cours",
       "finished": "Terminée"
+    },
+    "listTitle": "Campagnes de {brand}",
+    "listHelp": "Chaque campagne est comparée à la période de même durée qui la précède.",
+    "emptyHelp": "Créez-en une pour suivre ses résultats et générer son rapport en un clic.",
+    "days": "{days} j",
+    "upcomingHelp": "Campagne à venir : les résultats apparaîtront dès son lancement.",
+    "analyze": "Analyser",
+    "report": "Rapport",
+    "edit": "Modifier",
+    "editTitle": "Modifier la campagne",
+    "create": "Créer la campagne",
+    "delete": "Supprimer",
+    "deleteTitle": "Supprimer la campagne ?",
+    "deleteHelp": "« {name} » sera supprimée. Les publications associées sont conservées.",
+    "formHelp": "Nom, dates et mots-clés de la campagne.",
+    "fields": {
+      "name": "Nom",
+      "namePlaceholder": "Ex. Soldes d'été",
+      "start": "Début",
+      "end": "Fin",
+      "hashtags": "Hashtags / mots-clés",
+      "hashtagsHint": "Séparés par des espaces (optionnel)",
+      "description": "Description (optionnel)",
+      "color": "Couleur"
+    },
+    "errors": {
+      "forbidden": "Action réservée à l'équipe de l'agence.",
+      "invalid": "Vérifiez les champs du formulaire.",
+      "failed": "L'enregistrement a échoué. Réessayez."
     }
   },
   "reports": {
