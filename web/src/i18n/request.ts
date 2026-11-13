@@ -8,7 +8,11 @@ import { getSessionUser } from "@/lib/db";
  * langue du profil (clients FR/EN), sinon français. Les rapports choisissent
  * leur langue explicitement : getTranslations({ locale: "en", namespace: "report" }).
  */
-export default getRequestConfig(async () => {
+export default getRequestConfig(async ({ locale: requested }) => {
+  // langue explicite : getTranslations({ locale: "en" }) (rapports, aperçu bilingue)
+  if (isLocale(requested)) {
+    return { locale: requested, messages: (await import(`../../messages/${requested}.json`)).default, timeZone: "America/Martinique" };
+  }
   const store = await cookies();
   let locale = store.get(LOCALE_COOKIE)?.value;
   if (!isLocale(locale)) {
