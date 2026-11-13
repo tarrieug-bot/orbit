@@ -6,6 +6,7 @@
 <title>Orbit — Statistiques réseaux sociaux</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
@@ -195,13 +196,34 @@ tr.grp:hover td{background:var(--surface-2)}
 .camp .k span{font-size:12px;color:var(--ink-3)}
 .camp .k b{font-size:15px}
 .spark{display:block}
+.nb{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;font-size:11px;color:#fff;flex:none}
+.nb.ig,.nb-dot.ig{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
+.nb.fb,.nb-dot.fb{background:#1877F2}.nb.tt,.nb-dot.tt{background:#111}.nb.li,.nb-dot.li{background:#0A66C2}.nb.yt,.nb-dot.yt{background:#FF0000}
+.seg button .nb{width:22px;height:22px}
+.av{display:inline-grid;place-items:center;color:#fff;font-weight:700;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.av-img{display:inline-block}
+.av-wrap{position:relative;display:inline-block;flex:none;line-height:0}
+.nb-dot{position:absolute;right:-3px;bottom:-3px;width:15px;height:15px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:8px;box-shadow:0 0 0 2px var(--surface)}
+.brand .nets .nb{width:18px;height:18px;font-size:10px;border-radius:5px}
+.hero{display:flex;align-items:center;gap:18px;padding:22px 24px;border-radius:16px;color:#fff;background:linear-gradient(120deg,var(--brand) 0%,color-mix(in srgb,var(--brand) 55%,#000) 100%);box-shadow:0 10px 30px -12px color-mix(in srgb,var(--brand) 60%,transparent);flex-wrap:wrap}
+.hero .av{box-shadow:0 0 0 3px rgba(255,255,255,.85)}
+.hero-txt{flex:1;min-width:180px}
+.hero-name{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.hero-sub{opacity:.8;font-size:13.5px}
+.hero-accs{display:flex;gap:12px;flex-wrap:wrap}
+.hero-acc{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.14);backdrop-filter:blur(6px);padding:8px 14px 8px 10px;border-radius:12px}
+.hero-acc .nb-dot{box-shadow:0 0 0 2px rgba(255,255,255,.9)}
+.ha-h{font-weight:600;font-size:13.5px}.ha-f{font-size:12.5px;opacity:.85}.ha-f b{font-weight:700}
+.kpi{transition:transform .15s,box-shadow .15s}.kpi:hover{transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(0,0,0,.18)}
+.card{box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.brand .av{border-radius:9px}
 .boot{position:fixed;inset:0;background:var(--bg);z-index:300;place-items:center;padding:24px;overflow:auto}
 .boot-wrap{width:min(860px,100%)}
 .boot-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .boot-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px}
 .boot-card h3{margin:0;font-size:17px}
 .boot-card p{margin:0;line-height:1.5}
-.fb-btn{background:#1877f2;border-color:#1877f2;justify-content:center;padding:11px 16px}
+.btn.pri.fb-btn{background:#1877f2;border-color:#1877f2;justify-content:center;padding:11px 16px;gap:10px}
 .fb-btn:hover{background:#166fe5}
 .spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:spin .8s linear infinite;margin:0 auto 14px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -292,7 +314,16 @@ const NETS = {
   li:{name:'LinkedIn',short:'in',color:'--s-li',live:false},
   yt:{name:'YouTube',short:'YT',color:'--s-yt',live:false},
 };
-const nb = n => `<span class="nb ${n}" title="${NETS[n].name}">${NETS[n].short}</span>`;
+const NET_ICON = {ig:'fa-instagram',fb:'fa-facebook-f',tt:'fa-tiktok',li:'fa-linkedin-in',yt:'fa-youtube'};
+const nb = n => `<span class="nb ${n}" title="${NETS[n].name}"><i class="fa-brands ${NET_ICON[n]}"></i></span>`;
+/* Avatars : photo de profil réelle si disponible, sinon initiales sur la couleur de la marque */
+function brandAv(e,size=28,radius){ const r=radius??Math.round(size*.28); const img=e.avatar||(e.accounts.find(a=>a.avatar)||{}).avatar;
+  return img?`<span class="av av-img" style="width:${size}px;height:${size}px;border-radius:${r}px;background:#ddd url('${esc(img)}') center/cover"></span>`
+            :`<span class="av" style="width:${size}px;height:${size}px;border-radius:${r}px;background:${e.color};font-size:${Math.round(size*.4)}px">${initials(e.name)}</span>`; }
+function accAv(a,size=26){ const e=ENTITIES.find(x=>x.id===a.ent)||{color:'#888',name:a.handle};
+  const inner=a.avatar?`<span class="av av-img" style="width:${size}px;height:${size}px;border-radius:50%;background:#ddd url('${esc(a.avatar)}') center/cover"></span>`
+                      :`<span class="av" style="width:${size}px;height:${size}px;border-radius:50%;background:${e.color};font-size:${Math.round(size*.38)}px">${initials(a.handle.replace('@',''))}</span>`;
+  return `<span class="av-wrap">${inner}<span class="nb-dot ${a.net}"><i class="fa-brands ${NET_ICON[a.net]}"></i></span></span>`; }
 const TYPES = {
   ig:[{k:'reel',l:'Reel',w:.35,m:1.7,e:1.1,v:1},{k:'carousel',l:'Carrousel',w:.3,m:1.0,e:1.35},{k:'image',l:'Photo',w:.35,m:.85,e:.9}],
   fb:[{k:'photo',l:'Photo',w:.45,m:1,e:1},{k:'video',l:'Vidéo',w:.25,m:1.35,e:1.1,v:1},{k:'link',l:'Lien',w:.2,m:.7,e:.55},{k:'status',l:'Statut',w:.1,m:.5,e:.8}]
@@ -544,7 +575,7 @@ function renderBrands(){
   document.getElementById('sideFoot').innerHTML=isClient()?'Espace client · lecture seule<br>Données mises à jour chaque jour à 06:00':LIVE.on?`Connecté à Meta : ${esc((LIVE.user||{}).name||'')}<br><a href="#" style="color:#d9d8d2" onclick="event.preventDefault();liveLogout()">Se déconnecter</a>`:'Démo — données simulées.<br><a href="#" style="color:#d9d8d2" onclick="event.preventDefault();bootWelcome()">Connecter mes vrais comptes →</a>';
   document.getElementById('brands').innerHTML = ENTITIES.filter(e=>isClient()?e.id===S.client:e.name.toLowerCase().includes(q)).map(e=>`
     <div class="brand ${ENTITY_VIEWS.includes(S.view)&&S.entity===e.id?'on':''}" onclick="go('${ENTITY_VIEWS.includes(S.view)?S.view:'analytics'}','${e.id}')" title="Ouvrir les statistiques de ${esc(e.name)}">
-      <div class="av" style="background:${e.color}">${initials(e.name)}</div><div class="nm">${esc(e.name)}</div>
+      ${brandAv(e,30)}<div class="nm">${esc(e.name)}</div>
       <div class="nets">${[...new Set(e.accounts.map(a=>a.net))].map(nb).join('')}</div></div>`).join('') || '<div style="padding:8px 10px;color:var(--side-mute);font-size:13px">Aucune marque</div>';
 }
 function renderClientBar(){
@@ -556,7 +587,7 @@ function renderClientBar(){
 function renderTop(){
   const e=ent(); const isEnt=ENTITY_VIEWS.includes(S.view);
   const title = S.view==='overview'?'Vue d\'ensemble':S.view==='reports'?'Rapports':S.view==='accounts'?'Comptes connectés':
-    `<span class="av" style="background:${e.color}">${initials(e.name)}</span>${esc(e.name)} <span class="muted" style="font-weight:500;font-size:14px">· ${VIEWS.find(v=>v.id===S.view).l}</span>`;
+    `${brandAv(e,34)}${esc(e.name)} <span class="muted" style="font-weight:500;font-size:14px">· ${VIEWS.find(v=>v.id===S.view).l}</span>`;
   const showPeriod = !['reports','accounts'].includes(S.view);
   const camps = isEnt?e.campaigns:[];
   const pk=S.period.key;
@@ -603,9 +634,9 @@ function vOverview(v){
     <div class="card"><div class="card-h"><div><h3>Toutes les marques</h3><div class="sub">Cliquez sur une ligne pour ouvrir ses statistiques détaillées. Tendance = portée quotidienne sur 30 jours.</div></div>
       <button class="btn sm" onclick="copyOverviewCSV()">Copier en CSV</button></div>
       <div style="overflow:auto"><table><thead><tr><th>Marque / compte</th>${cols.map(([k,l])=>`<th class="${sk.k===k?'sorted':''}" onclick="sortOv('${k}')">${l}${sk.k===k?(sk.dir<0?' ↓':' ↑'):''}</th>`).join('')}<th style="cursor:default">Tendance portée</th></tr></thead><tbody>
-      ${rows.map(x=>`<tr class="click grp" onclick="go('analytics','${x.e.id}')"><td><div class="acc-cell"><div class="av" style="background:${x.e.color}">${initials(x.e.name)}</div>${esc(x.e.name)} <span class="muted" style="font-weight:400">· ${esc(x.e.sector)}</span></div></td>
+      ${rows.map(x=>`<tr class="click grp" onclick="go('analytics','${x.e.id}')"><td><div class="acc-cell">${brandAv(x.e,30)}${esc(x.e.name)} <span class="muted" style="font-weight:400">· ${esc(x.e.sector)}</span></div></td>
           ${cols.map(([k])=>`<td>${cell(x.m,x.p,k)}${k==='reach'?' '+dcell(x.m,x.p):''}</td>`).join('')}<td>${sparkSVG(series(accsOf(x.e),'reach',bk),'#52514e')}</td></tr>
-        ${x.subs.map(s=>`<tr class="click" onclick="S.nets={ig:false,fb:false,tt:false,li:false,yt:false};S.nets['${s.a.net}']=true;go('analytics','${x.e.id}')"><td style="padding-left:44px"><div class="acc-cell">${nb(s.a.net)}<span class="muted">${esc(s.a.handle)}</span></div></td>
+        ${x.subs.map(s=>`<tr class="click" onclick="S.nets={ig:false,fb:false,tt:false,li:false,yt:false};S.nets['${s.a.net}']=true;go('analytics','${x.e.id}')"><td style="padding-left:44px"><div class="acc-cell">${accAv(s.a,24)}<span class="muted">${esc(s.a.handle)}</span></div></td>
           ${cols.map(([k])=>`<td class="muted">${cell(s.m,s.p,k)}${k==='reach'?' '+dcell(s.m,s.p):''}</td>`).join('')}<td>${sparkSVG(series([s.a],'reach',bk),css(NETS[s.a.net].color))}</td></tr>`).join('')}`).join('')}
       </tbody></table></div></div>
     <div class="grid g32">
@@ -635,7 +666,7 @@ function vAnalytics(v){
   const {b:bk,mode}=buckets(r);
   const ps=postsIn(accs,r);
   const top=[...ps].sort((a,b)=>b.er-a.er).slice(0,5);
-  v.innerHTML = `${periodHeader(r)}
+  v.innerHTML = `${brandHero(e,accs,r)}${periodHeader(r)}
     ${kpiTiles(m,p)}
     <div class="grid g2">
       <div class="card"><h3>Évolution des abonnés</h3><div class="sub">Total en fin de ${mode}</div>${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box"><canvas id="cFol"></canvas></div></div>
@@ -674,6 +705,13 @@ function vAnalytics(v){
   mkChart('cFmt',{type:'bar',data:{labels:fmts,datasets:accs.map(a=>barDS(NETS[a.net].name,fmts.map(fl=>{const pp=ps.filter(x=>x.acc===a.id&&typeLabel(x.type)===fl); if(!pp.length) return null; return fm==='er'?pp.reduce((t,x)=>t+x.inter,0)/pp.reduce((t,x)=>t+x.reach,0):pp.reduce((t,x)=>t+x[fm],0)/pp.length;}),css(NETS[a.net].color),{_fmt:v=>fm==='er'?pct(v,2):fmt(v)}))},
     options:baseOpts({interaction:{mode:'nearest',intersect:true},scales:{...baseOpts().scales,y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,callback:v=>fm==='er'?pct(v,0):fmtC(v)}}}})});
   bindHeat();
+}
+function brandHero(e,accs,r){
+  return `<div class="hero" style="--brand:${e.color}">
+    ${brandAv(e,72,20)}
+    <div class="hero-txt"><div class="hero-name">${esc(e.name)}</div><div class="hero-sub">${esc(e.sector)}</div></div>
+    <div class="hero-accs">${accs.map(a=>`<div class="hero-acc">${accAv(a,40)}<div><div class="ha-h">${esc(a.handle)}</div><div class="ha-f"><b>${fmtC(DATA[a.id].followers[r.e])}</b> abonnés</div></div></div>`).join('')}</div>
+  </div>`;
 }
 function postTable(list){
   if(!list.length) return `<div class="empty">${t('Aucune publication sur cette période.')}</div>`;
@@ -864,7 +902,7 @@ function renderReportInner(){
     <div class="doc">
     <div class="doc-cover"><div><div class="eyebrow">${rr.kind}</div><h2>${esc(en.name)} — ${esc(rr.label)}</h2>
       <div class="muted">${periodLabel(rr)} · ${accs.map(a=>NETS[a.net].name+' '+a.handle).join(' · ')}${pr?`<br>${t('Comparé à :')} ${periodLabel(pr)}`:''}</div></div>
-      <div class="av" style="width:52px;height:52px;border-radius:12px;background:${en.color};color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px">${initials(en.name)}</div></div>
+      ${brandAv(en,56,14)}</div>
     ${sec.summary?`<section>${H(t('Synthèse'))}${kpiTiles(m,p,['followers','gained','reach','impr','inter','er','posts','visits'])}</section>`:''}
     ${sec.audience?`<section>${H(t("Évolution de l'audience"))}${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box sm"><canvas id="rFol"></canvas></div></section>`:''}
     ${sec.reach?`<section>${H(t('Portée & vues'))}<div class="grid g2"><div><div class="sub">${t('Portée par')} ${t(mode)}</div>${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box sm"><canvas id="rReach"></canvas></div></div><div><div class="sub">${t('Vues par')} ${t(mode)}</div>${legend(accs.map(a=>[NETS[a.net].name,css(NETS[a.net].color)]))}<div class="chart-box sm"><canvas id="rImpr"></canvas></div></div></div></section>`:''}
@@ -947,8 +985,8 @@ function vAccounts(v){
   v.innerHTML=`<div class="card"><div class="card-h"><div><h3>Comptes connectés</h3><div class="sub">Chaque marque regroupe ses comptes de différents réseaux.</div></div>
     <div style="display:flex;gap:8px"><button class="btn" onclick="openAddBrand()">+ Nouvelle marque</button><button class="btn pri" onclick="openConnect()">+ Connecter un compte</button></div></div>
     <div style="overflow:auto"><table><thead><tr><th style="cursor:default">Marque / compte</th><th style="cursor:default">Abonnés</th><th style="cursor:default">Statut</th><th style="cursor:default">Dernière synchro</th><th style="cursor:default">Autorisation</th></tr></thead><tbody>
-    ${ENTITIES.map(e=>`<tr class="grp"><td colspan="4"><div class="acc-cell"><div class="av" style="background:${e.color}">${initials(e.name)}</div>${esc(e.name)} <span class="muted" style="font-weight:400">· ${esc(e.sector)}</span></div></td><td><button class="btn sm" onclick="openClientAccess('${e.id}')">👤 Accès client (${clientCfg(e.id).users.length})</button></td></tr>
-      ${e.accounts.map((a,i)=>`<tr><td style="padding-left:44px"><div class="acc-cell">${nb(a.net)} ${esc(a.handle)}</div></td><td>${fmt(DATA[a.id].followers[T])}</td><td><span class="pill ${!LIVE.on&&i%5===3?'warn':'ok'}">${!LIVE.on&&i%5===3?'À renouveler':'Connecté'}</span></td><td class="muted">${LIVE.on?(a.loadedFrom<N?'chargé':'pas encore chargé'):'aujourd\'hui 06:00'}</td><td class="muted">${LIVE.on?'session en cours':(i%5===3?'expire dans 6 j':'valide 54 j')}</td></tr>`).join('')}
+    ${ENTITIES.map(e=>`<tr class="grp"><td colspan="4"><div class="acc-cell">${brandAv(e,30)}${esc(e.name)} <span class="muted" style="font-weight:400">· ${esc(e.sector)}</span></div></td><td><button class="btn sm" onclick="openClientAccess('${e.id}')">👤 Accès client (${clientCfg(e.id).users.length})</button></td></tr>
+      ${e.accounts.map((a,i)=>`<tr><td style="padding-left:44px"><div class="acc-cell">${accAv(a,26)} ${esc(a.handle)}</div></td><td>${fmt(DATA[a.id].followers[T])}</td><td><span class="pill ${!LIVE.on&&i%5===3?'warn':'ok'}">${!LIVE.on&&i%5===3?'À renouveler':'Connecté'}</span></td><td class="muted">${LIVE.on?(a.loadedFrom<N?'chargé':'pas encore chargé'):'aujourd\'hui 06:00'}</td><td class="muted">${LIVE.on?'session en cours':(i%5===3?'expire dans 6 j':'valide 54 j')}</td></tr>`).join('')}
       ${['tt','li','yt'].map(n=>`<tr><td style="padding-left:44px"><div class="acc-cell" style="opacity:.55">${nb(n)} <span class="muted">${NETS[n].name} — bientôt disponible</span></div></td><td></td><td></td><td></td><td></td></tr>`).join('')}`).join('')}
     </tbody></table></div></div>`;
 }
@@ -1269,7 +1307,7 @@ async function afterLogin(){
   bootMsg('Connexion réussie — récupération de vos pages et comptes Instagram…');
   try{
     const me=await api('/me',{fields:'id,name'}); LIVE.user=me;
-    let r=await api('/me/accounts',{fields:'id,name,access_token,category,followers_count,fan_count,instagram_business_account{id,username,followers_count,media_count}',limit:100});
+    let r=await api('/me/accounts',{fields:'id,name,access_token,category,followers_count,fan_count,picture.type(large){url},instagram_business_account{id,username,followers_count,media_count,profile_picture_url}',limit:100});
     let pages=(r.data||[]).slice(); let guard=0; while(r.paging&&r.paging.next&&guard++<10){ r=await getUrl(r.paging.next); pages=pages.concat(r.data||[]); }
     diag('Meta','Pages accessibles',pages.length>0,`${pages.length} page(s) · utilisateur ${me.name}`);
     if(!pages.length){ bootMsg(`Connecté en tant que <b>${esc(me.name)}</b>, mais aucune Page Facebook n'est accessible.<br><br>Dans la fenêtre de connexion Facebook, cliquez sur « Modifier les paramètres » et cochez les Pages (et comptes Instagram) à autoriser.<br><br><button class="btn pri" onclick="liveLogin()">Réessayer</button> <button class="btn" onclick="startDemo()">Voir la démo</button>`, true); return; }
@@ -1277,9 +1315,10 @@ async function afterLogin(){
     Object.keys(DATA).forEach(k=>delete DATA[k]); Object.keys(POSTS).forEach(k=>delete POSTS[k]);
     const camps=store.get('camps',{});
     ENTITIES = pages.sort((a,b)=>a.name.localeCompare(b.name)).map((p,k)=>{
-      const e={id:'p'+p.id,name:p.name,sector:p.category||'Page Facebook',color:colors[k%colors.length],theme:'food',accounts:[],campaigns:(camps['p'+p.id]||[]).slice()};
-      e.accounts.push(mkAcc(e,{id:'fb-'+p.id,net:'fb',handle:p.name,ext:p.id,token:p.access_token,followersNow:p.followers_count||p.fan_count||0}));
-      const ig=p.instagram_business_account; if(ig) e.accounts.push(mkAcc(e,{id:'ig-'+ig.id,net:'ig',handle:'@'+ig.username,ext:ig.id,token:p.access_token,followersNow:ig.followers_count||0}));
+      const pic=(p.picture&&p.picture.data&&p.picture.data.url)||'';
+      const e={id:'p'+p.id,name:p.name,sector:p.category||'Page Facebook',color:colors[k%colors.length],theme:'food',avatar:pic,accounts:[],campaigns:(camps['p'+p.id]||[]).slice()};
+      e.accounts.push(mkAcc(e,{id:'fb-'+p.id,net:'fb',handle:p.name,ext:p.id,token:p.access_token,followersNow:p.followers_count||p.fan_count||0,avatar:pic}));
+      const ig=p.instagram_business_account; if(ig) e.accounts.push(mkAcc(e,{id:'ig-'+ig.id,net:'ig',handle:'@'+ig.username,ext:ig.id,token:p.access_token,followersNow:ig.followers_count||0,avatar:ig.profile_picture_url||''}));
       return e; });
     LIVE.on=true; store.set('mode','live'); S.client=null; S.entity=ENTITIES[0].id; S.period.key='30d'; S.report=null; S.nets={ig:true,fb:true,tt:false,li:false,yt:false};
     document.getElementById('boot').style.display='none'; go('overview');
@@ -1296,7 +1335,7 @@ function bootWelcome(){
   <p class="muted" style="text-align:center;margin:6px 0 22px">Les statistiques Facebook et Instagram de toutes vos marques, en un clic.</p>
   <div class="boot-grid">
     <div class="boot-card"><h3>Connecter mes comptes</h3><p class="muted">Connexion Facebook : Orbit lit les statistiques des Pages et comptes Instagram professionnels que vous gérez. Lecture seule — rien n'est publié ni modifié, et aucun jeton n'est conservé après la fermeture de l'onglet.</p>
-      ${c.appId?`<button class="btn pri fb-btn" onclick="liveLogin()">Se connecter avec Facebook</button><div class="muted" style="font-size:12px;margin-top:10px">Application Meta ${esc(c.appId)} · <a href="#" onclick="event.preventDefault();openMetaConfig()">modifier</a></div>`
+      ${c.appId?`<button class="btn pri fb-btn" onclick="liveLogin()"><i class="fa-brands fa-facebook"></i> Se connecter avec Facebook</button><div class="muted" style="font-size:12px;margin-top:10px">Application Meta ${esc(c.appId)} · <a href="#" onclick="event.preventDefault();openMetaConfig()">modifier</a></div>`
       :`<form class="form" onsubmit="event.preventDefault();saveMetaConfig(this)"><div class="field"><label>Identifiant de l'application Meta (App ID)</label><input type="text" name="appId" required placeholder="ex. 123456789012345"></div><div class="field"><label>Configuration ID (Facebook Login for Business, optionnel)</label><input type="text" name="configId" placeholder="laisser vide si non utilisé"></div><button class="btn pri">Enregistrer</button></form>`}
     </div>
     <div class="boot-card"><h3>Explorer la démo</h3><p class="muted">5 marques fictives avec 2 ans de données simulées, pour découvrir toutes les fonctions (rapports FR/EN, espace client, campagnes…).</p><button class="btn" onclick="startDemo()">Ouvrir la démo</button></div>
