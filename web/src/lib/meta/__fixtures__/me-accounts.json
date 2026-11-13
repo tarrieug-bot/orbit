@@ -1,0 +1,40 @@
+{
+  "data": [
+    {
+      "id": "1111",
+      "name": "Café Lumière",
+      "category": "Café",
+      "access_token": "PAGE_TOKEN_FAKE_1",
+      "followers_count": 1530,
+      "fan_count": 1490,
+      "picture": {
+        "data": {
+          "url": "https://scontent.xx.fbcdn.net/v/page1.jpg"
+        }
+      },
+      "instagram_business_account": {
+        "id": "2222",
+        "username": "cafelumiere",
+        "name": "Café Lumière",
+        "followers_count": 4820,
+        "profile_picture_url": "https://scontent.cdninstagram.com/v/ig1.jpg"
+      }
+    },
+    {
+      "id": "3333",
+      "name": "Atelier Mangrove",
+      "category": "Artisanat",
+      "access_token": "PAGE_TOKEN_FAKE_2",
+      "fan_count": 880,
+      "picture": {
+        "data": {
+          "url": "https://scontent.xx.fbcdn.net/v/page2.jpg"
+        }
+      }
+    },
+    {
+      "id": "4444",
+      "name": "Page sans jeton"
+    }
+  ]
+}
