@@ -32,8 +32,12 @@ export function SyncButton({ accountId, label }: { accountId: string; label: str
   };
 
   return (
-    <span className="inline-flex items-center gap-2">
-      <span aria-live="polite" className="text-xs">
+    <span className="ml-auto inline-flex flex-col items-end gap-1">
+      <Button size="sm" onClick={run} disabled={state === "busy"} aria-label={`${t("action")} — ${label}`}>
+        {state === "busy" ? <Loader2 size={14} className="animate-spin" aria-hidden /> : <RefreshCw size={14} aria-hidden />}
+        <span className="hidden sm:inline">{state === "busy" ? t("running") : t("action")}</span>
+      </Button>
+      <span aria-live="polite" className="max-w-56 text-right text-[11.5px] leading-tight">
         {state === "ok" && <span className="inline-flex items-center gap-1 text-positive"><Check size={13} aria-hidden />{t("done")}</span>}
         {state === "unavailable" && <span className="inline-flex items-center gap-1 text-ink-3"><TriangleAlert size={13} aria-hidden />{t("unavailable")}</span>}
         {state === "partial" && <span className="inline-flex items-center gap-1 text-warning"><TriangleAlert size={13} aria-hidden />{t("partial")}</span>}
@@ -41,10 +45,6 @@ export function SyncButton({ accountId, label }: { accountId: string; label: str
         {state === "reauth" && <span className="inline-flex items-center gap-1 text-negative"><TriangleAlert size={13} aria-hidden />{t("reauth")}</span>}
         {state === "error" && <span className="inline-flex items-center gap-1 text-negative"><TriangleAlert size={13} aria-hidden />{t("error")}</span>}
       </span>
-      <Button size="sm" onClick={run} disabled={state === "busy"} aria-label={`${t("action")} — ${label}`}>
-        {state === "busy" ? <Loader2 size={14} className="animate-spin" aria-hidden /> : <RefreshCw size={14} aria-hidden />}
-        <span className="hidden sm:inline">{state === "busy" ? t("running") : t("action")}</span>
-      </Button>
     </span>
   );
 }
