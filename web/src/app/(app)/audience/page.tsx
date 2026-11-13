@@ -88,6 +88,7 @@ export default async function AudiencePage({ searchParams }: { searchParams: Pag
                   xKind="category"
                   format="percent"
                   locale={locale}
+                  height={330}
                   data={data.ageGender.map((r) => ({ key: r.age, female: r.female, male: r.male }))}
                   series={[
                     { key: "female", label: t("audience.women"), color: "#EC4899" },
