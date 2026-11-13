@@ -313,7 +313,7 @@
   "settings": {
     "accounts": {
       "title": "Comptes connectés",
-      "connect": "Connecter des comptes Meta",
+      "connect": "Connecter Facebook / Instagram",
       "tokenExpires": "Jeton valable jusqu'au {date}",
       "status": {
         "pending": "En attente",
@@ -322,13 +322,116 @@
         "expired": "Expiré",
         "error": "Erreur",
         "disconnected": "Déconnecté"
+      },
+      "subtitle": "Chaque marque regroupe ses comptes de différents réseaux. La collecte est quotidienne (J−1).",
+      "empty": "Aucun compte connecté",
+      "emptyHelp": "Connectez vos Pages Facebook et comptes Instagram professionnels pour commencer.",
+      "clientAccess": "Accès clients",
+      "lastSync": "Dernière synchro : {date}",
+      "calls": "{ok}/{total} appels OK",
+      "daysLeft": "{days, plural, =0 {expire aujourd'hui} one {encore # jour} other {encore # jours}}",
+      "reauth": "Reconnexion requise : reconnectez ce compte via « Connecter Facebook / Instagram ».",
+      "sync": {
+        "action": "Synchroniser",
+        "running": "Synchro…",
+        "done": "Synchronisé",
+        "unavailable": "Indisponible pour l'instant",
+        "error": "Échec de la synchro",
+        "busy": "Synchro déjà en cours",
+        "reauth": "Reconnexion requise"
+      },
+      "callback": {
+        "connected": "{accounts, plural, one {# compte connecté} other {# comptes connectés}} ({brands, plural, one {# marque} other {# marques}}).",
+        "state": "La connexion a expiré ou a été interrompue. Recommencez.",
+        "cancelled": "Connexion annulée : aucune autorisation n'a été donnée.",
+        "no_pages": "Aucune Page Facebook ni compte Instagram professionnel trouvé sur ce compte Meta.",
+        "meta": "Meta a renvoyé une erreur. Réessayez dans quelques minutes.",
+        "demo": "Le mode démo ne permet pas de connecter de vrais comptes.",
+        "config": "L'application Meta n'est pas configurée sur ce serveur (variables META_*).",
+        "forbidden": "Seule l'équipe de l'agence peut connecter des comptes.",
+        "unknown": "La connexion n'a pas abouti."
       }
     },
     "clients": {
       "title": "Accès clients",
       "invite": "Inviter un client",
       "sections": "Rubriques visibles",
-      "lastSeen": "Dernière connexion"
+      "lastSeen": "Dernière connexion",
+      "subtitle": "Vos clients consultent leur marque en lecture seule, dans leur langue.",
+      "readOnlyNote": "Les clients ne voient que leur marque et les rubriques cochées. Ils ne peuvent ni connecter de compte, ni créer de campagne, ni programmer d'envoi ; ils peuvent générer et exporter leurs rapports.",
+      "count": "{count, plural, =0 {aucun client} one {# client} other {# clients}}",
+      "none": "Personne n'a encore accès à cette marque.",
+      "inviteTitle": "Inviter un client — {brand}",
+      "inviteHelp": "Un lien de connexion lui sera envoyé par e-mail.",
+      "name": "Nom",
+      "namePlaceholder": "Ex. Marie Dupont",
+      "email": "E-mail",
+      "language": "Langue de l'espace et des rapports",
+      "languageHint": "Interface, e-mails et rapports dans cette langue.",
+      "send": "Envoyer l'invitation",
+      "invited": "Invitation enregistrée pour {email}",
+      "invitedEmailed": "Un lien de connexion vient de lui être envoyé.",
+      "invitedDemo": "Mode démo : invitation simulée, aucun e-mail envoyé.",
+      "invitedExisting": "Ce compte existe déjà : l'accès à la marque lui a été ajouté.",
+      "lastSeenAt": "Dernière connexion : {date}",
+      "never": "jamais",
+      "saved": "Enregistré",
+      "remove": "Retirer l'accès",
+      "removeTitle": "Retirer l'accès ?",
+      "removeHelp": "{name} ne pourra plus consulter cette marque.",
+      "logTitle": "Journal des connexions clients",
+      "logHelp": "Dernières connexions des utilisateurs clients",
+      "logEmpty": "Aucune connexion enregistrée.",
+      "events": {
+        "login": "connexion",
+        "other": "activité"
+      },
+      "errors": {
+        "email": "Adresse e-mail invalide.",
+        "sections": "Cochez au moins une rubrique.",
+        "already_exists": "Ce client a déjà accès à cette marque.",
+        "invalid": "Cette adresse appartient à un membre de l'agence ou à une autre organisation.",
+        "invite_unavailable": "Invitations indisponibles : clé service Supabase non configurée.",
+        "forbidden": "Action réservée à l'équipe de l'agence.",
+        "failed": "L'invitation a échoué. Réessayez."
+      }
+    },
+    "diagnostic": {
+      "title": "Diagnostic",
+      "subtitle": "Journal de la collecte Meta : chaque appel, ses valeurs et ses erreurs. Les erreurs indiquent les métriques que Meta ne fournit pas pour un compte.",
+      "accounts": "Comptes suivis",
+      "runs": "Passages de collecte",
+      "okCalls": "Appels réussis",
+      "ofCalls": "sur {total} appels",
+      "errors": "Passages en erreur",
+      "journal": "Journal de collecte",
+      "journalHelp": "Cliquez sur une ligne pour voir le détail des appels",
+      "empty": "Aucune collecte pour l'instant",
+      "emptyHelp": "La première synchronisation a lieu à la connexion d'un compte, puis chaque matin.",
+      "global": "Toutes les marques",
+      "range": "Données du {from} au {to}",
+      "values": "{count, plural, one {# valeur} other {# valeurs}}",
+      "noCalls": "Aucun appel détaillé.",
+      "status": {
+        "success": "Réussie",
+        "partial": "Partielle",
+        "error": "Erreur",
+        "running": "En cours"
+      },
+      "kind": {
+        "daily": "Métriques du jour",
+        "posts": "Publications",
+        "audience": "Audience",
+        "backfill": "Historique",
+        "profile": "Profil",
+        "other": "Collecte"
+      },
+      "trigger": {
+        "cron": "automatique",
+        "manual": "manuelle",
+        "connect": "connexion",
+        "other": "autre"
+      }
     }
   },
   "login": {

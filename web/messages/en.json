@@ -313,7 +313,7 @@
   "settings": {
     "accounts": {
       "title": "Connected accounts",
-      "connect": "Connect Meta accounts",
+      "connect": "Connect Facebook / Instagram",
       "tokenExpires": "Token valid until {date}",
       "status": {
         "pending": "Pending",
@@ -322,13 +322,116 @@
         "expired": "Expired",
         "error": "Error",
         "disconnected": "Disconnected"
+      },
+      "subtitle": "Each brand groups its accounts across networks. Data is collected daily (D−1).",
+      "empty": "No connected account",
+      "emptyHelp": "Connect your Facebook Pages and professional Instagram accounts to get started.",
+      "clientAccess": "Client access",
+      "lastSync": "Last sync: {date}",
+      "calls": "{ok}/{total} calls OK",
+      "daysLeft": "{days, plural, =0 {expires today} one {# day left} other {# days left}}",
+      "reauth": "Reconnection required: reconnect this account with “Connect Facebook / Instagram”.",
+      "sync": {
+        "action": "Sync",
+        "running": "Syncing…",
+        "done": "Synced",
+        "unavailable": "Not available yet",
+        "error": "Sync failed",
+        "busy": "Sync already running",
+        "reauth": "Reconnection required"
+      },
+      "callback": {
+        "connected": "{accounts, plural, one {# account connected} other {# accounts connected}} ({brands, plural, one {# brand} other {# brands}}).",
+        "state": "The connection expired or was interrupted. Please start again.",
+        "cancelled": "Connection cancelled: no permission was granted.",
+        "no_pages": "No Facebook Page or professional Instagram account found on this Meta account.",
+        "meta": "Meta returned an error. Please try again in a few minutes.",
+        "demo": "Demo mode cannot connect real accounts.",
+        "config": "The Meta app is not configured on this server (META_* variables).",
+        "forbidden": "Only the agency team can connect accounts.",
+        "unknown": "The connection did not complete."
       }
     },
     "clients": {
       "title": "Client access",
       "invite": "Invite a client",
       "sections": "Visible sections",
-      "lastSeen": "Last sign-in"
+      "lastSeen": "Last sign-in",
+      "subtitle": "Your clients view their brand read-only, in their own language.",
+      "readOnlyNote": "Clients only see their brand and the checked sections. They cannot connect accounts, create campaigns or schedule sends; they can generate and export their reports.",
+      "count": "{count, plural, =0 {no client} one {# client} other {# clients}}",
+      "none": "Nobody has access to this brand yet.",
+      "inviteTitle": "Invite a client — {brand}",
+      "inviteHelp": "A sign-in link will be emailed to them.",
+      "name": "Name",
+      "namePlaceholder": "e.g. Marie Dupont",
+      "email": "Email",
+      "language": "Workspace and report language",
+      "languageHint": "Interface, emails and reports in this language.",
+      "send": "Send invitation",
+      "invited": "Invitation saved for {email}",
+      "invitedEmailed": "A sign-in link has just been sent.",
+      "invitedDemo": "Demo mode: simulated invitation, no email sent.",
+      "invitedExisting": "This account already exists: access to the brand has been added.",
+      "lastSeenAt": "Last sign-in: {date}",
+      "never": "never",
+      "saved": "Saved",
+      "remove": "Remove access",
+      "removeTitle": "Remove access?",
+      "removeHelp": "{name} will no longer be able to view this brand.",
+      "logTitle": "Client sign-in log",
+      "logHelp": "Latest sign-ins by client users",
+      "logEmpty": "No sign-in recorded.",
+      "events": {
+        "login": "sign-in",
+        "other": "activity"
+      },
+      "errors": {
+        "email": "Invalid email address.",
+        "sections": "Check at least one section.",
+        "already_exists": "This client already has access to this brand.",
+        "invalid": "This address belongs to an agency member or another organisation.",
+        "invite_unavailable": "Invitations unavailable: Supabase service key not configured.",
+        "forbidden": "Only the agency team can do this.",
+        "failed": "The invitation failed. Please try again."
+      }
+    },
+    "diagnostic": {
+      "title": "Diagnostics",
+      "subtitle": "Meta collection log: every call, its values and its errors. Errors show the metrics Meta does not provide for an account.",
+      "accounts": "Tracked accounts",
+      "runs": "Collection runs",
+      "okCalls": "Successful calls",
+      "ofCalls": "out of {total} calls",
+      "errors": "Failed runs",
+      "journal": "Collection log",
+      "journalHelp": "Click a row to see call details",
+      "empty": "No collection yet",
+      "emptyHelp": "The first sync happens when an account is connected, then every morning.",
+      "global": "All brands",
+      "range": "Data from {from} to {to}",
+      "values": "{count, plural, one {# value} other {# values}}",
+      "noCalls": "No detailed call.",
+      "status": {
+        "success": "Succeeded",
+        "partial": "Partial",
+        "error": "Error",
+        "running": "Running"
+      },
+      "kind": {
+        "daily": "Daily metrics",
+        "posts": "Posts",
+        "audience": "Audience",
+        "backfill": "History",
+        "profile": "Profile",
+        "other": "Collection"
+      },
+      "trigger": {
+        "cron": "automatic",
+        "manual": "manual",
+        "connect": "connection",
+        "other": "other"
+      }
     }
   },
   "login": {
