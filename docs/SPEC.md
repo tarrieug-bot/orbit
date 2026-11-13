@@ -57,7 +57,7 @@ Champ `organization.logo` et emplacement prévus en couverture et pied de page d
 ## 4. Intégrations réseaux
 ### Meta (V1)
 - Facebook Login for Business → Pages et comptes Instagram professionnels liés.
-- Permissions (App Review + vérification d'entreprise pour la mise en production) : `pages_show_list`, `pages_read_engagement`, `read_insights`, `instagram_basic`, `instagram_manage_insights`, `business_management`.
+- Permissions (App Review + vérification d'entreprise pour la mise en production) : `pages_show_list`, `pages_read_engagement`, `pages_read_user_content`, `read_insights`, `instagram_basic`, `instagram_manage_insights`, `business_management`.
 - **Métriques 2026** : Graph API v25 remplace la portée et les impressions Facebook par `page_total_media_view_unique` / `page_media_view` et `post_total_media_view_unique` / `post_media_view` ; côté Instagram, `impressions` est remplacé par `views`. Couche de correspondance obligatoire entre nos métriques et celles de chaque API, versionnée par réseau.
 - Démographie des Pages Facebook indisponible via l'API : démographie Instagram uniquement.
 - La version d'essai (`index.html`, page Diagnostic API) sert à vérifier la disponibilité réelle de chaque métrique sur nos comptes.

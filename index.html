@@ -1013,7 +1013,7 @@ window.addEventListener('hashchange',fromHash);
 /* démarrage : voir le module LIVE ci-dessous */
 /* ============================== MODE LIVE : API Meta réelle ============================== */
 const ORBIT_CONFIG = { appId:'1452532180348433', configId:'1043988088713323', apiVersion:'v25.0' };
-const SCOPES = 'pages_show_list,pages_read_engagement,read_insights,instagram_basic,instagram_manage_insights,business_management';
+const SCOPES = 'pages_show_list,pages_read_engagement,pages_read_user_content,read_insights,instagram_basic,instagram_manage_insights,business_management';
 const LIVE = { on:false, user:null, diag:[], status:'', busy:false };
 function liveCfg(){ const c=store.get('meta',{}); return {appId:c.appId||ORBIT_CONFIG.appId, configId:c.configId||ORBIT_CONFIG.configId, apiVersion:c.apiVersion||ORBIT_CONFIG.apiVersion}; }
 function diag(kind, what, ok, msg){ LIVE.diag.unshift({t:new Date().toLocaleTimeString('fr-FR'), kind, what, ok, msg:String(msg||'').replace(/access_token=[^&\s]+/g,'access_token=…')}); if(LIVE.diag.length>600) LIVE.diag.pop(); }
