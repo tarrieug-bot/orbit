@@ -1,0 +1,189 @@
+{
+  "app": {
+    "name": "Orbit",
+    "tagline": "Statistiques Facebook & Instagram de vos marques"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "searchBrands": "Rechercher une marque",
+    "noBrand": "Aucune marque",
+    "compare": "Comparer",
+    "vsPrevious": "vs {value}",
+    "noComparison": "pas de période de comparaison",
+    "comingSoon": "bientôt",
+    "readOnly": "Lecture seule",
+    "signOut": "Se déconnecter",
+    "export": "Exporter",
+    "seeAll": "Tout voir",
+    "unavailable": "Indisponible",
+    "lastSync": "Dernière synchro {date}",
+    "demoMode": "Mode démo — données fictives",
+    "brands": "Marques",
+    "accounts": "Comptes",
+    "back": "Retour"
+  },
+  "nav": {
+    "overview": "Vue d'ensemble",
+    "analytics": "Analytics",
+    "posts": "Publications",
+    "audience": "Audience",
+    "campaigns": "Campagnes",
+    "reports": "Rapports",
+    "settings": "Réglages",
+    "accounts": "Comptes connectés",
+    "clients": "Accès clients"
+  },
+  "network": {
+    "ig": "Instagram",
+    "fb": "Facebook",
+    "tt": "TikTok",
+    "li": "LinkedIn",
+    "yt": "YouTube",
+    "filter": "Réseaux"
+  },
+  "period": {
+    "label": "Période",
+    "campaigns": "Campagnes",
+    "from": "Du",
+    "to": "au",
+    "summary": "Période : {range} ({days} j)",
+    "comparedTo": "comparée à {range}",
+    "presets": {
+      "7d": "7 derniers jours",
+      "30d": "30 derniers jours",
+      "90d": "90 derniers jours",
+      "month": "Ce mois-ci",
+      "lastmonth": "Mois dernier",
+      "year": "Cette année",
+      "lastyear": "Année précédente",
+      "custom": "Dates personnalisées",
+      "campaign": "Campagne"
+    },
+    "granularity": {
+      "day": "par jour",
+      "week": "par semaine",
+      "month": "par mois"
+    }
+  },
+  "kpi": {
+    "followers": { "label": "Abonnés", "help": "Abonnés en fin de période" },
+    "followersNet": { "label": "Évolution abonnés", "help": "Abonnés fin de période − abonnés la veille du début" },
+    "followersGained": { "label": "Nouveaux abonnés", "help": "Abonnements sur la période" },
+    "followersLost": { "label": "Désabonnements", "help": "Désabonnements sur la période" },
+    "reach": { "label": "Portée", "help": "Comptes uniques ayant vu vos contenus" },
+    "views": { "label": "Vues", "help": "Nombre total d'affichages" },
+    "interactions": { "label": "Interactions", "help": "J'aime, commentaires, partages et enregistrements" },
+    "engagementRate": { "label": "Taux d'engagement", "help": "Interactions ÷ portée" },
+    "posts": { "label": "Publications", "help": "Publications sur la période" },
+    "profileVisits": { "label": "Visites du profil", "help": "Visites de la Page ou du profil" },
+    "linkClicks": { "label": "Clics vers le site", "help": "Clics sur le lien du profil" },
+    "likes": { "label": "J'aime", "help": "" },
+    "comments": { "label": "Commentaires", "help": "" },
+    "shares": { "label": "Partages", "help": "" },
+    "saves": { "label": "Enregistrements", "help": "" },
+    "videoViews": { "label": "Vues vidéo", "help": "" },
+    "overPeriod": "sur la période"
+  },
+  "format": {
+    "image": "Image",
+    "carousel": "Carrousel",
+    "reel": "Reel",
+    "video": "Vidéo",
+    "story": "Story",
+    "link": "Lien",
+    "status": "Statut"
+  },
+  "alerts": {
+    "title": "Points d'attention",
+    "none": "Rien à signaler sur la période.",
+    "followers_loss": "{network} perd des abonnés ({net} sur la période)",
+    "engagement_drop": "{network} : taux d'engagement en baisse ({current} vs {previous})",
+    "reach_spike": "{network} : portée en forte hausse ({ratio})",
+    "inactive": "{network} : aucune publication depuis {days} jours"
+  },
+  "overview": {
+    "title": "Vue d'ensemble",
+    "allBrands": "Toutes les marques",
+    "allBrandsHelp": "Cliquez sur une ligne pour ouvrir les statistiques détaillées. Tendance = portée quotidienne sur 30 jours.",
+    "brandAccount": "Marque / compte",
+    "reachTrend": "Tendance portée"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "followersEvolution": "Évolution des abonnés",
+    "reachViews": "Portée et vues",
+    "interactionsByType": "Interactions par type",
+    "byNetwork": "Par réseau"
+  },
+  "posts": {
+    "title": "Publications",
+    "empty": "Aucune publication sur la période.",
+    "date": "Date",
+    "format": "Format",
+    "allFormats": "Tous les formats",
+    "exportCsv": "Exporter en CSV",
+    "sort": "Trier par"
+  },
+  "audience": {
+    "title": "Audience",
+    "ageGender": "Âge et genre",
+    "women": "Femmes",
+    "men": "Hommes",
+    "cities": "Villes principales",
+    "countries": "Pays principaux",
+    "online": "Abonnés en ligne",
+    "noData": "La démographie n'est disponible que pour les comptes Instagram professionnels (Meta ne la fournit pas pour les Pages Facebook)."
+  },
+  "campaigns": {
+    "title": "Campagnes",
+    "new": "Nouvelle campagne",
+    "empty": "Aucune campagne pour cette marque.",
+    "status": { "upcoming": "À venir", "running": "En cours", "finished": "Terminée" }
+  },
+  "reports": {
+    "title": "Rapports",
+    "empty": "Générez un rapport mensuel, de campagne, annuel ou sur des dates libres.",
+    "language": "Langue du rapport",
+    "schedules": "Envois programmés"
+  },
+  "settings": {
+    "accounts": {
+      "title": "Comptes connectés",
+      "connect": "Connecter des comptes Meta",
+      "tokenExpires": "Jeton valable jusqu'au {date}",
+      "status": {
+        "pending": "En attente",
+        "active": "Actif",
+        "expiring": "Expire bientôt",
+        "expired": "Expiré",
+        "error": "Erreur",
+        "disconnected": "Déconnecté"
+      }
+    },
+    "clients": {
+      "title": "Accès clients",
+      "invite": "Inviter un client",
+      "sections": "Rubriques visibles",
+      "lastSeen": "Dernière connexion"
+    }
+  },
+  "login": {
+    "title": "Connexion à Orbit",
+    "subtitle": "Recevez un lien de connexion par e-mail.",
+    "email": "Adresse e-mail",
+    "submit": "Recevoir le lien",
+    "sent": "Si un compte existe pour {email}, un lien de connexion vient d'être envoyé.",
+    "invalidEmail": "Adresse e-mail invalide.",
+    "sendFailed": "L'envoi a échoué, réessayez dans un instant.",
+    "linkError": "Ce lien a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
+    "demoTitle": "Mode démo",
+    "demoSubtitle": "Aucune base configurée : choisissez un profil fictif.",
+    "role": { "admin": "Administrateur", "manager": "Équipe agence", "client": "Client (lecture seule)" }
+  },
+  "empty": {
+    "underConstruction": "Cette vue arrive bientôt",
+    "underConstructionHelp": "Le socle est en place : les données de démonstration sont déjà disponibles.",
+    "noAccess": "Aucune marque ne vous est encore partagée. Contactez votre agence."
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "app": {
+    "name": "Orbit",
+    "tagline": "Facebook & Instagram analytics for your brands"
+  },
+  "common": {
+    "loading": "Loading…",
+    "search": "Search",
+    "searchBrands": "Search brands",
+    "noBrand": "No brands",
+    "compare": "Compare",
+    "vsPrevious": "vs {value}",
+    "noComparison": "no comparison period",
+    "comingSoon": "soon",
+    "readOnly": "Read-only",
+    "signOut": "Sign out",
+    "export": "Export",
+    "seeAll": "See all",
+    "unavailable": "Unavailable",
+    "lastSync": "Last sync {date}",
+    "demoMode": "Demo mode — sample data",
+    "brands": "Brands",
+    "accounts": "Accounts",
+    "back": "Back"
+  },
+  "nav": {
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "posts": "Posts",
+    "audience": "Audience",
+    "campaigns": "Campaigns",
+    "reports": "Reports",
+    "settings": "Settings",
+    "accounts": "Connected accounts",
+    "clients": "Client access"
+  },
+  "network": {
+    "ig": "Instagram",
+    "fb": "Facebook",
+    "tt": "TikTok",
+    "li": "LinkedIn",
+    "yt": "YouTube",
+    "filter": "Networks"
+  },
+  "period": {
+    "label": "Period",
+    "campaigns": "Campaigns",
+    "from": "From",
+    "to": "to",
+    "summary": "Period: {range} ({days} days)",
+    "comparedTo": "compared with {range}",
+    "presets": {
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "90d": "Last 90 days",
+      "month": "This month",
+      "lastmonth": "Last month",
+      "year": "This year",
+      "lastyear": "Last year",
+      "custom": "Custom dates",
+      "campaign": "Campaign"
+    },
+    "granularity": {
+      "day": "daily",
+      "week": "weekly",
+      "month": "monthly"
+    }
+  },
+  "kpi": {
+    "followers": { "label": "Followers", "help": "Followers at the end of the period" },
+    "followersNet": { "label": "Follower growth", "help": "Followers at end of period − followers the day before it started" },
+    "followersGained": { "label": "New followers", "help": "Follows during the period" },
+    "followersLost": { "label": "Unfollows", "help": "Unfollows during the period" },
+    "reach": { "label": "Reach", "help": "Unique accounts that saw your content" },
+    "views": { "label": "Views", "help": "Total number of times content was displayed" },
+    "interactions": { "label": "Interactions", "help": "Likes, comments, shares and saves" },
+    "engagementRate": { "label": "Engagement rate", "help": "Interactions ÷ reach" },
+    "posts": { "label": "Posts", "help": "Posts published during the period" },
+    "profileVisits": { "label": "Profile visits", "help": "Page or profile visits" },
+    "linkClicks": { "label": "Website clicks", "help": "Taps on the profile link" },
+    "likes": { "label": "Likes", "help": "" },
+    "comments": { "label": "Comments", "help": "" },
+    "shares": { "label": "Shares", "help": "" },
+    "saves": { "label": "Saves", "help": "" },
+    "videoViews": { "label": "Video views", "help": "" },
+    "overPeriod": "over the period"
+  },
+  "format": {
+    "image": "Image",
+    "carousel": "Carousel",
+    "reel": "Reel",
+    "video": "Video",
+    "story": "Story",
+    "link": "Link",
+    "status": "Status"
+  },
+  "alerts": {
+    "title": "Highlights",
+    "none": "Nothing to report for this period.",
+    "followers_loss": "{network} is losing followers ({net} over the period)",
+    "engagement_drop": "{network}: engagement rate down ({current} vs {previous})",
+    "reach_spike": "{network}: reach sharply up ({ratio})",
+    "inactive": "{network}: no post for {days} days"
+  },
+  "overview": {
+    "title": "Overview",
+    "allBrands": "All brands",
+    "allBrandsHelp": "Click a row to open detailed analytics. Trend = daily reach over 30 days.",
+    "brandAccount": "Brand / account",
+    "reachTrend": "Reach trend"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "followersEvolution": "Follower growth",
+    "reachViews": "Reach and views",
+    "interactionsByType": "Interactions by type",
+    "byNetwork": "By network"
+  },
+  "posts": {
+    "title": "Posts",
+    "empty": "No posts in this period.",
+    "date": "Date",
+    "format": "Format",
+    "allFormats": "All formats",
+    "exportCsv": "Export CSV",
+    "sort": "Sort by"
+  },
+  "audience": {
+    "title": "Audience",
+    "ageGender": "Age and gender",
+    "women": "Women",
+    "men": "Men",
+    "cities": "Top cities",
+    "countries": "Top countries",
+    "online": "Followers online",
+    "noData": "Demographics are only available for Instagram professional accounts (Meta does not provide them for Facebook Pages)."
+  },
+  "campaigns": {
+    "title": "Campaigns",
+    "new": "New campaign",
+    "empty": "No campaigns for this brand.",
+    "status": { "upcoming": "Upcoming", "running": "Running", "finished": "Finished" }
+  },
+  "reports": {
+    "title": "Reports",
+    "empty": "Generate a monthly, campaign, yearly or custom-range report.",
+    "language": "Report language",
+    "schedules": "Scheduled emails"
+  },
+  "settings": {
+    "accounts": {
+      "title": "Connected accounts",
+      "connect": "Connect Meta accounts",
+      "tokenExpires": "Token valid until {date}",
+      "status": {
+        "pending": "Pending",
+        "active": "Active",
+        "expiring": "Expiring soon",
+        "expired": "Expired",
+        "error": "Error",
+        "disconnected": "Disconnected"
+      }
+    },
+    "clients": {
+      "title": "Client access",
+      "invite": "Invite a client",
+      "sections": "Visible sections",
+      "lastSeen": "Last sign-in"
+    }
+  },
+  "login": {
+    "title": "Sign in to Orbit",
+    "subtitle": "Get a sign-in link by email.",
+    "email": "Email address",
+    "submit": "Send me a link",
+    "sent": "If an account exists for {email}, a sign-in link has just been sent.",
+    "invalidEmail": "Invalid email address.",
+    "sendFailed": "Sending failed, please try again shortly.",
+    "linkError": "This link has expired or was already used. Request a new one.",
+    "demoTitle": "Demo mode",
+    "demoSubtitle": "No database configured: pick a sample profile.",
+    "role": { "admin": "Administrator", "manager": "Agency team", "client": "Client (read-only)" }
+  },
+  "empty": {
+    "underConstruction": "This view is coming soon",
+    "underConstructionHelp": "The foundation is in place: demo data is already available.",
+    "noAccess": "No brand has been shared with you yet. Please contact your agency."
+  }
+}

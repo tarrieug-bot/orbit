@@ -1,0 +1,20 @@
+/* Styles de base — propriétaire : agent design */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "ss01";
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+  ::selection {
+    background: var(--color-orbit-200);
+  }
+  /* chiffres alignés dans les tableaux et KPI */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
