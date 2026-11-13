@@ -3,10 +3,11 @@ import { Info, Users } from "lucide-react";
 import { BrandHero } from "@/components/views/brand-hero";
 import { BrandSwitcher } from "@/components/views/brand-switcher";
 import { MetricChart } from "@/components/views/charts";
-import { Heatmap } from "@/components/views/heatmap";
+import { BestTimesHeatmap } from "@/components/views/heatmap";
 import { KpiGrid } from "@/components/views/kpi-grid";
 import { filterQuery } from "@/components/views/page-header";
 import { PeriodNote } from "@/components/views/period-note";
+import { GENDER_COLOR } from "@/components/views/palette";
 import { ShareBars } from "@/components/views/share-bars";
 import { Card, CardContent, CardHeader, EmptyState, NetworkIcon } from "@/components/ui";
 import { resolveBrandParam } from "@/lib/auth/guards";
@@ -46,7 +47,6 @@ export default async function AudiencePage({ searchParams }: { searchParams: Pag
       {msg}
     </div>
   );
-  const days = t("common.weekdaysShort").split(",");
 
   return (
     <div className="space-y-6">
@@ -91,8 +91,8 @@ export default async function AudiencePage({ searchParams }: { searchParams: Pag
                   height={330}
                   data={data.ageGender.map((r) => ({ key: r.age, female: r.female, male: r.male }))}
                   series={[
-                    { key: "female", label: t("audience.women"), color: "#EC4899" },
-                    { key: "male", label: t("audience.men"), color: "#4F46E5" },
+                    { key: "female", label: t("audience.women"), color: GENDER_COLOR.female },
+                    { key: "male", label: t("audience.men"), color: GENDER_COLOR.male },
                   ]}
                 />
               ) : (
@@ -128,15 +128,7 @@ export default async function AudiencePage({ searchParams }: { searchParams: Pag
             <CardHeader title={t("audience.online")} description={t("audience.onlineHelp")} />
             <CardContent>
               {data?.onlineHeatmap ? (
-                <Heatmap
-                  values={data.onlineHeatmap}
-                  dayLabels={days}
-                  cellLabel={(d, h, v) => t("heatmap.cell", { day: d, from: h, to: h + 1, value: Math.round(v * 100) })}
-                  bestLabel={(d, h) => t("heatmap.best", { day: d, hour: h })}
-                  lessLabel={t("heatmap.less")}
-                  moreLabel={t("heatmap.more")}
-                  note={t("heatmap.noteOnline")}
-                />
+                <BestTimesHeatmap values={data.onlineHeatmap} note={t("heatmap.noteOnline")} />
               ) : (
                 unavailable(t("audience.onlineUnavailable"))
               )}

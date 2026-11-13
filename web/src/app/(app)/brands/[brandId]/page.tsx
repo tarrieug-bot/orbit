@@ -5,7 +5,7 @@ import { ArrowRight, Megaphone } from "lucide-react";
 import { engagementChart, formatPerformance, perAccountChart, postsHeatmap, topPosts } from "@/components/views/analytics-data";
 import { BrandHero } from "@/components/views/brand-hero";
 import { MetricChart } from "@/components/views/charts";
-import { Heatmap } from "@/components/views/heatmap";
+import { BestTimesHeatmap } from "@/components/views/heatmap";
 import { KpiGrid } from "@/components/views/kpi-grid";
 import { filterQuery } from "@/components/views/page-header";
 import { GAIN_COLOR, INTERACTION_COLORS, LOSS_COLOR, NETWORK_COLOR } from "@/components/views/palette";
@@ -42,14 +42,28 @@ export default async function BrandAnalyticsPage({ params, searchParams }: { par
 
   const followersEnd = Object.fromEntries(data.accounts.map((a) => [a.id, computeTotals(filterRows(data.rows, [a.id]), data.range).followers]));
   const hero = (
-    <BrandHero brand={brand} accounts={data.accounts} followers={followersEnd} locale={locale} followersLabel={t("kpi.followers.label").toLowerCase()}>
-      {campaign && (
-        <Badge tone="brand" className="mt-2">
-          <Megaphone size={12} aria-hidden />
-          {campaign.name}
-        </Badge>
-      )}
-    </BrandHero>
+    <BrandHero
+      brand={brand}
+      accounts={data.accounts}
+      followers={followersEnd}
+      locale={locale}
+      size="lg"
+      followersLabel={t("kpi.followers.label").toLowerCase()}
+      eyebrow={
+        campaign ? (
+          <Badge tone="brand" icon={<Megaphone size={12} aria-hidden />}>
+            {campaign.name}
+          </Badge>
+        ) : (
+          t("nav.analytics")
+        )
+      }
+      stats={[
+        { label: t("kpi.followers.label"), value: formatCompact(data.totals.followers, locale) },
+        { label: t("kpi.reach.label"), value: formatCompact(data.totals.reach, locale) },
+        { label: t("kpi.engagementRate.label"), value: formatPercent(data.totals.engagementRate, locale, 2) },
+      ]}
+    />
   );
 
   if (!data.accounts.length) {
@@ -87,7 +101,6 @@ export default async function BrandAnalyticsPage({ params, searchParams }: { par
   const top = topPosts(posts, 5);
   const onlineHeat = audience?.onlineHeatmap ?? null;
   const heat = onlineHeat ?? postsHeatmap(posts);
-  const days = t("common.weekdaysShort").split(",");
   const q = filterQuery(sp);
 
   return (
@@ -209,15 +222,7 @@ export default async function BrandAnalyticsPage({ params, searchParams }: { par
           <CardHeader title={t("analytics.bestTimes")} description={onlineHeat ? t("analytics.bestTimesOnline") : t("analytics.bestTimesPosts")} />
           <CardContent>
             {heat ? (
-              <Heatmap
-                values={heat}
-                dayLabels={days}
-                cellLabel={(d, h, v) => t("heatmap.cell", { day: d, from: h, to: h + 1, value: Math.round(v * 100) })}
-                bestLabel={(d, h) => t("heatmap.best", { day: d, hour: h })}
-                lessLabel={t("heatmap.less")}
-                moreLabel={t("heatmap.more")}
-                note={onlineHeat ? t("heatmap.noteOnline") : undefined}
-              />
+              <BestTimesHeatmap values={heat} note={onlineHeat ? t("heatmap.noteOnline") : undefined} />
             ) : (
               <p className="text-sm text-ink-2">{t("analytics.bestTimesNone")}</p>
             )}

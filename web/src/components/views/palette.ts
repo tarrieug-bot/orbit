@@ -1,36 +1,26 @@
 import type { Network } from "@/lib/db/types";
+import { CHART_VARS, NETWORK_SERIES_VARS } from "@/styles/tokens";
 
 /**
- * Couleurs des graphiques (validées daltonisme, voir skill dataviz).
- * Copie serveur-compatible des couleurs réseaux (NETWORK_META est exporté par un
- * module client et n'est pas lisible depuis un composant serveur).
+ * Couleurs des graphiques : variables CSS du design system (suivent le thème
+ * clair / sombre, palette validée daltonisme). Ne pas mettre d'hex en dur.
  */
-export const NETWORK_COLOR: Record<Network, string> = {
-  ig: "#DD2A7B",
-  fb: "#1877F2",
-  tt: "#010101",
-  li: "#0A66C2",
-  yt: "#FF0000",
-};
+export const NETWORK_COLOR: Record<Network, string> = NETWORK_SERIES_VARS;
 
-/** Types d'interactions, ordre fixe. */
+/** Types d'interactions, ordre fixe (hors couleurs réseaux 1–2). */
 export const INTERACTION_COLORS = {
-  likes: "#4F46E5",
-  comments: "#0EA5E9",
-  shares: "#EC4899",
-  saves: "#F59E0B",
+  likes: CHART_VARS[6],
+  comments: CHART_VARS[2],
+  shares: CHART_VARS[4],
+  saves: CHART_VARS[3],
 } as const;
 
 /** Polarité gagnés / perdus. */
-export const GAIN_COLOR = "#10B981";
-export const LOSS_COLOR = "#F43F5E";
+export const GAIN_COLOR = CHART_VARS[2];
+export const LOSS_COLOR = CHART_VARS[7];
+
+/** Genre (démographie). */
+export const GENDER_COLOR = { female: CHART_VARS[4], male: CHART_VARS[6] } as const;
 
 /** Couleur principale Orbit (séries uniques). */
-export const ORBIT_COLOR = "#6366F1";
-
-/** Rampe séquentielle (heatmaps) : indigo clair → foncé. */
-export const HEAT_STEPS = ["#EEF2FF", "#E0E7FF", "#C7D2FE", "#A5B4FC", "#818CF8", "#6366F1", "#4F46E5", "#3730A3"];
-
-export function heatColor(v: number): string {
-  return HEAT_STEPS[Math.min(HEAT_STEPS.length - 1, Math.max(0, Math.floor(v * HEAT_STEPS.length)))];
-}
+export const ORBIT_COLOR = "var(--color-orbit-500)";

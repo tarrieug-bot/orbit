@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { activeDot, axisProps, barProps, chartMargin, ChartTooltipContent, cursorBar, cursorLine, gridProps, xAxisProps } from "@/components/ui";
 import type { AppLocale } from "@/lib/db/types";
 import { formatBucketLabel, formatCompact, formatNumber, formatPercent, type Granularity } from "@/lib/metrics";
 
@@ -46,14 +47,6 @@ export interface MetricChartProps {
   hideLegend?: boolean;
 }
 
-const AXIS = { stroke: "#94A3B8", fontSize: 11, tickLine: false, axisLine: false } as const;
-const TOOLTIP_STYLE = {
-  borderRadius: 12,
-  border: "1px solid #E7E9F0",
-  boxShadow: "0 12px 32px -8px rgba(15,23,42,.18)",
-  fontSize: 12,
-  padding: "8px 12px",
-} as const;
 
 export function makeFormatter(format: ValueFormat, locale: AppLocale, digits = 2) {
   return (v: number) =>
@@ -93,11 +86,8 @@ export function MetricChart({
   );
   const tooltip = (
     <Tooltip
-      cursor={type === "bar" ? { fill: "rgba(99,102,241,0.06)" } : { stroke: "#C7D2FE" }}
-      contentStyle={TOOLTIP_STYLE}
-      labelStyle={{ color: "#0F172A", fontWeight: 600, marginBottom: 4 }}
-      labelFormatter={(v) => xLabel(String(v))}
-      formatter={(v, name) => [typeof v === "number" ? fmt(v) : "—", labelOf(name)]}
+      cursor={type === "bar" ? cursorBar : cursorLine}
+      content={(p) => <ChartTooltipContent {...p} labelFormatter={(l) => xLabel(l)} valueFormatter={(v) => fmt(v)} nameFormatter={(k) => labelOf(k)} />}
     />
   );
 
@@ -105,20 +95,20 @@ export function MetricChart({
     <div style={{ height }} className="w-full">
       <ResponsiveContainer width="100%" height="100%">
         {type === "bar" ? (
-          <BarChart data={data} stackOffset="sign" layout={horizontal ? "vertical" : "horizontal"} margin={{ top: 8, right: 12, bottom: 0, left: horizontal ? 8 : 0 }} barGap={2}>
-            <CartesianGrid vertical={!!horizontal} horizontal={!horizontal} stroke="#EEF0F5" />
+          <BarChart data={data} stackOffset="sign" layout={horizontal ? "vertical" : "horizontal"} margin={{ ...chartMargin, right: 12, left: horizontal ? 8 : 0 }} barGap={2}>
+            <CartesianGrid {...gridProps} vertical={!!horizontal} horizontal={!horizontal} />
             {horizontal ? (
               <>
-                <XAxis type="number" {...AXIS} tickFormatter={axisFmt} />
-                <YAxis type="category" dataKey="key" {...AXIS} width={120} tick={{ fill: "#0F172A", fontSize: 12 }} />
+                <XAxis type="number" {...axisProps} tickFormatter={axisFmt} />
+                <YAxis type="category" dataKey="key" {...axisProps} width={120} tick={{ ...axisProps.tick, fill: "var(--color-ink)", fontSize: 12 }} />
               </>
             ) : (
               <>
-                <XAxis dataKey="key" {...AXIS} tickFormatter={xLabel} minTickGap={16} />
-                <YAxis {...AXIS} width={52} tickFormatter={axisFmt} />
+                <XAxis dataKey="key" {...xAxisProps} tickFormatter={xLabel} minTickGap={16} />
+                <YAxis {...axisProps} width={52} tickFormatter={axisFmt} />
               </>
             )}
-            {zeroLine && <ReferenceLine y={0} stroke="#CBD5E1" />}
+            {zeroLine && <ReferenceLine y={0} stroke="var(--color-line-strong)" />}
             {tooltip}
             {legend}
             {series.map((s) => (
@@ -127,19 +117,19 @@ export function MetricChart({
                 dataKey={s.key}
                 fill={s.color}
                 stackId={s.stackId}
-                radius={s.stackId ? 0 : horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0]}
-                maxBarSize={horizontal ? 18 : 28}
-                stroke="#fff"
+                radius={s.stackId ? 0 : horizontal ? [0, 4, 4, 0] : barProps.radius}
+                maxBarSize={horizontal ? 18 : barProps.maxBarSize}
+                stroke="var(--color-surface)"
                 strokeWidth={s.stackId ? 1 : 0}
                 animationDuration={600}
               />
             ))}
           </BarChart>
         ) : (
-          <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
-            <CartesianGrid vertical={false} stroke="#EEF0F5" />
-            <XAxis dataKey="key" {...AXIS} tickFormatter={xLabel} minTickGap={24} />
-            <YAxis {...AXIS} width={52} tickFormatter={axisFmt} domain={yDomain === "auto" ? ["auto", "auto"] : [0, "auto"]} />
+          <LineChart data={data} margin={{ ...chartMargin, right: 12 }}>
+            <CartesianGrid {...gridProps} />
+            <XAxis dataKey="key" {...xAxisProps} tickFormatter={xLabel} minTickGap={24} />
+            <YAxis {...axisProps} width={52} tickFormatter={axisFmt} domain={yDomain === "auto" ? ["auto", "auto"] : [0, "auto"]} />
             {tooltip}
             {legend}
             {series.map((s) => (
@@ -150,7 +140,7 @@ export function MetricChart({
                 stroke={s.color}
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, strokeWidth: 2, stroke: "#fff" }}
+                activeDot={activeDot}
                 connectNulls
                 animationDuration={700}
               />

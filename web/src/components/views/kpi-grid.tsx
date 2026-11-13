@@ -26,7 +26,7 @@ export async function KpiGrid({
   previous,
   series,
   keys,
-  color = "#6366F1",
+  color = "var(--color-orbit-500)",
   columns = 4,
   locale: forcedLocale,
 }: {
