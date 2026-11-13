@@ -6,3 +6,4 @@ export * from "./queries";
 export { getDataSource } from "./source";
 export * from "./filters";
 export type { SessionUser, DataSource } from "./source/types";
+export * from "./mutations";

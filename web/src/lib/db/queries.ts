@@ -89,6 +89,8 @@ export interface OverviewBrandRow extends PeriodComparison {
 
 export interface OverviewData extends PeriodComparison {
   range: DateRange;
+  /** série quotidienne agrégée de toutes les marques (sparklines des KPI) */
+  series: SeriesPoint[];
   previousRange: DateRange | null;
   brands: OverviewBrandRow[];
   alerts: Alert[];
@@ -339,6 +341,7 @@ export async function getOverview(filters: Pick<Filters, "range" | "previous" | 
     range: filters.range,
     previousRange: filters.previous,
     ...compare(rows, filters),
+    series: buildDailySeries(rows, filters.range),
     brands: brandRows,
     alerts,
   };

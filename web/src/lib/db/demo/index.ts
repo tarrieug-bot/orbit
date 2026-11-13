@@ -57,7 +57,7 @@ function localTs(date: ISODate, time = "06:00"): string {
   return d.toISOString();
 }
 
-interface DemoDb {
+export interface DemoDb {
   today: ISODate;
   org: OrganizationRow;
   profiles: ProfileRow[];
@@ -127,6 +127,11 @@ function db(): DemoDb {
     })),
   };
   return cache;
+}
+
+/** Store en mémoire du mode démo (mutations simulées : lib/db/mutations.ts). */
+export function demoStore(): DemoDb {
+  return db();
 }
 
 export function createDemoSource(userEmail?: string | null): DataSource {
