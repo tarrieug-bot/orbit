@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { FileText } from "lucide-react";
@@ -7,7 +8,7 @@ import { ExportButtons } from "@/components/views/report/export-buttons";
 import { ReportPreview } from "@/components/views/report/preview";
 import { ReportSchedules } from "@/components/views/report/schedules";
 import { Badge, Card, EmptyState, Skeleton } from "@/components/ui";
-import { resolveBrandParam } from "@/lib/auth/guards";
+import { homePathFor, requireUser, resolveBrandParam } from "@/lib/auth/guards";
 import { getCampaigns, getReportSchedules, getSessionUser, listBrands, todayISO, type PageSearchParams } from "@/lib/db";
 import { LIVE_NETWORKS, type AppLocale } from "@/lib/db/types";
 import { addDays } from "@/lib/metrics";
@@ -23,6 +24,11 @@ export default async function ReportsPage({ searchParams }: { searchParams: Page
   const brand = await resolveBrandParam(sp.brand, "reports");
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
+  if (!brand) {
+    // rubrique non ouverte à ce client : retour à sa page d'accueil
+    const u = await requireUser();
+    if (!u.isAgency) redirect(await homePathFor(u));
+  }
   if (!brand) return <EmptyState illustration="reports" title={t("nav.reports")} description={t("empty.noAccess")} />;
 
   const [user, brands, campaigns] = await Promise.all([getSessionUser(), listBrands(), getCampaigns(brand.id)]);

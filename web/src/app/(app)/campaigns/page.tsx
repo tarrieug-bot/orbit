@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { BarChart3, CalendarRange, FileText, Hash, Megaphone } from "lucide-react";
@@ -6,7 +7,7 @@ import { BrandSwitcher } from "@/components/views/brand-switcher";
 import { CampaignDeleteButton, CampaignFormButton } from "@/components/views/campaign-dialogs";
 import { filterQuery, PageHeader } from "@/components/views/page-header";
 import { Badge, buttonVariants, Card, Delta, EmptyState } from "@/components/ui";
-import { resolveBrandParam } from "@/lib/auth/guards";
+import { homePathFor, requireUser, resolveBrandParam } from "@/lib/auth/guards";
 import { getBrandMetrics, getCampaigns, getSessionUser, listBrands, todayISO, type CampaignItem, type PageSearchParams } from "@/lib/db";
 import { LIVE_NETWORKS, type AppLocale } from "@/lib/db/types";
 import {
@@ -37,6 +38,11 @@ export default async function CampaignsPage({ searchParams }: { searchParams: Pa
   const brand = await resolveBrandParam(sp.brand, "campaigns");
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
+  if (!brand) {
+    // rubrique non ouverte à ce client : retour à sa page d'accueil
+    const u = await requireUser();
+    if (!u.isAgency) redirect(await homePathFor(u));
+  }
   if (!brand) return <EmptyState icon={<Megaphone size={22} />} title={t("campaigns.title")} description={t("empty.noAccess")} />;
   const [user, campaigns, brands] = await Promise.all([getSessionUser(), getCampaigns(brand.id), listBrands()]);
   const canManage = !!user?.isAgency;

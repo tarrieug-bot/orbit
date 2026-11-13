@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Info, Users } from "lucide-react";
 import { BrandHero } from "@/components/views/brand-hero";
@@ -10,7 +11,7 @@ import { PeriodNote } from "@/components/views/period-note";
 import { GENDER_COLOR } from "@/components/views/palette";
 import { ShareBars } from "@/components/views/share-bars";
 import { Card, CardContent, CardHeader, EmptyState, NetworkIcon } from "@/components/ui";
-import { resolveBrandParam } from "@/lib/auth/guards";
+import { homePathFor, requireUser, resolveBrandParam } from "@/lib/auth/guards";
 import { getAudience, getBrandMetrics, getPageFilters, listBrands, type PageSearchParams } from "@/lib/db";
 import type { AppLocale } from "@/lib/db/types";
 import { formatPercent, INTL_LOCALE } from "@/lib/metrics";
@@ -26,6 +27,11 @@ export default async function AudiencePage({ searchParams }: { searchParams: Pag
   const brand = await resolveBrandParam(sp.brand, "audience");
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
+  if (!brand) {
+    // rubrique non ouverte à ce client : retour à sa page d'accueil
+    const u = await requireUser();
+    if (!u.isAgency) redirect(await homePathFor(u));
+  }
   if (!brand) return <EmptyState icon={<Users size={22} />} title={t("audience.title")} description={t("empty.noAccess")} />;
 
   const filters = await getPageFilters(sp, brand.id);
