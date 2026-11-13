@@ -3,22 +3,11 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { encryptToken } from "@/lib/security/tokens";
 import { META_METRIC_MAP } from "@/lib/meta/metric-map";
 import type { DiscoveredAccount } from "@/lib/meta/types";
+import { slugify } from "./rules";
 
 type Admin = ReturnType<typeof createSupabaseAdminClient>;
 
 const BRAND_COLORS = ["#2A78D6", "#C2410C", "#0F766E", "#1D4ED8", "#7C3AED", "#B45309", "#0E7490", "#BE123C", "#15803D", "#4338CA"];
-
-export function slugify(name: string): string {
-  return (
-    name
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 48) || "marque"
-  );
-}
 
 function colorFor(id: string): string {
   let h = 0;

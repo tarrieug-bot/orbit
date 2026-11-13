@@ -2,7 +2,7 @@ import type { AccountSyncStateRow, ISODate, SocialAccountRow, SyncCallLog, SyncS
 import { createGraphClient, fetchAudience, fetchIgDaily, fetchPageDaily, fetchPosts, fetchProfile } from "@/lib/meta/client";
 import { GraphClient, MetaApiError } from "@/lib/meta/graph";
 import type { DailyColumn } from "@/lib/meta/metric-map";
-import type { DailyValues, FetchedPost, FetchedProfile, MetaCallContext } from "@/lib/meta/types";
+import type { DailyValues, FetchedPost, MetaCallContext } from "@/lib/meta/types";
 import type { DateRange } from "@/lib/metrics/types";
 import {
   addDays,

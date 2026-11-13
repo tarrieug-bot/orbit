@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text -- <Image> de @react-pdf/renderer : pas d'attribut alt (rendu PDF, pas du HTML) */
 import "server-only";
 import {
   Defs,

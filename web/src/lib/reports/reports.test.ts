@@ -71,3 +71,33 @@ describe("ReportModel", () => {
     ).rejects.toMatchObject({ code: "not_found" });
   });
 });
+
+describe("envois programmés", async () => {
+  const { buildReportEmail, nextRunAt, schedulePeriod, sendWithResend } = await import("./email");
+  it("période et prochain envoi selon la fréquence", () => {
+    expect(schedulePeriod("monthly", "2026-12-01")).toEqual({ type: "month", value: "2026-11" });
+    expect(schedulePeriod("weekly", "2026-11-16")).toEqual({ type: "custom", from: "2026-11-09", to: "2026-11-15" });
+    expect(schedulePeriod("quarterly", "2026-01-01")).toEqual({ type: "custom", from: "2025-10-01", to: "2025-12-31" });
+    expect(schedulePeriod("quarterly", "2026-11-13")).toEqual({ type: "custom", from: "2026-07-01", to: "2026-09-30" });
+    expect(schedulePeriod("yearly", "2027-01-01")).toEqual({ type: "year", value: "2026" });
+    expect(nextRunAt("monthly", "2026-11-13")).toBe("2026-12-01T10:00:00.000Z");
+    expect(nextRunAt("quarterly", "2026-11-13")).toBe("2027-01-01T10:00:00.000Z");
+    expect(nextRunAt("weekly", "2026-11-13")).toBe("2026-11-20T10:00:00.000Z");
+  });
+  it("e-mail HTML FR / EN et appel Resend", async () => {
+    const fr = await buildReportModel({ brandId: "b1", period: { type: "month", value: "2026-10" }, compare: true, sections: [], lang: "fr" }, { loader: testLoader(), today, now });
+    const mail = buildReportEmail(fr, { appUrl: "https://orbit.test", format: "pdf" });
+    expect(mail.subject).toBe("Café Lumière — Rapport mensuel · octobre 2026");
+    expect(mail.html).toContain("Veuillez trouver ci-joint le rapport mensuel de Café Lumière");
+    expect(mail.html).toContain("https://orbit.test/reports?brand=b1");
+    const en = await buildReportModel({ brandId: "b1", period: { type: "month", value: "2026-10" }, compare: true, sections: [], lang: "en" }, { loader: testLoader(), today, now });
+    expect(buildReportEmail(en, { appUrl: "https://orbit.test", format: "pptx" }).html).toContain("Please find attached the monthly report for Café Lumière");
+    let sent: { attachments: { filename: string }[]; to: string[] } | null = null;
+    const fetchImpl = (async (_u: RequestInfo | URL, init?: RequestInit) => {
+      sent = JSON.parse(String(init?.body));
+      return new Response(JSON.stringify({ id: "re_1" }), { status: 200 });
+    }) as typeof fetch;
+    await expect(sendWithResend({ apiKey: "k", from: "a@b.c", to: ["x@y.z"], subject: mail.subject, html: mail.html, text: mail.text, attachment: { filename: "r.pdf", content: Buffer.from("x") }, fetchImpl })).resolves.toEqual({ id: "re_1" });
+    expect(sent!.attachments[0].filename).toBe("r.pdf");
+  });
+});
