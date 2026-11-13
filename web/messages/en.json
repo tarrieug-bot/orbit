@@ -145,7 +145,89 @@
     "title": "Reports",
     "empty": "Generate a monthly, campaign, yearly or custom-range report.",
     "language": "Report language",
-    "schedules": "Scheduled emails"
+    "schedules": "Scheduled emails",
+    "kind": {
+      "month": "Monthly report",
+      "year": "Annual report",
+      "campaign": "Campaign report",
+      "custom": "Custom report"
+    },
+    "coverSubtitle": "Facebook and Instagram statistics",
+    "periodLabel": "Period",
+    "comparedTo": "Compared with {range}",
+    "generatedOn": "Generated on {date}",
+    "agencyLogo": "Agency logo",
+    "preparedBy": "Prepared by {agency}",
+    "pageOf": "{page} / {total}",
+    "confidential": "Confidential document",
+    "vsPrevious": "vs previous period",
+    "accounts": "Accounts analysed",
+    "campaignLabel": "Campaign: {name}",
+    "section": {
+      "summary": "Summary",
+      "audience": "Audience",
+      "reach": "Reach and views",
+      "engagement": "Engagement",
+      "formats": "Performance by format",
+      "top": "Top posts",
+      "insights": "Insights and recommendations"
+    },
+    "sectionIntro": {
+      "summary": "Key metrics for the period, across all networks.",
+      "audience": "Who the brand's Instagram followers are.",
+      "reach": "Unique accounts reached and total number of views.",
+      "engagement": "How the community reacted, by type of interaction.",
+      "formats": "Which formats engage the community the most.",
+      "top": "The posts that performed best.",
+      "insights": "What the results mean and what to do next."
+    },
+    "table": {
+      "format": "Format",
+      "posts": "Posts",
+      "avgReach": "Avg. reach",
+      "avgInteractions": "Avg. interactions",
+      "engagementRate": "Eng. rate",
+      "network": "Network",
+      "date": "Date",
+      "caption": "Post",
+      "reach": "Reach",
+      "interactions": "Interactions"
+    },
+    "noPosts": "No posts over the period.",
+    "noAudience": "Demographics unavailable (Meta only provides them for Instagram professional accounts).",
+    "ageGender": "Age and gender",
+    "women": "Women",
+    "men": "Men",
+    "cities": "Top cities",
+    "countries": "Top countries",
+    "followersEvolution": "Follower growth",
+    "byNetwork": "By network",
+    "noCaption": "(post without text)",
+    "insight": {
+      "community": "The community reaches **{followers} followers** ({net} over the period, i.e. {growth}).",
+      "change": "Reach {reachTrend, select, up {grew} other {fell}} by **{reach}** and interactions {interTrend, select, up {grew} other {fell}} by **{inter}** compared with the previous period.",
+      "engagementRate": "Engagement rate stands at **{rate}** ({diff}).",
+      "engagementRateNoCompare": "Engagement rate stands at **{rate}**.",
+      "bestFormat": "Most engaging format: **{network} {format}** ({rate} engagement over {count} posts), versus {worstRate} for {worstNetwork} {worstFormat}. Recommendation: increase the share of this format in the content plan.",
+      "bestPost": "Best-performing post: “{caption}” ({network}, {date}) with {interactions} interactions and {rate} engagement.",
+      "bestDay": "Posts published on **{best}** get the best engagement; **{worst}** is the weakest day.",
+      "frequency": "Posting frequency: **{perWeek} posts / week**.",
+      "frequencyLow": "Posting frequency: **{perWeek} posts / week** — a steadier pace (3 to 5 per week) would help reach."
+    },
+    "csv": {
+      "date": "Date",
+      "network": "Network",
+      "account": "Account"
+    },
+    "email": {
+      "subject": "{brand} — {kind} · {period}",
+      "greeting": "Hello,",
+      "intro": "Please find attached the {kind} for {brand} covering {period}.",
+      "highlights": "Key figures",
+      "attachment": "The full report is attached ({format}).",
+      "footer": "Sent automatically by Orbit. To stop receiving these emails, contact your agency.",
+      "cta": "Open Orbit"
+    }
   },
   "settings": {
     "accounts": {

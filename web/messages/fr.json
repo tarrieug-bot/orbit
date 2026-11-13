@@ -145,7 +145,89 @@
     "title": "Rapports",
     "empty": "Générez un rapport mensuel, de campagne, annuel ou sur des dates libres.",
     "language": "Langue du rapport",
-    "schedules": "Envois programmés"
+    "schedules": "Envois programmés",
+    "kind": {
+      "month": "Rapport mensuel",
+      "year": "Rapport annuel",
+      "campaign": "Rapport de campagne",
+      "custom": "Rapport sur mesure"
+    },
+    "coverSubtitle": "Statistiques Facebook et Instagram",
+    "periodLabel": "Période",
+    "comparedTo": "Comparée à {range}",
+    "generatedOn": "Généré le {date}",
+    "agencyLogo": "Logo de l'agence",
+    "preparedBy": "Préparé par {agency}",
+    "pageOf": "{page} / {total}",
+    "confidential": "Document confidentiel",
+    "vsPrevious": "vs période précédente",
+    "accounts": "Comptes analysés",
+    "campaignLabel": "Campagne : {name}",
+    "section": {
+      "summary": "Synthèse",
+      "audience": "Audience",
+      "reach": "Portée et vues",
+      "engagement": "Engagement",
+      "formats": "Performance par format",
+      "top": "Meilleures publications",
+      "insights": "Analyse et recommandations"
+    },
+    "sectionIntro": {
+      "summary": "Les indicateurs clés de la période, tous réseaux confondus.",
+      "audience": "Qui sont les abonnés Instagram de la marque.",
+      "reach": "Comptes uniques touchés et nombre total d'affichages.",
+      "engagement": "Réactions de la communauté, par type d'interaction.",
+      "formats": "Quels formats engagent le plus la communauté.",
+      "top": "Les publications qui ont le mieux fonctionné.",
+      "insights": "Lecture des résultats et pistes d'action."
+    },
+    "table": {
+      "format": "Format",
+      "posts": "Publications",
+      "avgReach": "Portée moy.",
+      "avgInteractions": "Interactions moy.",
+      "engagementRate": "Taux d'eng.",
+      "network": "Réseau",
+      "date": "Date",
+      "caption": "Publication",
+      "reach": "Portée",
+      "interactions": "Interactions"
+    },
+    "noPosts": "Aucune publication sur la période.",
+    "noAudience": "Démographie indisponible (Meta ne la fournit que pour les comptes Instagram professionnels).",
+    "ageGender": "Âge et genre",
+    "women": "Femmes",
+    "men": "Hommes",
+    "cities": "Villes principales",
+    "countries": "Pays principaux",
+    "followersEvolution": "Évolution des abonnés",
+    "byNetwork": "Par réseau",
+    "noCaption": "(publication sans texte)",
+    "insight": {
+      "community": "La communauté atteint **{followers} abonnés** ({net} sur la période, soit {growth}).",
+      "change": "La portée {reachTrend, select, up {progresse} other {recule}} de **{reach}** et les interactions {interTrend, select, up {progressent} other {reculent}} de **{inter}** par rapport à la période précédente.",
+      "engagementRate": "Le taux d'engagement s'établit à **{rate}** ({diff}).",
+      "engagementRateNoCompare": "Le taux d'engagement s'établit à **{rate}**.",
+      "bestFormat": "Format le plus engageant : **{format} {network}** ({rate} d'engagement sur {count} publications), contre {worstRate} pour {worstFormat} {worstNetwork}. Recommandation : augmenter la part de ce format dans le planning.",
+      "bestPost": "Publication la plus performante : « {caption} » ({network}, {date}) avec {interactions} interactions et {rate} d'engagement.",
+      "bestDay": "Les publications du **{best}** obtiennent le meilleur engagement ; le **{worst}** est le jour le moins performant.",
+      "frequency": "Rythme de publication : **{perWeek} publications / semaine**.",
+      "frequencyLow": "Rythme de publication : **{perWeek} publications / semaine** — un rythme plus soutenu (3 à 5 par semaine) aiderait la portée."
+    },
+    "csv": {
+      "date": "Date",
+      "network": "Réseau",
+      "account": "Compte"
+    },
+    "email": {
+      "subject": "{brand} — {kind} · {period}",
+      "greeting": "Bonjour,",
+      "intro": "Veuillez trouver ci-joint le {kind} de {brand} pour la période {period}.",
+      "highlights": "Chiffres clés",
+      "attachment": "Le rapport complet est en pièce jointe ({format}).",
+      "footer": "Envoyé automatiquement par Orbit. Pour ne plus recevoir ces e-mails, contactez votre agence.",
+      "cta": "Ouvrir Orbit"
+    }
   },
   "settings": {
     "accounts": {
