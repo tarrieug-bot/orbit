@@ -118,12 +118,12 @@ export function OverviewTable({ rows }: { rows: OverviewTableRow[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[880px] text-sm">
+      <table className="w-full min-w-[920px] text-sm">
         <thead>
           <tr className="border-y border-line bg-surface-2 text-xs text-ink-2">
             {sortHead("name", t("overview.brandAccount"), "left")}
             {COLS.map((k) => sortHead(k, t(LABEL_KEY[k])))}
-            <th scope="col" className="px-5 py-2.5 text-left font-medium whitespace-nowrap">{t("overview.reachTrend")}</th>
+            <th scope="col" className="px-4 py-2.5 text-left font-medium whitespace-nowrap">{t("overview.reachTrend")}</th>
             <th aria-hidden className="w-8" />
           </tr>
         </thead>
@@ -146,8 +146,8 @@ export function OverviewTable({ rows }: { rows: OverviewTableRow[] }) {
                 {COLS.map((k) => (
                   <td key={k} className="px-3 py-3 text-right font-medium whitespace-nowrap text-ink">{cell(row.current, row.previous, k)}</td>
                 ))}
-                <td className="px-5 py-3">
-                  <Sparkline values={row.trend} color={row.color} width={110} height={30} />
+                <td className="px-4 py-3">
+                  <Sparkline values={row.trend} color={row.color} width={96} height={30} />
                 </td>
                 <td className="pr-4 text-ink-3 transition-transform group-hover:translate-x-0.5"><ChevronRight size={16} /></td>
               </tr>
@@ -163,8 +163,8 @@ export function OverviewTable({ rows }: { rows: OverviewTableRow[] }) {
                   {COLS.map((k) => (
                     <td key={k} className="px-3 py-2 text-right text-[13px] whitespace-nowrap">{cell(a.current, a.previous, k, true)}</td>
                   ))}
-                  <td className="px-5 py-2">
-                    <Sparkline values={a.trend} color={NETWORK_COLOR[a.network]} width={110} height={24} />
+                  <td className="px-4 py-2">
+                    <Sparkline values={a.trend} color={NETWORK_COLOR[a.network]} width={96} height={24} />
                   </td>
                   <td />
                 </tr>

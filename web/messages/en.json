@@ -67,22 +67,70 @@
     }
   },
   "kpi": {
-    "followers": { "label": "Followers", "help": "Followers at the end of the period" },
-    "followersNet": { "label": "Follower growth", "help": "Followers at end of period − followers the day before it started" },
-    "followersGained": { "label": "New followers", "help": "Follows during the period" },
-    "followersLost": { "label": "Unfollows", "help": "Unfollows during the period" },
-    "reach": { "label": "Reach", "help": "Unique accounts that saw your content" },
-    "views": { "label": "Views", "help": "Total number of times content was displayed" },
-    "interactions": { "label": "Interactions", "help": "Likes, comments, shares and saves" },
-    "engagementRate": { "label": "Engagement rate", "help": "Interactions ÷ reach" },
-    "posts": { "label": "Posts", "help": "Posts published during the period" },
-    "profileVisits": { "label": "Profile visits", "help": "Page or profile visits" },
-    "linkClicks": { "label": "Website clicks", "help": "Taps on the profile link" },
-    "likes": { "label": "Likes", "help": "" },
-    "comments": { "label": "Comments", "help": "" },
-    "shares": { "label": "Shares", "help": "" },
-    "saves": { "label": "Saves", "help": "" },
-    "videoViews": { "label": "Video views", "help": "" },
+    "followers": {
+      "label": "Followers",
+      "help": "Followers at the end of the period"
+    },
+    "followersNet": {
+      "label": "Follower growth",
+      "help": "Followers at end of period − followers the day before it started"
+    },
+    "followersGained": {
+      "label": "New followers",
+      "help": "Follows during the period"
+    },
+    "followersLost": {
+      "label": "Unfollows",
+      "help": "Unfollows during the period"
+    },
+    "reach": {
+      "label": "Reach",
+      "help": "Unique accounts that saw your content"
+    },
+    "views": {
+      "label": "Views",
+      "help": "Total number of times content was displayed"
+    },
+    "interactions": {
+      "label": "Interactions",
+      "help": "Likes, comments, shares and saves"
+    },
+    "engagementRate": {
+      "label": "Engagement rate",
+      "help": "Interactions ÷ reach"
+    },
+    "posts": {
+      "label": "Posts",
+      "help": "Posts published during the period"
+    },
+    "profileVisits": {
+      "label": "Profile visits",
+      "help": "Page or profile visits"
+    },
+    "linkClicks": {
+      "label": "Website clicks",
+      "help": "Taps on the profile link"
+    },
+    "likes": {
+      "label": "Likes",
+      "help": ""
+    },
+    "comments": {
+      "label": "Comments",
+      "help": ""
+    },
+    "shares": {
+      "label": "Shares",
+      "help": ""
+    },
+    "saves": {
+      "label": "Saves",
+      "help": ""
+    },
+    "videoViews": {
+      "label": "Video views",
+      "help": ""
+    },
     "overPeriod": "over the period"
   },
   "format": {
@@ -100,14 +148,18 @@
     "followers_loss": "{network} is losing followers ({net} over the period)",
     "engagement_drop": "{network}: engagement rate down ({current} vs {previous})",
     "reach_spike": "{network}: reach sharply up ({ratio})",
-    "inactive": "{network}: no post for {days} days"
+    "inactive": "{network}: no post for {days} days",
+    "subtitle": "Detected automatically over the period"
   },
   "overview": {
     "title": "Overview",
     "allBrands": "All brands",
     "allBrandsHelp": "Click a row to open detailed analytics. Trend = daily reach over 30 days.",
     "brandAccount": "Brand / account",
-    "reachTrend": "Reach trend"
+    "reachTrend": "Reach trend",
+    "exportCsv": "Export CSV",
+    "reachByBrand": "Reach by brand",
+    "reachByBrandHelp": "Sum of the selected accounts, by network, over the period"
   },
   "analytics": {
     "title": "Analytics",
@@ -139,7 +191,11 @@
     "title": "Campaigns",
     "new": "New campaign",
     "empty": "No campaigns for this brand.",
-    "status": { "upcoming": "Upcoming", "running": "Running", "finished": "Finished" }
+    "status": {
+      "upcoming": "Upcoming",
+      "running": "Running",
+      "finished": "Finished"
+    }
   },
   "reports": {
     "title": "Reports",
@@ -179,11 +235,26 @@
     "linkError": "This link has expired or was already used. Request a new one.",
     "demoTitle": "Demo mode",
     "demoSubtitle": "No database configured: pick a sample profile.",
-    "role": { "admin": "Administrator", "manager": "Agency team", "client": "Client (read-only)" }
+    "role": {
+      "admin": "Administrator",
+      "manager": "Agency team",
+      "client": "Client (read-only)"
+    }
   },
   "empty": {
     "underConstruction": "This view is coming soon",
     "underConstructionHelp": "The foundation is in place: demo data is already available.",
     "noAccess": "No brand has been shared with you yet. Please contact your agency."
+  },
+  "csv": {
+    "brand": "Brand",
+    "network": "Network",
+    "account": "Account",
+    "date": "Date",
+    "time": "Time",
+    "format": "Format",
+    "caption": "Caption",
+    "link": "Link",
+    "campaign": "Campaign"
   }
 }

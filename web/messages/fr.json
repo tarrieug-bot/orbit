@@ -67,22 +67,70 @@
     }
   },
   "kpi": {
-    "followers": { "label": "Abonnés", "help": "Abonnés en fin de période" },
-    "followersNet": { "label": "Évolution abonnés", "help": "Abonnés fin de période − abonnés la veille du début" },
-    "followersGained": { "label": "Nouveaux abonnés", "help": "Abonnements sur la période" },
-    "followersLost": { "label": "Désabonnements", "help": "Désabonnements sur la période" },
-    "reach": { "label": "Portée", "help": "Comptes uniques ayant vu vos contenus" },
-    "views": { "label": "Vues", "help": "Nombre total d'affichages" },
-    "interactions": { "label": "Interactions", "help": "J'aime, commentaires, partages et enregistrements" },
-    "engagementRate": { "label": "Taux d'engagement", "help": "Interactions ÷ portée" },
-    "posts": { "label": "Publications", "help": "Publications sur la période" },
-    "profileVisits": { "label": "Visites du profil", "help": "Visites de la Page ou du profil" },
-    "linkClicks": { "label": "Clics vers le site", "help": "Clics sur le lien du profil" },
-    "likes": { "label": "J'aime", "help": "" },
-    "comments": { "label": "Commentaires", "help": "" },
-    "shares": { "label": "Partages", "help": "" },
-    "saves": { "label": "Enregistrements", "help": "" },
-    "videoViews": { "label": "Vues vidéo", "help": "" },
+    "followers": {
+      "label": "Abonnés",
+      "help": "Abonnés en fin de période"
+    },
+    "followersNet": {
+      "label": "Évolution abonnés",
+      "help": "Abonnés fin de période − abonnés la veille du début"
+    },
+    "followersGained": {
+      "label": "Nouveaux abonnés",
+      "help": "Abonnements sur la période"
+    },
+    "followersLost": {
+      "label": "Désabonnements",
+      "help": "Désabonnements sur la période"
+    },
+    "reach": {
+      "label": "Portée",
+      "help": "Comptes uniques ayant vu vos contenus"
+    },
+    "views": {
+      "label": "Vues",
+      "help": "Nombre total d'affichages"
+    },
+    "interactions": {
+      "label": "Interactions",
+      "help": "J'aime, commentaires, partages et enregistrements"
+    },
+    "engagementRate": {
+      "label": "Taux d'engagement",
+      "help": "Interactions ÷ portée"
+    },
+    "posts": {
+      "label": "Publications",
+      "help": "Publications sur la période"
+    },
+    "profileVisits": {
+      "label": "Visites du profil",
+      "help": "Visites de la Page ou du profil"
+    },
+    "linkClicks": {
+      "label": "Clics vers le site",
+      "help": "Clics sur le lien du profil"
+    },
+    "likes": {
+      "label": "J'aime",
+      "help": ""
+    },
+    "comments": {
+      "label": "Commentaires",
+      "help": ""
+    },
+    "shares": {
+      "label": "Partages",
+      "help": ""
+    },
+    "saves": {
+      "label": "Enregistrements",
+      "help": ""
+    },
+    "videoViews": {
+      "label": "Vues vidéo",
+      "help": ""
+    },
     "overPeriod": "sur la période"
   },
   "format": {
@@ -100,14 +148,18 @@
     "followers_loss": "{network} perd des abonnés ({net} sur la période)",
     "engagement_drop": "{network} : taux d'engagement en baisse ({current} vs {previous})",
     "reach_spike": "{network} : portée en forte hausse ({ratio})",
-    "inactive": "{network} : aucune publication depuis {days} jours"
+    "inactive": "{network} : aucune publication depuis {days} jours",
+    "subtitle": "Détectés automatiquement sur la période"
   },
   "overview": {
     "title": "Vue d'ensemble",
     "allBrands": "Toutes les marques",
     "allBrandsHelp": "Cliquez sur une ligne pour ouvrir les statistiques détaillées. Tendance = portée quotidienne sur 30 jours.",
     "brandAccount": "Marque / compte",
-    "reachTrend": "Tendance portée"
+    "reachTrend": "Tendance portée",
+    "exportCsv": "Exporter en CSV",
+    "reachByBrand": "Portée par marque",
+    "reachByBrandHelp": "Somme des comptes sélectionnés, par réseau, sur la période"
   },
   "analytics": {
     "title": "Analytics",
@@ -139,7 +191,11 @@
     "title": "Campagnes",
     "new": "Nouvelle campagne",
     "empty": "Aucune campagne pour cette marque.",
-    "status": { "upcoming": "À venir", "running": "En cours", "finished": "Terminée" }
+    "status": {
+      "upcoming": "À venir",
+      "running": "En cours",
+      "finished": "Terminée"
+    }
   },
   "reports": {
     "title": "Rapports",
@@ -179,11 +235,26 @@
     "linkError": "Ce lien a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
     "demoTitle": "Mode démo",
     "demoSubtitle": "Aucune base configurée : choisissez un profil fictif.",
-    "role": { "admin": "Administrateur", "manager": "Équipe agence", "client": "Client (lecture seule)" }
+    "role": {
+      "admin": "Administrateur",
+      "manager": "Équipe agence",
+      "client": "Client (lecture seule)"
+    }
   },
   "empty": {
     "underConstruction": "Cette vue arrive bientôt",
     "underConstructionHelp": "Le socle est en place : les données de démonstration sont déjà disponibles.",
     "noAccess": "Aucune marque ne vous est encore partagée. Contactez votre agence."
+  },
+  "csv": {
+    "brand": "Marque",
+    "network": "Réseau",
+    "account": "Compte",
+    "date": "Date",
+    "time": "Heure",
+    "format": "Format",
+    "caption": "Légende",
+    "link": "Lien",
+    "campaign": "Campagne"
   }
 }
