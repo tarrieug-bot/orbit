@@ -32,7 +32,7 @@ function Arrow({ trend }: { trend: Trend }) {
 export function Delta({ trend, label, higherIsBetter = true, caption, variant = "pill", className }: DeltaProps) {
   const good = trend === "flat" ? null : (trend === "up") === higherIsBetter;
   return (
-    <span className={cn("inline-flex items-center gap-1.5 text-xs", className)}>
+    <span className={cn("inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs", className)}>
       <span
         className={cn(
           "tabular inline-flex items-center gap-1 font-semibold",

@@ -3,6 +3,13 @@
     "name": "Orbit",
     "tagline": "Facebook & Instagram analytics for your brands"
   },
+  "shell": {
+    "apply": "Apply",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "customRange": "Custom dates",
+    "theme": { "label": "Theme", "light": "Light", "dark": "Dark", "system": "System" }
+  },
   "common": {
     "loading": "Loading…",
     "search": "Search",

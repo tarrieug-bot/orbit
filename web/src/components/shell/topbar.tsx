@@ -2,12 +2,13 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
-import { useTranslations } from "next-intl";
-import { CalendarDays, Loader2 } from "lucide-react";
-import { Avatar, NetworkIcon, Select } from "@/components/ui";
-import { LIVE_NETWORKS, NETWORKS, type ISODate, type Network } from "@/lib/db/types";
-import { PERIOD_PRESETS, parseFilters, serializeFilters, type Filters } from "@/lib/metrics";
+import { useLocale, useTranslations } from "next-intl";
+import { Loader2, Menu } from "lucide-react";
+import { Avatar, DateRangePicker, NetworkIcon, Toggle, Tooltip, type DateRangePreset } from "@/components/ui";
+import { LIVE_NETWORKS, NETWORKS, type AppLocale, type ISODate, type Network } from "@/lib/db/types";
+import { PERIOD_PRESETS, formatRange, parseFilters, serializeFilters, type Filters } from "@/lib/metrics";
 import { cn } from "@/lib/utils";
+import { NAV_EVENT } from "./sidebar";
 import type { ShellBrand, ShellCampaign } from "./types";
 
 /** Pages sans filtres de période / réseaux. */
@@ -15,6 +16,7 @@ const NO_FILTERS = ["/settings", "/reports", "/campaigns", "/audience", "/no-acc
 
 export function Topbar({ brands, campaigns, today }: { brands: ShellBrand[]; campaigns: ShellCampaign[]; today: ISODate }) {
   const t = useTranslations();
+  const locale = useLocale() as AppLocale;
   const pathname = usePathname();
   const sp = useSearchParams();
   const router = useRouter();
@@ -45,97 +47,103 @@ export function Topbar({ brands, campaigns, today }: { brands: ShellBrand[]; cam
   const title = pathname === "/" ? t("nav.overview") : pathname.startsWith("/settings/accounts") ? t("nav.accounts") : pathname.startsWith("/settings/clients") ? t("nav.clients") : null;
   const sectionTitle = (["audience", "campaigns", "reports"] as const).find((s) => pathname.startsWith(`/${s}`));
 
+  const presets: DateRangePreset[] = [
+    ...PERIOD_PRESETS.filter((p) => p !== "custom").map((p) => ({ value: p, label: t(`period.presets.${p}`) })),
+    ...brandCampaigns.map((c) => ({ value: `campaign:${c.id}`, label: c.name, group: t("period.campaigns") })),
+  ];
+  const presetValue = filters.preset === "campaign" && filters.campaignId ? `campaign:${filters.campaignId}` : filters.preset;
+  const presetLabel = presets.find((p) => p.value === presetValue)?.label ?? t(`period.presets.${filters.preset}`);
+
   return (
-    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b border-line/70 bg-canvas/80 px-6 py-3 backdrop-blur-xl lg:px-8">
-      <div className="mr-auto flex min-w-0 items-center gap-3">
-        {brand && pathname.startsWith("/brands/") ? (
-          <>
-            <Avatar src={brand.avatarUrl} name={brand.name} color={brand.color} size="md" shape="rounded" />
+    <header className="sticky top-0 z-30 border-b border-line/80 bg-canvas/80 backdrop-blur-xl backdrop-saturate-150">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2.5 px-4 py-3 sm:px-6 lg:px-8">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent(NAV_EVENT, { detail: "toggle" }))}
+          aria-label={t("shell.openMenu")}
+          className="-ml-1 rounded-control p-2 text-ink-2 hover:bg-surface-3 hover:text-ink lg:hidden"
+        >
+          <Menu size={19} />
+        </button>
+        <div className="mr-auto flex min-w-0 items-center gap-3">
+          {brand && pathname.startsWith("/brands/") ? (
+            <>
+              <Avatar src={brand.avatarUrl} name={brand.name} color={brand.color} size="md" shape="rounded" />
+              <div className="min-w-0">
+                <h1 className="truncate text-[17px] leading-6 font-semibold tracking-[-0.015em]">{brand.name}</h1>
+                <p className="flex items-center gap-1.5 text-xs text-ink-2">
+                  {section}
+                  <span className="text-ink-3">·</span>
+                  {brand.networks.map((n) => (
+                    <NetworkIcon key={n} network={n} size={12} />
+                  ))}
+                </p>
+              </div>
+            </>
+          ) : sectionTitle ? (
             <div className="min-w-0">
-              <h1 className="truncate text-lg font-semibold tracking-tight">{brand.name}</h1>
-              <p className="text-xs text-ink-2">{section}</p>
+              <h1 className="text-[17px] leading-6 font-semibold tracking-[-0.015em]">{t(`nav.${sectionTitle}`)}</h1>
+              {brand && (
+                <p className="flex items-center gap-1.5 text-xs text-ink-2">
+                  <Avatar src={brand.avatarUrl} name={brand.name} color={brand.color} size="xs" shape="rounded" />
+                  {brand.name}
+                </p>
+              )}
             </div>
-          </>
-        ) : sectionTitle ? (
-          <div className="min-w-0">
-            <h1 className="text-lg font-semibold tracking-tight">{t(`nav.${sectionTitle}`)}</h1>
-            {brand && <p className="text-xs text-ink-2">{brand.name}</p>}
-          </div>
-        ) : (
-          <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
-        )}
-        {pending && <Loader2 size={16} className="animate-spin text-ink-3" />}
-      </div>
-
-      {showFilters && (
-        <div className="flex flex-wrap items-center gap-2">
-          <div role="group" aria-label={t("network.filter")} className="inline-flex items-center gap-0.5 rounded-control border border-line bg-surface p-0.5 shadow-soft">
-            {NETWORKS.map((n) => {
-              const live = LIVE_NETWORKS.includes(n);
-              const on = filters.networks.includes(n);
-              return (
-                <button
-                  key={n}
-                  type="button"
-                  disabled={!live}
-                  aria-pressed={on}
-                  onClick={() => toggleNetwork(n)}
-                  title={live ? t(`network.${n}`) : `${t(`network.${n}`)} — ${t("common.comingSoon")}`}
-                  className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-[8px] transition-all",
-                    on ? "bg-orbit-50 shadow-soft ring-1 ring-orbit-200" : "opacity-45 grayscale hover:opacity-80 hover:grayscale-0",
-                    !live && "cursor-not-allowed opacity-25 hover:opacity-25 hover:grayscale",
-                  )}
-                >
-                  <NetworkIcon network={n} size={16} />
-                </button>
-              );
-            })}
-          </div>
-
-          <Select
-            aria-label={t("period.label")}
-            icon={<CalendarDays size={15} />}
-            value={filters.preset === "campaign" && filters.campaignId ? `campaign:${filters.campaignId}` : filters.preset}
-            onChange={(e) => {
-              const v = e.target.value;
-              if (v.startsWith("campaign:")) update({ preset: "campaign", campaignId: v.slice(9) });
-              else update({ preset: v as Filters["preset"], campaignId: null });
-            }}
-          >
-            {PERIOD_PRESETS.map((p) => (
-              <option key={p} value={p}>
-                {t(`period.presets.${p}`)}
-              </option>
-            ))}
-            {brandCampaigns.length > 0 && (
-              <optgroup label={t("period.campaigns")}>
-                {brandCampaigns.map((c) => (
-                  <option key={c.id} value={`campaign:${c.id}`}>
-                    {c.name}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-          </Select>
-
-          {filters.preset === "custom" && (
-            <div className="flex items-center gap-1.5 text-sm text-ink-2">
-              <input type="date" max={today} value={filters.range.from} onChange={(e) => e.target.value && update({ range: { ...filters.range, from: e.target.value } })} className="h-9 rounded-control border border-line bg-surface px-2 text-sm shadow-soft" />
-              <span>→</span>
-              <input type="date" max={today} value={filters.range.to} onChange={(e) => e.target.value && update({ range: { ...filters.range, to: e.target.value } })} className="h-9 rounded-control border border-line bg-surface px-2 text-sm shadow-soft" />
-            </div>
+          ) : (
+            <h1 className="text-[17px] leading-6 font-semibold tracking-[-0.015em]">{title}</h1>
           )}
-
-          <label className="flex h-9 cursor-pointer items-center gap-2 rounded-control border border-line bg-surface px-3 text-sm font-medium text-ink-2 shadow-soft select-none">
-            <span className={cn("relative h-4.5 w-8 rounded-full transition-colors", filters.compare ? "bg-orbit-600" : "bg-line-strong")}>
-              <span className={cn("absolute top-0.5 h-3.5 w-3.5 rounded-full bg-white shadow transition-all", filters.compare ? "left-4" : "left-0.5")} />
-            </span>
-            <input type="checkbox" className="sr-only" checked={filters.compare} onChange={(e) => update({ compare: e.target.checked })} />
-            {t("common.compare")}
-          </label>
+          {pending && <Loader2 size={16} className="animate-spin text-ink-3" />}
         </div>
-      )}
+
+        {showFilters && (
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            <div role="group" aria-label={t("network.filter")} className="inline-flex items-center gap-0.5 rounded-control border border-line bg-surface p-[3px] shadow-soft">
+              {NETWORKS.map((n) => {
+                const live = LIVE_NETWORKS.includes(n);
+                const on = filters.networks.includes(n);
+                const name = t(`network.${n}`);
+                return (
+                  <Tooltip key={n} content={live ? name : `${name} — ${t("common.comingSoon")}`} side="bottom">
+                    <button
+                      type="button"
+                      disabled={!live}
+                      aria-pressed={on}
+                      aria-label={name}
+                      onClick={() => toggleNetwork(n)}
+                      className={cn(
+                        "flex h-[30px] items-center gap-1.5 rounded-[7px] px-2 text-[13px] font-medium transition-all",
+                        on ? "bg-surface-3 text-ink shadow-[inset_0_0_0_1px_var(--color-line)]" : "text-ink-3 hover:bg-surface-2 hover:text-ink-2",
+                        !live && "cursor-not-allowed px-1.5",
+                      )}
+                    >
+                      <NetworkIcon network={n} size={16} muted={!live || !on} />
+                      {live && <span className="hidden md:inline">{name}</span>}
+                    </button>
+                  </Tooltip>
+                );
+              })}
+            </div>
+
+            <DateRangePicker
+              presets={presets}
+              value={presetValue}
+              range={filters.range}
+              label={presetLabel}
+              detail={formatRange(filters.range, locale)}
+              max={today}
+              onPresetChange={(v) => {
+                if (v.startsWith("campaign:")) update({ preset: "campaign", campaignId: v.slice(9) });
+                else update({ preset: v as Filters["preset"], campaignId: null });
+              }}
+              onRangeChange={(range) => update({ preset: "custom", campaignId: null, range })}
+              labels={{ custom: t("shell.customRange"), from: t("period.from"), to: t("period.to"), apply: t("shell.apply") }}
+            />
+
+            <Toggle framed size="sm" checked={filters.compare} onCheckedChange={(v) => update({ compare: v })} label={t("common.compare")} />
+          </div>
+        )}
+      </div>
     </header>
   );
 }
