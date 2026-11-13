@@ -4,7 +4,7 @@ export function toCsv(rows: (string | number | null | undefined)[][], locale: "f
   const esc = (v: string | number | null | undefined) => {
     if (v == null) return "";
     const s = typeof v === "number" ? (locale === "fr" ? String(v).replace(".", ",") : String(v)) : v;
-    return /[";,\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    return (locale === "fr" ? /[";\n\r]/ : /[",\n\r]/).test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return "﻿" + rows.map((r) => r.map(esc).join(sep)).join("\r\n");
 }

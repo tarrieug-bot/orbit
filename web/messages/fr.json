@@ -208,7 +208,26 @@
     "format": "Format",
     "allFormats": "Tous les formats",
     "exportCsv": "Exporter en CSV",
-    "sort": "Trier par"
+    "sort": "Trier par",
+    "allNetworks": "Tous les réseaux",
+    "emptyHelp": "Élargissez la période ou retirez un filtre.",
+    "count": "{count, plural, =0 {Aucune publication} one {# publication} other {# publications}}",
+    "shown": "{shown} affichées",
+    "more": "Afficher plus",
+    "open": "Ouvrir la publication",
+    "sortBy": {
+      "engagementRate": "Taux d'engagement",
+      "reach": "Portée",
+      "interactions": "Interactions",
+      "views": "Vues",
+      "date": "Date (récentes)"
+    },
+    "short": {
+      "interactions": "Interact.",
+      "engagement": "Eng.",
+      "comments": "Comm.",
+      "saves": "Enreg."
+    }
   },
   "audience": {
     "title": "Audience",

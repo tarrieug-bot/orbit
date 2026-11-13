@@ -1,72 +1,88 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { ExternalLink, ImageOff } from "lucide-react";
+import { ImageOff } from "lucide-react";
+import { BrandHero } from "@/components/views/brand-hero";
+import { filterQuery } from "@/components/views/page-header";
 import { PeriodNote } from "@/components/views/period-note";
-import { Avatar, Badge, EmptyState } from "@/components/ui";
+import { PostCard } from "@/components/views/post-card";
+import { postQueryFrom } from "@/components/views/posts-query";
+import { PostsToolbar } from "@/components/views/posts-toolbar";
+import { buttonVariants, EmptyState } from "@/components/ui";
 import { requireBrand } from "@/lib/auth/guards";
-import { getPageFilters, getPosts, type PageSearchParams } from "@/lib/db";
-import type { AppLocale } from "@/lib/db/types";
-import { formatCompact, formatPercent, INTL_LOCALE } from "@/lib/metrics";
+import { getCampaigns, getPageFilters, getPosts, type PageSearchParams } from "@/lib/db";
+import type { AppLocale, PostFormat } from "@/lib/db/types";
+import Link from "next/link";
 
-/** Publications d'une marque. Point de départ — propriété : front (filtres, tri, export CSV). */
+const PAGE = 48;
+
+export async function generateMetadata() {
+  const t = await getTranslations();
+  return { title: t("nav.posts") };
+}
+
+/** Publications d'une marque : grille filtrable, triable, export CSV. */
 export default async function BrandPostsPage({ params, searchParams }: { params: Promise<{ brandId: string }>; searchParams: PageSearchParams }) {
   const { brandId } = await params;
   const { brand } = await requireBrand(brandId, "posts");
-  const filters = await getPageFilters(searchParams, brand.id);
-  const posts = await getPosts(brand.id, { range: filters.range, networks: filters.networks, sort: "date", limit: 60 });
+  const sp = await searchParams;
+  const filters = await getPageFilters(sp, brand.id);
+  const query = postQueryFrom(sp, filters);
+  const [posts, allPosts, campaigns] = await Promise.all([
+    getPosts(brand.id, query),
+    getPosts(brand.id, { range: filters.range, networks: filters.networks, limit: 1000 }),
+    getCampaigns(brand.id),
+  ]);
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
+  const show = Math.max(PAGE, Math.min(posts.length, Number(Array.isArray(sp.show) ? sp.show[0] : sp.show) || PAGE));
+  const shown = posts.slice(0, show);
+  const ranked = query.sort !== "date";
+  const campaignName = new Map(campaigns.map((c) => [c.id, c.name]));
+  const formats = [...new Set(allPosts.map((p) => p.format))] as PostFormat[];
+  const accounts = brand.accounts.filter((a) => filters.networks.includes(a.network));
+  const keep = ["period", "from", "to", "nets", "compare", "campaign", "fmt", "net", "sort"];
 
   return (
     <div className="space-y-6">
+      <BrandHero brand={brand} accounts={accounts} locale={locale} followersLabel={t("kpi.followers.label").toLowerCase()} />
       <PeriodNote range={filters.range} previous={null} />
-      {posts.length === 0 ? (
-        <EmptyState icon={<ImageOff size={22} />} title={t("posts.empty")} />
+      <PostsToolbar
+        formats={formats}
+        networks={[...new Set(accounts.map((a) => a.network))]}
+        count={posts.length}
+        shown={shown.length}
+        csvHref={`/brands/${brand.id}/posts/csv${filterQuery(sp, undefined, keep)}`}
+      />
+      {shown.length === 0 ? (
+        <EmptyState icon={<ImageOff size={22} />} title={t("posts.empty")} description={t("posts.emptyHelp")} />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-          {posts.map((p) => (
-            <article key={p.id} className="group overflow-hidden rounded-card border border-line/70 bg-surface shadow-card transition-shadow hover:shadow-pop">
-              <div className="relative aspect-square bg-surface-2">
-                {p.thumbnailUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full items-center justify-center p-6 text-center text-sm text-ink-2">{p.caption}</div>
-                )}
-                <div className="absolute top-3 left-3 flex items-center gap-2">
-                  <Badge className="bg-white/90 text-ink shadow-soft backdrop-blur">{t(`format.${p.format}`)}</Badge>
-                </div>
-                {p.permalink && (
-                  <a href={p.permalink} target="_blank" rel="noreferrer" className="absolute top-3 right-3 rounded-full bg-white/90 p-1.5 text-ink-2 opacity-0 shadow-soft transition-opacity group-hover:opacity-100" aria-label="Ouvrir">
-                    <ExternalLink size={14} />
-                  </a>
-                )}
-              </div>
-              <div className="space-y-3 p-4">
-                <div className="flex items-center gap-2">
-                  <Avatar src={p.account.avatarUrl} name={p.account.name ?? ""} color={brand.color} size="xs" network={p.network} />
-                  <span className="truncate text-xs font-medium text-ink-2">{p.account.handle}</span>
-                  <time className="ml-auto text-xs text-ink-3">
-                    {new Date(p.publishedAt).toLocaleDateString(INTL_LOCALE[locale], { day: "numeric", month: "short", timeZone: "America/Martinique" })}
-                  </time>
-                </div>
-                <p className="line-clamp-2 text-[13px] text-ink">{p.caption}</p>
-                <dl className="tabular grid grid-cols-3 gap-2 border-t border-line pt-3 text-center">
-                  <div>
-                    <dt className="text-[11px] text-ink-3">{t("kpi.reach.label")}</dt>
-                    <dd className="text-sm font-semibold">{p.metrics.reach != null ? formatCompact(p.metrics.reach, locale) : "—"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] text-ink-3">{t("kpi.interactions.label")}</dt>
-                    <dd className="text-sm font-semibold">{formatCompact(p.metrics.interactions, locale)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[11px] text-ink-3">{t("kpi.engagementRate.label")}</dt>
-                    <dd className="text-sm font-semibold text-orbit-700">{p.metrics.engagementRate != null ? formatPercent(p.metrics.engagementRate, locale, 1) : "—"}</dd>
-                  </div>
-                </dl>
-              </div>
-            </article>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {shown.map((p, i) => (
+            <PostCard
+              key={p.id}
+              post={p}
+              locale={locale}
+              brandColor={brand.color}
+              rank={ranked ? i + 1 : undefined}
+              labels={{
+                format: t(`format.${p.format}`),
+                reach: t("kpi.reach.label"),
+                interactions: t("posts.short.interactions"),
+                engagement: t("posts.short.engagement"),
+                likes: t("kpi.likes.label"),
+                comments: t("posts.short.comments"),
+                third: p.network === "ig" ? t("posts.short.saves") : t("kpi.shares.label"),
+                open: t("posts.open"),
+                campaign: p.campaignId ? campaignName.get(p.campaignId) : null,
+              }}
+            />
           ))}
+        </div>
+      )}
+      {shown.length < posts.length && (
+        <div className="flex justify-center">
+          <Link scroll={false} href={`/brands/${brand.id}/posts${filterQuery(sp, { show: String(show + PAGE) }, keep)}`} className={buttonVariants({ variant: "secondary" })}>
+            {t("posts.more")}
+          </Link>
         </div>
       )}
     </div>

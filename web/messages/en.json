@@ -208,7 +208,26 @@
     "format": "Format",
     "allFormats": "All formats",
     "exportCsv": "Export CSV",
-    "sort": "Sort by"
+    "sort": "Sort by",
+    "allNetworks": "All networks",
+    "emptyHelp": "Widen the period or remove a filter.",
+    "count": "{count, plural, =0 {No posts} one {# post} other {# posts}}",
+    "shown": "{shown} shown",
+    "more": "Show more",
+    "open": "Open the post",
+    "sortBy": {
+      "engagementRate": "Engagement rate",
+      "reach": "Reach",
+      "interactions": "Interactions",
+      "views": "Views",
+      "date": "Date (newest)"
+    },
+    "short": {
+      "interactions": "Interact.",
+      "engagement": "Eng.",
+      "comments": "Comm.",
+      "saves": "Saves"
+    }
   },
   "audience": {
     "title": "Audience",
