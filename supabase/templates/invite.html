@@ -1,0 +1,10 @@
+<!-- Modèle Supabase Auth « Invite user » -->
+<div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;color:#0f172a">
+  <h2 style="margin:0 0 8px">Vous êtes invité(e) sur Orbit</h2>
+  <p style="color:#475569">Votre agence vous donne accès aux statistiques de vos réseaux sociaux.</p>
+  <p style="margin:28px 0">
+    <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite"
+       style="background:#4f46e5;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">Accéder à Orbit</a>
+  </p>
+  <p style="color:#94a3b8;font-size:12px">You have been invited to Orbit by your agency.</p>
+</div>

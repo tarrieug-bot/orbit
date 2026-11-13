@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "demo:generate": "node scripts/generate-demo-data.mjs",
+    "test:rls": "../supabase/tests/run.sh",
+    "dev:demo": "ORBIT_DATA_SOURCE=demo next dev"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -34,5 +38,8 @@
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.9"
   }
 }

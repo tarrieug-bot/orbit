@@ -1,0 +1,10 @@
+<!-- Modèle Supabase Auth « Magic Link » (à recopier dans Authentication › Email Templates en production) -->
+<div style="font-family:Inter,Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;color:#0f172a">
+  <h2 style="margin:0 0 8px">Connexion à Orbit</h2>
+  <p style="color:#475569">Cliquez sur le bouton ci-dessous pour vous connecter. Ce lien est valable une heure et ne peut servir qu'une fois.</p>
+  <p style="margin:28px 0">
+    <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email"
+       style="background:#4f46e5;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">Se connecter</a>
+  </p>
+  <p style="color:#94a3b8;font-size:12px">Sign-in link for Orbit — if you did not request it, you can ignore this email.</p>
+</div>
