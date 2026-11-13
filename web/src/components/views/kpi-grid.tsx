@@ -45,7 +45,8 @@ export async function KpiGrid({
   const fmt = (v: number, f: "number" | "compact" | "percent") => (f === "percent" ? formatPercent(v, locale, 2) : f === "compact" ? formatCompact(v, locale) : formatNumber(v, locale));
 
   return (
-    <div className={cn("grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3", columns === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4")}>
+    <div className="@container">
+    <div className={cn("grid grid-cols-2 gap-3 @xl:grid-cols-3 @xl:gap-4 @3xl:grid-cols-4", columns === 5 && "@5xl:grid-cols-5")}>
       {keys.map((key, i) => {
         const def = getKpiDefinition(key);
         const value = totals[key];
@@ -81,6 +82,7 @@ export async function KpiGrid({
           </div>
         );
       })}
+    </div>
     </div>
   );
 }

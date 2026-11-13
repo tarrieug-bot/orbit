@@ -8,7 +8,12 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "customRange": "Custom dates",
-    "theme": { "label": "Theme", "light": "Light", "dark": "Dark", "system": "System" }
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
   },
   "common": {
     "loading": "Loading…",
@@ -365,5 +370,122 @@
     "less": "Less",
     "more": "More",
     "noteOnline": "Hours as provided by Meta (online followers, last 7 available days)."
+  },
+  "reportBuilder": {
+    "title": "Build a report",
+    "subtitle": "Monthly, campaign, yearly or custom dates",
+    "updating": "Updating preview",
+    "brand": "Brand",
+    "language": "Report language",
+    "type": "Report type",
+    "types": {
+      "month": "Month",
+      "campaign": "Campaign",
+      "year": "Year",
+      "custom": "Dates"
+    },
+    "month": "Month",
+    "year": "Year",
+    "campaign": "Campaign",
+    "noCampaign": "No campaign has started for this brand.",
+    "from": "From",
+    "to": "To",
+    "networks": "Networks",
+    "sections": "Sections",
+    "sectionNames": {
+      "summary": "KPI summary",
+      "audience": "Audience growth",
+      "reach": "Reach and views",
+      "engagement": "Engagement",
+      "formats": "Performance by format",
+      "top": "Top posts",
+      "insights": "Analysis and recommendations"
+    },
+    "compare": "Compare with the previous period",
+    "previewTitle": "Report preview",
+    "previewHelp": "Updated on every change",
+    "langBadge": {
+      "fr": "Report in French",
+      "en": "Report in English"
+    },
+    "export": {
+      "pdf": "PDF",
+      "pptx": "PowerPoint",
+      "csv": "CSV data",
+      "working": "Generating…",
+      "errors": {
+        "unavailable": "File export is not available on this server yet. Please try again later.",
+        "failed": "File generation failed. Please try again in a moment.",
+        "forbidden": "You don't have access to this brand's reports."
+      }
+    },
+    "schedules": {
+      "title": "Scheduled sends",
+      "subtitle": "Reports emailed automatically",
+      "new": "Schedule",
+      "empty": "No scheduled send for this brand.",
+      "dialogHelp": "The {brand} report will be generated and sent automatically.",
+      "name": "Send name",
+      "defaultName": "{brand} monthly report",
+      "frequency": "Frequency",
+      "kind": "Period covered",
+      "format": "Format",
+      "recipients": "Recipients",
+      "recipientsHint": "Email addresses separated by commas",
+      "submit": "Schedule send",
+      "next": "next send on {date}",
+      "freq": {
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "yearly": "Yearly"
+      },
+      "errors": {
+        "recipients": "Enter at least one valid email address.",
+        "forbidden": "Only the agency team can do this.",
+        "failed": "Saving failed. Please try again."
+      }
+    }
+  },
+  "reportPreview": {
+    "invalidTitle": "Report unavailable",
+    "invalidHelp": "Select at least one network and a period that has already elapsed.",
+    "kind": {
+      "month": "Monthly report",
+      "year": "Annual report",
+      "campaign": "Campaign report",
+      "custom": "Custom report"
+    },
+    "yearTitle": "Year {year}",
+    "days": "{days} days",
+    "comparedTo": "compared with {range}",
+    "sections": {
+      "summary": "Summary",
+      "audience": "Audience growth",
+      "reach": "Reach and views",
+      "engagement": "Engagement",
+      "formats": "Performance by format",
+      "top": "Top posts",
+      "insights": "Analysis and recommendations"
+    },
+    "reachBy": "Reach, {granularity}",
+    "viewsBy": "Views, {granularity}",
+    "table": {
+      "format": "Format",
+      "posts": "Posts",
+      "avgReach": "Avg. reach",
+      "avgInteractions": "Avg. interactions"
+    },
+    "noPosts": "No posts over the period.",
+    "footer": "Report generated on {date} with Orbit · Engagement rate = interactions ÷ reach (unique accounts). Meta Graph API v25 metrics.",
+    "insights": {
+      "community": "The community reaches <b>{followers} followers</b> ({net} over the period, i.e. {growth}).",
+      "reachChange": "Reach {reachDir, select, up {grew} other {fell}} by <b>{reach}</b> and interactions {interDir, select, up {grew} other {fell}} by <b>{inter}</b> compared with the previous period.",
+      "engagement": "Engagement rate stands at <b>{rate}</b> ({points}).",
+      "bestFormat": "Most engaging format: <b>{network} {format}</b> ({rate} engagement over {count} posts), versus {worstRate} for {worstNetwork} {worstFormat}. Recommendation: increase the share of this format in the content plan.",
+      "bestPost": "Best-performing post: “{caption}” ({network}, {date}) with {interactions} interactions and {rate} engagement.",
+      "bestDay": "Posts published on <b>{best}</b> get the best engagement; <b>{worst}</b> is the weakest day.",
+      "frequency": "Posting frequency: <b>{perWeek} posts / week</b>{low, select, yes { — a steadier pace (3 to 5 per week) would help reach.} other {.}}"
+    }
   }
 }

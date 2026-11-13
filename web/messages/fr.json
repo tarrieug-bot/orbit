@@ -8,7 +8,12 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "customRange": "Dates personnalisées",
-    "theme": { "label": "Thème", "light": "Clair", "dark": "Sombre", "system": "Système" }
+    "theme": {
+      "label": "Thème",
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    }
   },
   "common": {
     "loading": "Chargement…",
@@ -365,5 +370,122 @@
     "less": "Moins",
     "more": "Plus",
     "noteOnline": "Heures fournies par Meta (abonnés en ligne, 7 derniers jours disponibles)."
+  },
+  "reportBuilder": {
+    "title": "Créer un rapport",
+    "subtitle": "Mensuel, campagne, annuel ou dates libres",
+    "updating": "Mise à jour de l'aperçu",
+    "brand": "Marque",
+    "language": "Langue du rapport",
+    "type": "Type de rapport",
+    "types": {
+      "month": "Mois",
+      "campaign": "Campagne",
+      "year": "Année",
+      "custom": "Dates"
+    },
+    "month": "Mois",
+    "year": "Année",
+    "campaign": "Campagne",
+    "noCampaign": "Aucune campagne lancée pour cette marque.",
+    "from": "Du",
+    "to": "Au",
+    "networks": "Réseaux",
+    "sections": "Sections",
+    "sectionNames": {
+      "summary": "Synthèse des KPI",
+      "audience": "Évolution de l'audience",
+      "reach": "Portée et vues",
+      "engagement": "Engagement",
+      "formats": "Performance par format",
+      "top": "Top publications",
+      "insights": "Analyse et recommandations"
+    },
+    "compare": "Comparer à la période précédente",
+    "previewTitle": "Aperçu du rapport",
+    "previewHelp": "Mis à jour à chaque modification",
+    "langBadge": {
+      "fr": "Rapport en français",
+      "en": "Rapport en anglais"
+    },
+    "export": {
+      "pdf": "PDF",
+      "pptx": "PowerPoint",
+      "csv": "Données CSV",
+      "working": "Génération…",
+      "errors": {
+        "unavailable": "L'export de fichiers n'est pas encore disponible sur ce serveur. Réessayez plus tard.",
+        "failed": "La génération du fichier a échoué. Réessayez dans un instant.",
+        "forbidden": "Vous n'avez pas accès aux rapports de cette marque."
+      }
+    },
+    "schedules": {
+      "title": "Envois programmés",
+      "subtitle": "Rapports envoyés automatiquement par e-mail",
+      "new": "Programmer",
+      "empty": "Aucun envoi programmé pour cette marque.",
+      "dialogHelp": "Le rapport de {brand} sera généré et envoyé automatiquement.",
+      "name": "Nom de l'envoi",
+      "defaultName": "Rapport mensuel {brand}",
+      "frequency": "Fréquence",
+      "kind": "Période couverte",
+      "format": "Format",
+      "recipients": "Destinataires",
+      "recipientsHint": "Adresses e-mail séparées par des virgules",
+      "submit": "Programmer l'envoi",
+      "next": "prochain envoi le {date}",
+      "freq": {
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel",
+        "quarterly": "Trimestriel",
+        "yearly": "Annuel"
+      },
+      "errors": {
+        "recipients": "Indiquez au moins une adresse e-mail valide.",
+        "forbidden": "Action réservée à l'équipe de l'agence.",
+        "failed": "L'enregistrement a échoué. Réessayez."
+      }
+    }
+  },
+  "reportPreview": {
+    "invalidTitle": "Rapport indisponible",
+    "invalidHelp": "Choisissez au moins un réseau et une période déjà écoulée.",
+    "kind": {
+      "month": "Rapport mensuel",
+      "year": "Rapport annuel",
+      "campaign": "Rapport de campagne",
+      "custom": "Rapport personnalisé"
+    },
+    "yearTitle": "Année {year}",
+    "days": "{days} jours",
+    "comparedTo": "comparé à {range}",
+    "sections": {
+      "summary": "Synthèse",
+      "audience": "Évolution de l'audience",
+      "reach": "Portée et vues",
+      "engagement": "Engagement",
+      "formats": "Performance par format",
+      "top": "Top publications",
+      "insights": "Analyse et recommandations"
+    },
+    "reachBy": "Portée, {granularity}",
+    "viewsBy": "Vues, {granularity}",
+    "table": {
+      "format": "Format",
+      "posts": "Publications",
+      "avgReach": "Portée moy.",
+      "avgInteractions": "Interactions moy."
+    },
+    "noPosts": "Aucune publication sur la période.",
+    "footer": "Rapport généré le {date} avec Orbit · Taux d'engagement = interactions ÷ portée (comptes uniques). Métriques Meta Graph API v25.",
+    "insights": {
+      "community": "La communauté atteint <b>{followers} abonnés</b> ({net} sur la période, soit {growth}).",
+      "reachChange": "La portée {reachDir, select, up {progresse} other {recule}} de <b>{reach}</b> et les interactions {interDir, select, up {progressent} other {reculent}} de <b>{inter}</b> par rapport à la période précédente.",
+      "engagement": "Le taux d'engagement s'établit à <b>{rate}</b> ({points}).",
+      "bestFormat": "Format le plus engageant : <b>{format} {network}</b> ({rate} d'engagement sur {count} publications), contre {worstRate} pour {worstFormat} {worstNetwork}. Recommandation : augmenter la part de ce format dans le planning.",
+      "bestPost": "Publication la plus performante : « {caption} » ({network}, {date}) avec {interactions} interactions et {rate} d'engagement.",
+      "bestDay": "Les publications du <b>{best}</b> obtiennent le meilleur engagement ; le <b>{worst}</b> est le jour le moins performant.",
+      "frequency": "Rythme de publication : <b>{perWeek} publications / semaine</b>{low, select, yes { — un rythme plus soutenu (3 à 5 par semaine) aiderait la portée.} other {.}}"
+    }
   }
 }
