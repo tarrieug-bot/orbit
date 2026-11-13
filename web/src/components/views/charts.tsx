@@ -89,7 +89,7 @@ export function MetricChart({
   const xLabel = (v: string) => (xKind === "bucket" ? formatBucketLabel(v, granularity, locale) : v);
   const labelOf = (name: unknown) => series.find((s) => s.key === name)?.label ?? String(name);
   const legend = !hideLegend && series.length > 1 && (
-    <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, paddingTop: 8 }} formatter={(v: string) => <span className="text-ink-2">{labelOf(v)}</span>} />
+    <Legend itemSorter={null} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, paddingTop: 8 }} formatter={(v: string) => <span className="text-ink-2">{labelOf(v)}</span>} />
   );
   const tooltip = (
     <Tooltip
@@ -105,7 +105,7 @@ export function MetricChart({
     <div style={{ height }} className="w-full">
       <ResponsiveContainer width="100%" height="100%">
         {type === "bar" ? (
-          <BarChart data={data} layout={horizontal ? "vertical" : "horizontal"} margin={{ top: 8, right: 12, bottom: 0, left: horizontal ? 8 : 0 }} barGap={2}>
+          <BarChart data={data} stackOffset="sign" layout={horizontal ? "vertical" : "horizontal"} margin={{ top: 8, right: 12, bottom: 0, left: horizontal ? 8 : 0 }} barGap={2}>
             <CartesianGrid vertical={!!horizontal} horizontal={!horizontal} stroke="#EEF0F5" />
             {horizontal ? (
               <>

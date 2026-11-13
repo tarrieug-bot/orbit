@@ -21,7 +21,9 @@
     "demoMode": "Mode démo — données fictives",
     "brands": "Marques",
     "accounts": "Comptes",
-    "back": "Retour"
+    "back": "Retour",
+    "weekdaysShort": "Lun,Mar,Mer,Jeu,Ven,Sam,Dim",
+    "weekdaysLong": "lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche"
   },
   "nav": {
     "overview": "Vue d'ensemble",
@@ -166,7 +168,38 @@
     "followersEvolution": "Évolution des abonnés",
     "reachViews": "Portée et vues",
     "interactionsByType": "Interactions par type",
-    "byNetwork": "Par réseau"
+    "byNetwork": "Par réseau",
+    "noAccounts": "Aucun compte sur les réseaux sélectionnés",
+    "noAccountsHelp": "Activez Instagram ou Facebook dans la barre de filtres pour afficher les statistiques.",
+    "followersEvolutionHelp": "Total en fin de période, {granularity}",
+    "gainedLost": "Abonnés gagnés et perdus",
+    "gainedLostHelp": "Tous comptes sélectionnés, {granularity}",
+    "gained": "Gagnés",
+    "lost": "Perdus",
+    "visibility": "Visibilité",
+    "visibilityHelp": "Par réseau, {granularity}",
+    "visibilityTabs": {
+      "reach": "Portée",
+      "views": "Vues",
+      "profileVisits": "Visites",
+      "linkClicks": "Clics"
+    },
+    "interactionsByTypeHelp": "J'aime / réactions, commentaires, partages, enregistrements — {granularity}",
+    "engagementHelp": "Interactions ÷ portée, {granularity}",
+    "formats": "Performance par format",
+    "formatsHelp": "Moyenne par publication sur la période",
+    "formatTabs": {
+      "engagementRate": "Taux d'eng.",
+      "reach": "Portée moy.",
+      "interactions": "Interactions moy."
+    },
+    "topPosts": "Top publications",
+    "topPostsHelp": "Les 5 meilleures par taux d'engagement",
+    "allPosts": "Toutes les publications",
+    "bestTimes": "Meilleurs moments pour publier",
+    "bestTimesOnline": "Abonnés Instagram en ligne (moyenne)",
+    "bestTimesPosts": "Interactions moyennes des publications par créneau (heure de Martinique)",
+    "bestTimesNone": "Pas assez de publications sur la période pour estimer les meilleurs créneaux."
   },
   "posts": {
     "title": "Publications",
@@ -256,5 +289,12 @@
     "caption": "Légende",
     "link": "Lien",
     "campaign": "Campagne"
+  },
+  "heatmap": {
+    "cell": "{day} {from}h–{to}h · {value} % du pic",
+    "best": "Meilleur créneau : {day} à {hour}h",
+    "less": "Moins",
+    "more": "Plus",
+    "noteOnline": "Heures fournies par Meta (abonnés en ligne, 7 derniers jours disponibles)."
   }
 }

@@ -21,7 +21,9 @@
     "demoMode": "Demo mode — sample data",
     "brands": "Brands",
     "accounts": "Accounts",
-    "back": "Back"
+    "back": "Back",
+    "weekdaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+    "weekdaysLong": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"
   },
   "nav": {
     "overview": "Overview",
@@ -166,7 +168,38 @@
     "followersEvolution": "Follower growth",
     "reachViews": "Reach and views",
     "interactionsByType": "Interactions by type",
-    "byNetwork": "By network"
+    "byNetwork": "By network",
+    "noAccounts": "No account on the selected networks",
+    "noAccountsHelp": "Turn on Instagram or Facebook in the filter bar to see the statistics.",
+    "followersEvolutionHelp": "Total at the end of each period, {granularity}",
+    "gainedLost": "Followers gained and lost",
+    "gainedLostHelp": "All selected accounts, {granularity}",
+    "gained": "Gained",
+    "lost": "Lost",
+    "visibility": "Visibility",
+    "visibilityHelp": "By network, {granularity}",
+    "visibilityTabs": {
+      "reach": "Reach",
+      "views": "Views",
+      "profileVisits": "Visits",
+      "linkClicks": "Clicks"
+    },
+    "interactionsByTypeHelp": "Likes / reactions, comments, shares, saves — {granularity}",
+    "engagementHelp": "Interactions ÷ reach, {granularity}",
+    "formats": "Performance by format",
+    "formatsHelp": "Average per post over the period",
+    "formatTabs": {
+      "engagementRate": "Eng. rate",
+      "reach": "Avg. reach",
+      "interactions": "Avg. interactions"
+    },
+    "topPosts": "Top posts",
+    "topPostsHelp": "The 5 best by engagement rate",
+    "allPosts": "All posts",
+    "bestTimes": "Best times to post",
+    "bestTimesOnline": "Instagram followers online (average)",
+    "bestTimesPosts": "Average post interactions by time slot (Martinique time)",
+    "bestTimesNone": "Not enough posts over the period to estimate the best time slots."
   },
   "posts": {
     "title": "Posts",
@@ -256,5 +289,12 @@
     "caption": "Caption",
     "link": "Link",
     "campaign": "Campaign"
+  },
+  "heatmap": {
+    "cell": "{day} {from}:00–{to}:00 · {value}% of peak",
+    "best": "Best slot: {day} at {hour}:00",
+    "less": "Less",
+    "more": "More",
+    "noteOnline": "Hours as provided by Meta (online followers, last 7 available days)."
   }
 }
