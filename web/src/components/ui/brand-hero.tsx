@@ -63,7 +63,7 @@ export function BrandHero({ name, avatarUrl, color, sector, eyebrow, accounts, s
       </svg>
       <div className={cn("relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between", size === "lg" ? "p-6 sm:p-8" : "p-5 sm:p-6")}>
         <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-center">
-          <span className="relative inline-flex shrink-0 rounded-[30%] shadow-raised">
+          <span className="relative inline-flex shrink-0 self-start rounded-[30%] shadow-raised sm:self-center">
             <Avatar src={avatarUrl} name={name} color={color} size={size === "lg" ? "2xl" : "xl"} shape="rounded" />
           </span>
           <div className="min-w-0">
@@ -90,12 +90,12 @@ export function BrandHero({ name, avatarUrl, color, sector, eyebrow, accounts, s
           <div className="flex shrink-0 flex-col gap-4 lg:items-end">
             {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
             {stats && stats.length > 0 && (
-              <dl className="flex flex-wrap gap-x-8 gap-y-3">
+              <dl className="grid grid-cols-3 gap-x-5 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-8">
                 {stats.map((s) => (
                   <div key={s.label}>
                     <dt className="text-xs font-medium text-ink-2">{s.label}</dt>
-                    <dd className="mt-0.5 flex items-baseline gap-2">
-                      <span className="text-xl font-semibold tracking-tight text-ink tabular">{s.value}</span>
+                    <dd className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                      <span className="text-lg font-semibold tracking-tight text-ink tabular sm:text-xl">{s.value}</span>
                       {s.delta}
                     </dd>
                   </div>
