@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { KpiTile } from "@/components/ui";
 import type { AppLocale } from "@/lib/db/types";
+import { cn } from "@/lib/utils";
 import {
   computeDelta,
   computeRateDelta,
@@ -17,17 +18,35 @@ import {
 } from "@/lib/metrics";
 
 /**
- * Grille de tuiles KPI (point de départ — propriété : front).
+ * Grille de tuiles KPI (propriété : front).
  * Abonnés : évolution sur la période ; autres : variation vs période précédente.
  */
-export async function KpiGrid({ totals, previous, series, keys, color = "#6366F1" }: { totals: MetricTotals; previous: MetricTotals | null; series?: SeriesPoint[]; keys: KpiKey[]; color?: string }) {
-  const t = await getTranslations();
-  const locale = (await getLocale()) as AppLocale;
+export async function KpiGrid({
+  totals,
+  previous,
+  series,
+  keys,
+  color = "#6366F1",
+  columns = 4,
+  locale: forcedLocale,
+}: {
+  totals: MetricTotals;
+  previous: MetricTotals | null;
+  series?: SeriesPoint[];
+  keys: KpiKey[];
+  color?: string;
+  /** colonnes sur grand écran */
+  columns?: 4 | 5;
+  /** langue imposée (aperçu de rapport) */
+  locale?: AppLocale;
+}) {
+  const locale = forcedLocale ?? ((await getLocale()) as AppLocale);
+  const t = await getTranslations({ locale });
   const fmt = (v: number, f: "number" | "compact" | "percent") => (f === "percent" ? formatPercent(v, locale, 2) : f === "compact" ? formatCompact(v, locale) : formatNumber(v, locale));
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-      {keys.map((key) => {
+    <div className={cn("grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3", columns === 5 ? "xl:grid-cols-5" : "xl:grid-cols-4")}>
+      {keys.map((key, i) => {
         const def = getKpiDefinition(key);
         const value = totals[key];
         const unavailable = key in totals.available && !totals.available[key as keyof MetricTotals["available"]];
@@ -49,8 +68,8 @@ export async function KpiGrid({ totals, previous, series, keys, color = "#6366F1
         }
         const spark = def.sparkline && series ? series.map((p) => p[def.sparkline!] ?? 0) : undefined;
         return (
+          <div key={key} className="flex transition duration-500 starting:translate-y-1.5 starting:opacity-0 [&>*]:flex-1" style={{ transitionDelay: `${i * 35}ms` }}>
           <KpiTile
-            key={key}
             label={t(`${def.i18nKey}.label`)}
             help={t(`${def.i18nKey}.help`)}
             value={unavailable ? "—" : fmt(value, def.format)}
@@ -59,6 +78,7 @@ export async function KpiGrid({ totals, previous, series, keys, color = "#6366F1
             sparkline={spark}
             sparklineColor={color}
           />
+          </div>
         );
       })}
     </div>
